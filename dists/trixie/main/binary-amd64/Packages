@@ -1,0 +1,19 @@
+Package: wiringpi
+Version: 3.16-0~deb13u1
+Architecture: amd64
+Maintainer: MW0MWZ <andy@mw0mwz.co.uk>
+Filename: pool/main/w/wiringpi/wiringpi_3.16-0~deb13u1_amd64.deb
+Size: 2040
+MD5sum: cdf606de4fc8e2bfeb2fe267b0da54a4
+SHA1: 1766f479b072fa1ab7ca560c10a22e8babeeff42
+SHA256: ea51953f54ec2e3482ffd2613691cd9deb03fb130fbd38ebf1e5ca99b548a0ab
+Section: libs
+Priority: optional
+Homepage: https://github.com/WiringPi/WiringPi
+Description: GPIO Interface library for Raspberry Pi (dummy package)
+ This is a dummy package for non-ARM architectures.
+ WiringPi is only functional on ARM-based systems with GPIO hardware.
+ .
+ This package exists to satisfy dependencies on non-ARM systems
+ but provides no actual functionality.
+

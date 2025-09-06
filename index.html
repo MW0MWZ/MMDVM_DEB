@@ -608,8 +608,8 @@
                 <div class="step-content">
                     <strong>Update and install packages:</strong>
                     <div class="code-block">
-                        sudo apt update && sudo apt install mmdvmhost dmrclients dstarclients ysfclients nxdnclients p25clients pocsagclients fmclients aprsclients
-                        <button class="copy-button" onclick="copyToClipboard(this, 'sudo apt update && sudo apt install mmdvmhost dmrclients dstarclients ysfclients nxdnclients p25clients pocsagclients fmclients aprsclients')">Copy</button>
+                        sudo apt update && sudo apt install mmdvmhost dmrclients dstarclients dstarrepeater ysfclients nxdnclients p25clients pocsagclients fmclients aprsclients
+                        <button class="copy-button" onclick="copyToClipboard(this, 'sudo apt update && sudo apt install mmdvmhost dmrclients dstarclients dstarrepeater ysfclients nxdnclients p25clients pocsagclients fmclients aprsclients')">Copy</button>
                     </div>
                 </div>
             </div>
@@ -639,11 +639,11 @@
                 </div>
                 <div class="stats-grid">
                     <div class="stat-item">
-                        <div class="stat-number">9</div>
+                        <div class="stat-number">10</div>
                         <div class="stat-label">Packages</div>
                     </div>
                     <div class="stat-item">
-                        <div class="stat-number">30+</div>
+                        <div class="stat-number">40+</div>
                         <div class="stat-label">Binaries</div>
                     </div>
                     <div class="stat-item">
@@ -666,8 +666,8 @@
                         <span style="font-size: 0.9em; opacity: 0.9;">Automated builds with Docker and QEMU for all architectures</span>
                     </div>
                     <div style="padding: 10px; background: rgba(237, 137, 54, 0.1); border-left: 3px solid var(--warning); border-radius: 5px;">
-                        <strong>Cross-Mode Support</strong><br>
-                        <span style="font-size: 0.9em; opacity: 0.9;">Full interoperability between DMR, YSF, NXDN, and P25</span>
+                        <strong>D-Star Options</strong><br>
+                        <span style="font-size: 0.9em; opacity: 0.9;">Choose between multi-mode MMDVMHost or dedicated DStarRepeater</span>
                     </div>
                     <div style="padding: 10px; background: rgba(215, 10, 83, 0.1); border-left: 3px solid var(--debian-light-red); border-radius: 5px;">
                         <strong>Debian Standards</strong><br>
@@ -693,6 +693,22 @@
                     <span class="component-badge">MMDVMHost</span>
                     <span class="component-badge">MMDVMCal</span>
                     <span class="component-badge">RemoteCommand</span>
+                </div>
+            </div>
+
+            <div class="package-card dstar">
+                <div class="package-header">
+                    <svg class="package-icon" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                    </svg>
+                    <div class="package-name">dstarrepeater</div>
+                </div>
+                <div class="package-desc">
+                    Dedicated D-Star repeater controller with support for multiple hardware interfaces including DVAP, DV-RPTR, GMSK modems, and sound cards. Features GPIO control for PTT on ARM platforms, voice announcements, and beacon support.
+                </div>
+                <div class="package-components">
+                    <span class="component-badge">dstarrepeaterd</span>
+                    <span class="component-badge">dstarrepeaterconfig</span>
                 </div>
             </div>
         </div>

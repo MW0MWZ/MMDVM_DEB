@@ -1,0 +1,19 @@
+Package: wiringpi
+Version: 3.16-0~deb13u1
+Architecture: arm64
+Bugs: https://github.com/WiringPi/WiringPi/issues
+Maintainer: MW0MWZ <andy@mw0mwz.co.uk>
+Depends: libc6
+Filename: pool/main/w/wiringpi/wiringpi_3.16-0~deb13u1_arm64.deb
+Size: 72936
+MD5sum: 6ff9e66b084c27242aade26e06a38423
+SHA1: 1d0fe09d27f418a1488c794bd7445ec15747ff75
+SHA256: 58feef224851ab12d11c410260549a802392d4b822421149839730eb1604f1d3
+Section: libraries
+Priority: optional
+Homepage: https://github.com/WiringPi/WiringPi
+Description: The wiringPi libraries, headers and gpio command
+  Libraries to allow GPIO access on a Raspberry Pi from C and C++
+  programs as well as from the command-line
+Uploaders: Grazer Computer Club - GC2 <wiringpi@gc2.at>
+
