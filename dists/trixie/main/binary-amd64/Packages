@@ -1,3 +1,22 @@
+Package: nxdnclients
+Version: 2025.07.09-0~deb13u1
+Architecture: amd64
+Maintainer: MW0MWZ <andy@mw0mwz.co.uk>
+Depends: libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11)
+Filename: pool/main/n/nxdnclients/nxdnclients_2025.07.09-0~deb13u1_amd64.deb
+Size: 1521548
+MD5sum: d37e571625da62ed636001d31033daa6
+SHA1: 89e8781fb2000eacdd5d66e373a609cd471a12cc
+SHA256: 1a13b8943f025c19c64386ba612fa1f6f9212cc2323e622fbaec3e0d6cba37ae
+Section: hamradio
+Priority: optional
+Homepage: https://github.com/g4klx/NXDNClients
+Description: NXDN Clients for Amateur Radio
+ NXDN Gateway, Parrot and Cross-Mode converters
+ Includes NXDNGateway, NXDNParrot, and NXDN2DMR
+ Built for Debian trixie
+ Git commits: NXDNClients dfadc12, MMDVM_CM 1dd5383
+
 Package: p25clients
 Version: 2025.07.09-0~deb13u1
 Architecture: amd64
