@@ -1,3 +1,22 @@
+Package: pocsagclients
+Version: 2025.08.20-0~deb13u1
+Architecture: armhf
+Maintainer: MW0MWZ <andy@mw0mwz.co.uk>
+Depends: libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11)
+Filename: pool/main/p/pocsagclients/pocsagclients_2025.08.20-0~deb13u1_armhf.deb
+Size: 718592
+MD5sum: 7aae88bf5b75e32e8d560bae3a976da5
+SHA1: 9d4f425979b071f1593405c4a4bc86d4f6c0e7ac
+SHA256: 5bee954547b48fe3491011f8c7ec8e0f1bb8adcc4a869a087858b373a39b166c
+Section: hamradio
+Priority: optional
+Homepage: https://github.com/g4klx/DAPNETGateway
+Description: POCSAG/DAPNET Gateway for Amateur Radio
+ DAPNET Gateway for POCSAG paging network
+ Supports connection to the DAPNET amateur radio paging network
+ Built for Debian trixie
+ Git commit: 475c802
+
 Package: wiringpi
 Version: 3.16-0~deb13u1
 Architecture: armhf
