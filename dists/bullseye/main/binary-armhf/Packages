@@ -1,3 +1,22 @@
+Package: p25clients
+Version: 2025.07.09-0~deb13u1
+Architecture: armhf
+Maintainer: MW0MWZ <andy@mw0mwz.co.uk>
+Depends: libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11)
+Filename: pool/main/p/p25clients/p25clients_2025.07.09-0~deb13u1_armhf.deb
+Size: 392756
+MD5sum: 5e3e8f2d4bf358a155d4e13540d485ea
+SHA1: d34ae473ecf8ac3010cf411fc460b843b371da39
+SHA256: b4a14dcd2fb89c9990e08ebb8b32eb2171cf3c5db59abb7f0bef917b08a797dc
+Section: hamradio
+Priority: optional
+Homepage: https://github.com/g4klx/P25Clients
+Description: P25 Clients for Amateur Radio
+ P25 Gateway and Parrot for digital communications
+ Includes P25Gateway and P25Parrot
+ Built for Debian trixie
+ Git commit: 72b85eb
+
 Package: pocsagclients
 Version: 2025.08.20-0~deb13u1
 Architecture: armhf

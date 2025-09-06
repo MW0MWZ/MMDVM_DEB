@@ -1,3 +1,22 @@
+Package: p25clients
+Version: 2025.07.09-0~deb13u1
+Architecture: amd64
+Maintainer: MW0MWZ <andy@mw0mwz.co.uk>
+Depends: libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11)
+Filename: pool/main/p/p25clients/p25clients_2025.07.09-0~deb13u1_amd64.deb
+Size: 408080
+MD5sum: e39fc3de8d90bec3a23baf2be7f31c72
+SHA1: 4b45bbfc34fe96b6a74ea747cd18644e63cbb96d
+SHA256: faea4b23a3ff483b9e03e3e0daa2c746eeec8e8be7fca16dcd3324ac170205a7
+Section: hamradio
+Priority: optional
+Homepage: https://github.com/g4klx/P25Clients
+Description: P25 Clients for Amateur Radio
+ P25 Gateway and Parrot for digital communications
+ Includes P25Gateway and P25Parrot
+ Built for Debian trixie
+ Git commit: 72b85eb
+
 Package: pocsagclients
 Version: 2025.08.20-0~deb13u1
 Architecture: amd64
