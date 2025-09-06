@@ -1,0 +1,47 @@
+# Build artifacts
+*.deb
+*.build
+*.changes
+*.buildinfo
+*.upload
+build/
+tmp/
+work/
+
+# GPG/Keys (keep private keys out of repo)
+keys/*.key
+keys/*.asc
+keys/private/
+*.asc.bak
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor files
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+*.sublime-*
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+venv/
+env/
+
+# Logs
+*.log
+logs/
+
+# Debian build files
+debian/files
+debian/*.debhelper
+debian/*.debhelper.log
+debian/*.substvars
+debian/debhelper-build-stamp

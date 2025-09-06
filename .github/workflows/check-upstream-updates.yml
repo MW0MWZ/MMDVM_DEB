@@ -1,0 +1,639 @@
+name: Check Upstream Updates
+
+on:
+  # Manual trigger
+  workflow_dispatch:
+    inputs:
+      packages:
+        description: 'Specific packages to check (comma-separated, or "all")'
+        required: false
+        type: string
+        default: 'all'
+      auto_update:
+        description: 'Automatically update source.conf files if changes found'
+        required: false
+        type: boolean
+        default: true
+      trigger_build:
+        description: 'Trigger build workflow if updates found'
+        required: false
+        type: boolean
+        default: true
+
+  # Run on schedule (twice daily at 2 AM and 2 PM UTC)
+  schedule:
+    - cron: '0 2,14 * * *'
+
+# Prevent concurrent update checks
+concurrency:
+  group: update-check-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check-updates:
+    name: Check for Upstream Updates
+    runs-on: ubuntu-latest
+    outputs:
+      packages: ${{ steps.check.outputs.packages }}
+      has_updates: ${{ steps.check.outputs.has_updates }}
+      update_details: ${{ steps.check.outputs.details }}
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Check for upstream updates
+        id: check
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PACKAGES: ${{ github.event.inputs.packages || 'all' }}
+        run: |
+          set -e
+          
+          # Function to get latest release tag from GitHub
+          get_latest_release_tag() {
+            local url=$1
+            local repo=$(echo "$url" | sed 's|.*github.com/||' | sed 's|\.git$||')
+            
+            # Get latest release tag
+            local release_tag=$(curl -s -H "Accept: application/vnd.github.v3+json" \
+              -H "Authorization: token ${GITHUB_TOKEN}" \
+              "https://api.github.com/repos/${repo}/releases/latest" 2>/dev/null | \
+              python3 -c "import sys, json; data=json.load(sys.stdin); print(data.get('tag_name', '') if 'tag_name' in data else '')" 2>/dev/null)
+            
+            # If no releases, try to get latest tag
+            if [ -z "$release_tag" ] || [ "$release_tag" = "null" ]; then
+              release_tag=$(curl -s -H "Accept: application/vnd.github.v3+json" \
+                -H "Authorization: token ${GITHUB_TOKEN}" \
+                "https://api.github.com/repos/${repo}/tags" 2>/dev/null | \
+                python3 -c "import sys, json; tags=json.load(sys.stdin); print(tags[0]['name'] if tags and len(tags) > 0 else '')" 2>/dev/null)
+            fi
+            
+            echo "$release_tag"
+          }
+          
+          # Function to get latest commit from GitHub
+          get_github_commit() {
+            local url=$1
+            local repo=$(echo "$url" | sed 's|.*github.com/||' | sed 's|\.git$||')
+            
+            # Try to get latest commit from default branch with auth token
+            for branch in main master develop; do
+              commit=$(curl -s -H "Accept: application/vnd.github.v3+json" \
+                -H "Authorization: token ${GITHUB_TOKEN}" \
+                "https://api.github.com/repos/${repo}/commits/${branch}" 2>/dev/null | \
+                python3 -c "import sys, json; data=json.load(sys.stdin); print(data.get('sha', '')[:7] if 'sha' in data else '')" 2>/dev/null)
+              
+              if [ -n "$commit" ]; then
+                echo "$commit"
+                return
+              fi
+            done
+            
+            # If all branches fail, try to get the default branch
+            default_branch=$(curl -s -H "Accept: application/vnd.github.v3+json" \
+              -H "Authorization: token ${GITHUB_TOKEN}" \
+              "https://api.github.com/repos/${repo}" 2>/dev/null | \
+              python3 -c "import sys, json; data=json.load(sys.stdin); print(data.get('default_branch', ''))" 2>/dev/null)
+            
+            if [ -n "$default_branch" ]; then
+              commit=$(curl -s -H "Accept: application/vnd.github.v3+json" \
+                -H "Authorization: token ${GITHUB_TOKEN}" \
+                "https://api.github.com/repos/${repo}/commits/${default_branch}" 2>/dev/null | \
+                python3 -c "import sys, json; data=json.load(sys.stdin); print(data.get('sha', '')[:7] if 'sha' in data else '')" 2>/dev/null)
+              
+              if [ -n "$commit" ]; then
+                echo "$commit"
+                return
+              fi
+            fi
+            
+            echo ""
+          }
+          
+          # Function to check if package needs update
+          check_package_update() {
+            local package=$1
+            local source_conf="packages/${package}/source.conf"
+            
+            if [ ! -f "$source_conf" ]; then
+              echo "Source configuration not found for $package"
+              return 1
+            fi
+            
+            # Source the configuration
+            source "$source_conf"
+            
+            # Check if this package tracks releases via GIT_REF (like wiringpi)
+            if [ -n "${GIT_REF:-}" ] && [ -n "${GITURL:-}" ]; then
+              echo "Checking $package for release updates from $GITURL"
+              
+              local current_ref="${GIT_REF}"
+              local latest_release=$(get_latest_release_tag "$GITURL")
+              
+              if [ -z "$latest_release" ]; then
+                echo "  Could not fetch latest release tag for $package"
+                echo "  Falling back to commit-based checking..."
+                
+                # Fall back to commit checking if no releases found
+                if [ -n "${GIT_COMMIT:-}" ]; then
+                  local current_commit="${GIT_COMMIT}"
+                  local latest_commit=$(get_github_commit "$GITURL")
+                  
+                  if [ -n "$latest_commit" ] && [ "$current_commit" != "$latest_commit" ]; then
+                    echo "  Current commit: ${current_commit}"
+                    echo "  Latest commit:  ${latest_commit}"
+                    echo "  ✅ UPDATE AVAILABLE (commit)!"
+                    echo "$package:$current_commit:$latest_commit:GIT_COMMIT" >> /tmp/updates.txt
+                    return 0
+                  fi
+                fi
+              else
+                echo "  Current release: ${current_ref}"
+                echo "  Latest release:  ${latest_release}"
+                
+                if [ "$current_ref" != "$latest_release" ]; then
+                  echo "  ✅ NEW RELEASE AVAILABLE!"
+                  echo "$package:$current_ref:$latest_release:GIT_REF" >> /tmp/updates.txt
+                  return 0
+                fi
+              fi
+            # Check primary GITURL with commits (original behavior for other packages)
+            elif [ -n "${GITURL:-}" ]; then
+              echo "Checking $package from $GITURL"
+              
+              local current_commit="${GIT_COMMIT:-unknown}"
+              local latest_commit=$(get_github_commit "$GITURL")
+              
+              if [ -z "$latest_commit" ]; then
+                echo "  Could not fetch latest commit for $package"
+              else
+                echo "  Current: ${current_commit}"
+                echo "  Latest:  ${latest_commit}"
+                
+                if [ "$current_commit" != "$latest_commit" ]; then
+                  echo "  ✅ UPDATE AVAILABLE!"
+                  echo "$package:$current_commit:$latest_commit:GIT_COMMIT" >> /tmp/updates.txt
+                  return 0
+                fi
+              fi
+            fi
+            
+            echo "  ✓ Up to date"
+            return 1
+          }
+          
+          # Check API rate limit before starting
+          echo "Checking GitHub API rate limit..."
+          RATE_LIMIT=$(curl -s -H "Authorization: token ${GITHUB_TOKEN}" \
+            "https://api.github.com/rate_limit" | \
+            python3 -c "import sys, json; data=json.load(sys.stdin); print(data['rate']['remaining'])" 2>/dev/null || echo "0")
+          
+          echo "API calls remaining: $RATE_LIMIT"
+          
+          if [ "$RATE_LIMIT" -lt "50" ]; then
+            echo "⚠️  Warning: Low API rate limit remaining."
+          fi
+          
+          # Determine which packages to check
+          if [ "$PACKAGES" = "all" ] || [ -z "$PACKAGES" ]; then
+            # Find all packages with source.conf
+            PACKAGES=$(find packages -name source.conf -type f | cut -d'/' -f2 | sort -u | tr '\n' ' ')
+          else
+            # Convert comma-separated to space-separated
+            PACKAGES=$(echo "$PACKAGES" | tr ',' ' ')
+          fi
+          
+          echo "Checking packages: $PACKAGES"
+          echo "================================================"
+          echo ""
+          
+          # Initialize update tracking
+          > /tmp/updates.txt
+          CHECKED_COUNT=0
+          UPDATED_COUNT=0
+          
+          # Check each package
+          for package in $PACKAGES; do
+            CHECKED_COUNT=$((CHECKED_COUNT + 1))
+            if check_package_update "$package"; then
+              UPDATED_COUNT=$((UPDATED_COUNT + 1))
+            fi
+            echo ""
+          done
+          
+          # Prepare output
+          PACKAGES_TO_UPDATE=""
+          UPDATE_DETAILS="[]"
+          
+          if [ -f /tmp/updates.txt ] && [ -s /tmp/updates.txt ]; then
+            # Get unique package names
+            PACKAGES_TO_UPDATE=$(cut -d':' -f1 /tmp/updates.txt | sort -u | tr '\n' ' ')
+            
+            # Build JSON array of updates - properly escaped
+            UPDATE_DETAILS=$(python3 << 'EOF'
+          import json
+          updates = []
+          with open('/tmp/updates.txt', 'r') as f:
+              for line in f:
+                  parts = line.strip().split(':')
+                  if len(parts) == 4:
+                      updates.append({
+                          "package": parts[0],
+                          "current": parts[1],
+                          "latest": parts[2],
+                          "source": parts[3]
+                      })
+          print(json.dumps(updates))
+          EOF
+          )
+          fi
+          
+          # Trim whitespace
+          PACKAGES_TO_UPDATE=$(echo "$PACKAGES_TO_UPDATE" | xargs)
+          
+          # Summary
+          echo "================================================"
+          echo "Summary:"
+          echo "  Packages checked: $CHECKED_COUNT"
+          echo "  Updates available: $UPDATED_COUNT"
+          
+          # Debug output
+          echo "DEBUG: UPDATE_DETAILS=$UPDATE_DETAILS"
+          echo "DEBUG: PACKAGES_TO_UPDATE=$PACKAGES_TO_UPDATE"
+          
+          # Set outputs
+          if [ -n "$PACKAGES_TO_UPDATE" ]; then
+            echo "Packages with updates: $PACKAGES_TO_UPDATE"
+            echo "packages=$PACKAGES_TO_UPDATE" >> $GITHUB_OUTPUT
+            echo "has_updates=true" >> $GITHUB_OUTPUT
+            
+            # Save JSON to file for artifact upload
+            echo "$UPDATE_DETAILS" > /tmp/update_details.json
+            echo "Saved update details to /tmp/update_details.json"
+            
+            # Create summary for GitHub Actions
+            {
+              echo "## 📦 Package Updates Available"
+              echo ""
+              echo "The following packages have upstream updates:"
+              echo ""
+              echo "| Package | Source | Current | Latest |"
+              echo "|---------|--------|---------|--------|"
+              while IFS=':' read -r pkg current latest source; do
+                if [ "$source" = "GIT_REF" ]; then
+                  echo "| \`$pkg\` | Release | $current | **$latest** |"
+                else
+                  echo "| \`$pkg\` | Commit | $current | $latest |"
+                fi
+              done < /tmp/updates.txt
+            } >> $GITHUB_STEP_SUMMARY
+          else
+            echo "No packages need updating"
+            echo "packages=" >> $GITHUB_OUTPUT
+            echo "has_updates=false" >> $GITHUB_OUTPUT
+            
+            echo "## ✅ All Packages Up to Date" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "No upstream updates detected." >> $GITHUB_STEP_SUMMARY
+          fi
+      
+      - name: Upload update details
+        if: steps.check.outputs.has_updates == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: update-details
+          path: /tmp/update_details.json
+          retention-days: 1
+
+  update-sources:
+    name: Update Source Configurations
+    needs: check-updates
+    if: |
+      needs.check-updates.outputs.has_updates == 'true' && 
+      (github.event.inputs.auto_update == 'true' || github.event_name == 'schedule')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      updated: ${{ steps.update.outputs.updated }}
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      
+      - name: Download update details
+        uses: actions/download-artifact@v4
+        with:
+          name: update-details
+          path: /tmp
+
+      - name: Update source.conf files
+        id: update
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PACKAGES: ${{ needs.check-updates.outputs.packages }}
+        run: |
+          set -e
+          
+          # Debug: Show what we're working with
+          echo "Packages to update: $PACKAGES"
+          
+          if [ ! -f /tmp/update_details.json ]; then
+            echo "❌ Update details file not found!"
+            echo "updated=false" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+          
+          echo "Update details from artifact:"
+          cat /tmp/update_details.json
+          echo "---"
+          
+          # Parse update details and update source.conf files
+          python3 << 'PYTHON_SCRIPT'
+          import sys
+          import json
+          import os
+          import re
+          
+          # Read update details from artifact file
+          try:
+              with open('/tmp/update_details.json', 'r') as f:
+                  update_details_str = f.read().strip()
+                  print(f"Processing update details from file")
+                  updates = json.loads(update_details_str)
+          except Exception as e:
+              print(f"Error reading/parsing update details: {e}")
+              sys.exit(1)
+          
+          if not updates:
+              print("No updates to process")
+              sys.exit(0)
+          
+          # Group updates by package
+          package_updates = {}
+          for update in updates:
+              pkg = update['package']
+              if pkg not in package_updates:
+                  package_updates[pkg] = []
+              package_updates[pkg].append(update)
+          
+          # Track if we made any changes
+          changes_made = False
+          
+          # Update each package's source.conf
+          for package, updates_list in package_updates.items():
+              source_conf = f'packages/{package}/source.conf'
+              print(f'Updating {package}')
+              
+              if not os.path.exists(source_conf):
+                  print(f"  Warning: {source_conf} does not exist, skipping")
+                  continue
+              
+              # Read source.conf
+              with open(source_conf, 'r') as f:
+                  lines = f.readlines()
+              
+              original_lines = lines.copy()
+              
+              # Update based on source type
+              for update in updates_list:
+                  latest = update['latest']
+                  source = update['source']
+                  
+                  if source == 'GIT_REF':
+                      # Update GIT_REF for release-based tracking
+                      found = False
+                      for i, line in enumerate(lines):
+                          if line.startswith('GIT_REF='):
+                              # Update the GIT_REF line
+                              lines[i] = f'GIT_REF="{latest}"\n'
+                              found = True
+                              print(f"  Updated GIT_REF to {latest}")
+                              break
+                      
+                      if not found:
+                          # Add GIT_REF if it doesn't exist
+                          lines.append(f'GIT_REF="{latest}"\n')
+                          print(f"  Added GIT_REF={latest}")
+                      
+                      # Also update GIT_COMMIT to track the commit of this release
+                      # We'll need to fetch this information
+                      import subprocess
+                      try:
+                          # Get the commit SHA for this tag
+                          repo_url = None
+                          for line in lines:
+                              if line.startswith('GITURL='):
+                                  repo_url = line.split('=')[1].strip().strip('"')
+                                  break
+                          
+                          if repo_url:
+                              repo = repo_url.replace('https://github.com/', '').replace('.git', '')
+                              # Fetch the commit SHA for this tag
+                              result = subprocess.run(
+                                  ['curl', '-s', '-H', 'Accept: application/vnd.github.v3+json',
+                                   '-H', f'Authorization: token {os.environ.get("GITHUB_TOKEN", "")}',
+                                   f'https://api.github.com/repos/{repo}/git/refs/tags/{latest}'],
+                                  capture_output=True, text=True
+                              )
+                              if result.returncode == 0:
+                                  import json
+                                  tag_data = json.loads(result.stdout)
+                                  if 'object' in tag_data and 'sha' in tag_data['object']:
+                                      commit_sha = tag_data['object']['sha'][:7]
+                                      # Update GIT_COMMIT
+                                      found_commit = False
+                                      for i, line in enumerate(lines):
+                                          if line.startswith('GIT_COMMIT='):
+                                              lines[i] = f'GIT_COMMIT="{commit_sha}"\n'
+                                              found_commit = True
+                                              print(f"  Updated GIT_COMMIT to {commit_sha} (for tag {latest})")
+                                              break
+                                      if not found_commit:
+                                          lines.append(f'GIT_COMMIT="{commit_sha}"\n')
+                                          print(f"  Added GIT_COMMIT={commit_sha} (for tag {latest})")
+                      except Exception as e:
+                          print(f"  Warning: Could not fetch commit SHA for tag {latest}: {e}")
+                  
+                  elif source == 'GIT_COMMIT':
+                      # Update GIT_COMMIT for commit-based tracking
+                      found = False
+                      for i, line in enumerate(lines):
+                          if line.startswith('GIT_COMMIT='):
+                              lines[i] = f'GIT_COMMIT="{latest}"\n'
+                              found = True
+                              print(f"  Updated GIT_COMMIT to {latest}")
+                              break
+                      if not found:
+                          lines.append(f'GIT_COMMIT="{latest}"\n')
+                          print(f"  Added GIT_COMMIT={latest}")
+              
+              # Write back if there were changes
+              if lines != original_lines:
+                  with open(source_conf, 'w') as f:
+                      f.writelines(lines)
+                  print(f"  Saved changes to {source_conf}")
+                  changes_made = True
+              else:
+                  print(f"  No changes needed for {source_conf}")
+          
+          if changes_made:
+              print("All source.conf files updated successfully")
+          else:
+              print("No changes were made to any files")
+          PYTHON_SCRIPT
+          
+          # Check if there are changes
+          if git diff --quiet; then
+            echo "No changes to commit"
+            echo "updated=false" >> $GITHUB_OUTPUT
+          else
+            # Configure git
+            git config --local user.email "github-actions[bot]@users.noreply.github.com"
+            git config --local user.name "github-actions[bot]"
+            
+            # Show what changed
+            echo "Changes made:"
+            git diff --name-only
+            
+            # Create a detailed commit message
+            COMMIT_MSG="chore: update packages to latest upstream versions
+
+          Updated packages:
+          ${{ needs.check-updates.outputs.packages }}
+          
+          Details:"
+            
+            # Add details about each update
+            if [ -f /tmp/update_details.json ]; then
+              python3 << 'EOF' >> commit_msg.txt
+          import json
+          with open('/tmp/update_details.json', 'r') as f:
+              updates = json.loads(f.read())
+              for update in updates:
+                  if update['source'] == 'GIT_REF':
+                      print(f"- {update['package']}: {update['current']} → {update['latest']} (release)")
+                  else:
+                      print(f"- {update['package']}: {update['current']} → {update['latest']} (commit)")
+          EOF
+              COMMIT_MSG="${COMMIT_MSG}
+          $(cat commit_msg.txt)"
+            fi
+            
+            COMMIT_MSG="${COMMIT_MSG}
+          
+          [automated update check]"
+            
+            # Commit changes
+            git add packages/*/source.conf
+            git commit -m "$COMMIT_MSG"
+            
+            # Push changes
+            git push
+            
+            echo "✅ Source configurations updated and pushed"
+            echo "updated=true" >> $GITHUB_OUTPUT
+          fi
+
+  trigger-build:
+    name: Trigger Package Build
+    needs: [check-updates, update-sources]
+    if: |
+      always() &&
+      needs.check-updates.outputs.has_updates == 'true' &&
+      (github.event.inputs.trigger_build == 'true' || github.event_name == 'schedule')
+    runs-on: ubuntu-latest
+    outputs:
+      triggered: ${{ steps.trigger.outputs.triggered }}
+    
+    steps:
+      - name: Debug packages variable
+        run: |
+          echo "PACKAGES from check-updates: ${{ needs.check-updates.outputs.packages }}"
+          echo "Has updates: ${{ needs.check-updates.outputs.has_updates }}"
+          echo "Update sources result: ${{ needs.update-sources.result }}"
+      
+      - name: Trigger build workflow
+        id: trigger
+        uses: actions/github-script@v7
+        with:
+          script: |
+            // Get packages from the correct output name
+            const packages = `${{ needs.check-updates.outputs.packages }}`.trim();
+            
+            console.log('Raw packages value:', packages);
+            
+            if (!packages || packages === '') {
+              console.log('No packages to build - packages variable is empty');
+              core.setOutput('triggered', 'false');
+              return;
+            }
+            
+            // Trigger build for updated packages
+            const packageList = packages.split(' ').filter(p => p.length > 0);
+            
+            if (packageList.length === 0) {
+              console.log('No packages in list after splitting');
+              core.setOutput('triggered', 'false');
+              return;
+            }
+            
+            console.log(`Triggering build for ${packageList.length} package(s): ${packageList.join(', ')}`);
+            
+            // If many packages, build all. Otherwise build specific ones
+            const packageParam = packageList.length > 3 ? 'all' : packageList[0];
+            
+            try {
+              await github.rest.actions.createWorkflowDispatch({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                workflow_id: 'build-debian-packages.yml',
+                ref: 'main',
+                inputs: {
+                  package: packageParam,
+                  debian_version: 'all'
+                }
+              });
+              
+              console.log('Build workflow triggered successfully');
+              core.setOutput('triggered', 'true');
+              
+              // Add to summary
+              const summary = `## 🚀 Build Triggered\n\nTriggered build for updated packages:\n${packageList.map(p => `- \`${p}\``).join('\n')}`;
+              await core.summary.addRaw(summary).write();
+            } catch (error) {
+              console.error('Failed to trigger build:', error);
+              core.setOutput('triggered', 'false');
+              core.setFailed(error.message);
+            }
+
+  notification:
+    name: Send Notifications
+    needs: [check-updates, update-sources, trigger-build]
+    if: always() && needs.check-updates.outputs.has_updates == 'true'
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Download update details
+        if: always()
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: update-details
+          path: /tmp
