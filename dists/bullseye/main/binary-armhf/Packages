@@ -36,6 +36,25 @@ Description: DMR Clients for Amateur Radio
  Built for Debian trixie
  Git commits: DMRGateway 3d099ae, MMDVM_CM 1dd5383
 
+Package: dstarclients
+Version: 2025.04.27-0~deb13u1
+Architecture: armhf
+Maintainer: MW0MWZ <andy@mw0mwz.co.uk>
+Depends: libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11), libwxgtk3.2-1t64, libportaudio2t64, libusb-1.0-0t64
+Filename: pool/main/d/dstarclients/dstarclients_2025.04.27-0~deb13u1_armhf.deb
+Size: 944848
+MD5sum: 825b1cbc724dfff8df8353672012ab9f
+SHA1: 58178ca90363ee63c0c679698a41614528ce340f
+SHA256: f9d79cd7c1767df8acb7298ea95a2bb315aa07789b91e3a1a79adc0028af0cef
+Section: hamradio
+Priority: optional
+Homepage: https://github.com/g4klx/ircDDBGateway
+Description: D-Star ircDDB Gateway and Tools
+ ircDDB Gateway for D-Star digital voice
+ Includes gateway, time server, remote control, and transmit tools
+ Built for Debian trixie
+ Git commit: 6680e4b
+
 Package: fmclients
 Version: 2025.06.09-0~deb13u1
 Architecture: armhf
