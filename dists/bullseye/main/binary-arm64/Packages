@@ -1,3 +1,21 @@
+Package: fmclients
+Version: 2025.06.09-0~deb13u1
+Architecture: arm64
+Maintainer: MW0MWZ <andy@mw0mwz.co.uk>
+Depends: libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11), libmd0 (>= 1.0.3)
+Filename: pool/main/f/fmclients/fmclients_2025.06.09-0~deb13u1_arm64.deb
+Size: 269596
+MD5sum: bb8442baa76db8e6bcd2a0865be9bc98
+SHA1: 59acad3321c631ccbf4632d5ee881f08a50b5a27
+SHA256: 5ba0ffb7a5f3cb8e81c03838e3edd41d66505bd76c6a9c7d4589b15fc350242e
+Section: hamradio
+Priority: optional
+Homepage: https://github.com/g4klx/FMGateway
+Description: FM Clients for Amateur Radio
+ FM repeater gateway for digital modes
+ Built for Debian trixie
+ Git commit: 24c509e
+
 Package: nxdnclients
 Version: 2025.07.09-0~deb13u1
 Architecture: arm64
