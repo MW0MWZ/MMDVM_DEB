@@ -17,3 +17,33 @@ Description: GPIO Interface library for Raspberry Pi (dummy package)
  This package exists to satisfy dependencies on non-ARM systems
  but provides no actual functionality.
 
+Package: ysfclients
+Version: 2025.07.09-0~deb13u1
+Architecture: amd64
+Maintainer: MW0MWZ <andy@mw0mwz.co.uk>
+Depends: libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11)
+Recommends: ntp | chrony
+Filename: pool/main/y/ysfclients/ysfclients_2025.07.09-0~deb13u1_amd64.deb
+Size: 2941544
+MD5sum: 1d01c3b317bf2e0807c06e4ea35be449
+SHA1: f2ac8f6abbc54458822145a25a3aa61f0317d2b9
+SHA256: 470f476ca5ec2165ceab5d435b7db45040faab01c783ee51eb68bc78e48bb95e
+Section: hamradio
+Priority: optional
+Homepage: https://github.com/g4klx/YSFClients
+Description: YSF Clients for Amateur Radio
+ YSF Gateway, Parrot, DGId Gateway and Cross-Mode converters for
+ digital communications using Yaesu System Fusion (YSF) protocol.
+ .
+ This package includes:
+  - YSFGateway: Gateway for YSF networks
+  - YSFParrot: Echo/parrot server for testing
+  - DGIdGateway: Digital Group ID Gateway
+  - YSF2DMR: Cross-mode converter from YSF to DMR
+  - YSF2NXDN: Cross-mode converter from YSF to NXDN
+  - YSF2P25: Cross-mode converter from YSF to P25
+ .
+ Built for Debian trixie
+ YSFClients commit: b189b73
+ MMDVM_CM commit: 1dd5383
+
