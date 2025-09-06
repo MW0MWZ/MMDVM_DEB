@@ -1,3 +1,22 @@
+Package: aprsclients
+Version: 2025.06.09-0~deb13u1
+Architecture: arm64
+Maintainer: MW0MWZ <andy@mw0mwz.co.uk>
+Depends: libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11)
+Filename: pool/main/a/aprsclients/aprsclients_2025.06.09-0~deb13u1_arm64.deb
+Size: 161532
+MD5sum: 578d2e71efc00748fa746062c2f5e87f
+SHA1: d9e37f414d16446f3407b005667419c4ee666537
+SHA256: b06d79ec800c6df069565c4d86139e1c06381a66f2a1d3a7596888a474e084b2
+Section: hamradio
+Priority: optional
+Homepage: https://github.com/g4klx/APRSGateway
+Description: APRS Gateway for Amateur Radio
+ APRS Gateway for digital voice networks
+ Bridges APRS data between digital voice networks and APRS-IS
+ Built for Debian trixie
+ Git commit: ae3a3a7
+
 Package: dmrclients
 Version: 2025.06.09-0~deb13u1
 Architecture: arm64
