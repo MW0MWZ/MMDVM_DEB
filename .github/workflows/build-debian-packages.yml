@@ -1,0 +1,1219 @@
+name: Build Debian Packages
+
+on:
+  workflow_dispatch:
+    inputs:
+      package:
+        description: 'Package to build (or "all" for all packages)'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - aprsclients
+          - dmrclients
+          - dstarclients
+          - dstarrepeater
+          - fmclients
+          - mmdvmhost
+          - nxdnclients
+          - p25clients
+          - pocsagclients
+          - wiringpi
+          - ysfclients
+      debian_version:
+        description: 'Debian version (or "all" for all versions)'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - bullseye
+          - bookworm
+          - trixie
+      cleanup_after_build:
+        description: 'Run cleanup of old packages after build'
+        required: false
+        default: true
+        type: boolean
+      versions_to_keep:
+        description: 'Number of package versions to keep (if cleanup enabled)'
+        required: false
+        default: '5'
+        type: string
+      cleanup_orphaned:
+        description: 'Remove packages not in current source (if cleanup enabled)'
+        required: false
+        default: true
+        type: boolean
+
+concurrency:
+  group: build-deb-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  prepare:
+    name: Prepare Build Matrix
+    runs-on: ubuntu-latest
+    outputs:
+      debian_versions: ${{ steps.versions.outputs.versions }}
+      packages: ${{ steps.packages.outputs.packages }}
+    steps:
+      - name: Determine Debian versions to build
+        id: versions
+        run: |
+          if [ "${{ github.event.inputs.debian_version }}" = "all" ] || [ -z "${{ github.event.inputs.debian_version }}" ]; then
+            echo 'versions=["bullseye","bookworm","trixie"]' >> $GITHUB_OUTPUT
+          else
+            echo 'versions=["${{ github.event.inputs.debian_version }}"]' >> $GITHUB_OUTPUT
+          fi
+          
+      - name: Determine packages to build
+        id: packages
+        run: |
+          if [ "${{ github.event.inputs.package }}" = "all" ] || [ -z "${{ github.event.inputs.package }}" ]; then
+            echo 'packages=["wiringpi","mmdvmhost","dmrclients","dstarclients","dstarrepeater","ysfclients","nxdnclients","p25clients","aprsclients","pocsagclients","fmclients"]' >> $GITHUB_OUTPUT
+          else
+            echo 'packages=["${{ github.event.inputs.package }}"]' >> $GITHUB_OUTPUT
+          fi
+
+  build:
+    name: Build ${{ matrix.package }} for ${{ matrix.arch }} on Debian ${{ matrix.debian_version }}
+    needs: prepare
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        arch: [amd64, arm64, armhf]
+        debian_version: ${{ fromJson(needs.prepare.outputs.debian_versions) }}
+        package: ${{ fromJson(needs.prepare.outputs.packages) }}
+        include:
+          - arch: amd64
+            platform: linux/amd64
+            debian_arch: amd64
+          - arch: arm64
+            platform: linux/arm64
+            debian_arch: arm64
+          - arch: armhf
+            platform: linux/arm/v7
+            debian_arch: armhf
+      max-parallel: 6
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up QEMU for multi-arch builds
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: all
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Clone existing gh-pages for version check
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: existing-repo
+        continue-on-error: true
+
+      - name: Calculate smart build number
+        id: calc_build
+        env:
+          PACKAGE: ${{ matrix.package }}
+          ARCH: ${{ matrix.debian_arch }}
+          DEBIAN_VERSION: ${{ matrix.debian_version }}
+        run: |
+          set -e
+          
+          # Map Debian version to suffix
+          case "$DEBIAN_VERSION" in
+            bullseye) DEB_VERSION_SUFFIX="~deb11u1" ;;
+            bookworm) DEB_VERSION_SUFFIX="~deb12u1" ;;
+            trixie)   DEB_VERSION_SUFFIX="~deb13u1" ;;
+            *) DEB_VERSION_SUFFIX="" ;;
+          esac
+          
+          echo "Package: $PACKAGE"
+          echo "Architecture: $ARCH"
+          echo "Debian suffix: $DEB_VERSION_SUFFIX"
+          
+          # Clone the source to get the version (commit date)
+          echo "Getting version from source repository..."
+          
+          # Determine source repository URL
+          case "$PACKAGE" in
+            dstarrepeater)
+              SOURCE_REPO="https://github.com/g4klx/DStarRepeater.git"
+              ;;
+            dstarclients)
+              SOURCE_REPO="https://github.com/g4klx/ircDDBGateway.git"
+              ;;
+            mmdvmhost)
+              SOURCE_REPO="https://github.com/g4klx/MMDVMHost.git"
+              ;;
+            dmrclients)
+              SOURCE_REPO="https://github.com/g4klx/DMRGateway.git"
+              ;;
+            ysfclients)
+              SOURCE_REPO="https://github.com/g4klx/YSFClients.git"
+              ;;
+            nxdnclients)
+              SOURCE_REPO="https://github.com/g4klx/NXDNClients.git"
+              ;;
+            p25clients)
+              SOURCE_REPO="https://github.com/g4klx/P25Clients.git"
+              ;;
+            aprsclients)
+              SOURCE_REPO="https://github.com/g4klx/APRSGateway.git"
+              ;;
+            pocsagclients)
+              SOURCE_REPO="https://github.com/g4klx/DAPNETGateway.git"
+              ;;
+            fmclients)
+              SOURCE_REPO="https://github.com/g4klx/FMGateway.git"
+              ;;
+            wiringpi)
+              SOURCE_REPO="https://github.com/WiringPi/WiringPi.git"
+              ;;
+            *)
+              echo "Unknown package: $PACKAGE"
+              exit 1
+              ;;
+          esac
+          
+          # Clone just enough to get the last commit date
+          git clone --depth 1 "$SOURCE_REPO" temp_source
+          cd temp_source
+          VERSION=$(git show -s --format=%cd --date=format:'%Y.%m.%d' HEAD)
+          cd ..
+          rm -rf temp_source
+          
+          echo "Source version: $VERSION"
+          
+          # Now check if this version already exists in the repository
+          BUILD_NUMBER=0
+          
+          if [ -d "existing-repo/pool" ]; then
+            echo "Checking existing repository for version conflicts..."
+            
+            # Look for existing packages with same version
+            PATTERN="${PACKAGE}_${VERSION}-*${DEB_VERSION_SUFFIX}_${ARCH}.deb"
+            echo "Looking for pattern: $PATTERN"
+            
+            # Find the highest build number for this version
+            HIGHEST=-1
+            
+            # Search in the pool directory
+            POOL_DIR="existing-repo/pool/main/${PACKAGE:0:1}/${PACKAGE}"
+            if [ -d "$POOL_DIR" ]; then
+              for deb_file in "$POOL_DIR"/${PACKAGE}_${VERSION}-*${DEB_VERSION_SUFFIX}_${ARCH}.deb; do
+                if [ -f "$deb_file" ]; then
+                  # Extract build number from filename
+                  # Format: package_version-BUILD${DEB_VERSION_SUFFIX}_arch.deb
+                  filename=$(basename "$deb_file")
+                  # Remove package name and version
+                  temp="${filename#${PACKAGE}_${VERSION}-}"
+                  # Remove debian suffix and architecture
+                  build_num="${temp%${DEB_VERSION_SUFFIX}_${ARCH}.deb}"
+                  
+                  if [[ "$build_num" =~ ^[0-9]+$ ]]; then
+                    echo "Found existing build: $filename (build number: $build_num)"
+                    if [ "$build_num" -gt "$HIGHEST" ]; then
+                      HIGHEST=$build_num
+                    fi
+                  fi
+                fi
+              done
+              
+              if [ "$HIGHEST" -ge 0 ]; then
+                BUILD_NUMBER=$((HIGHEST + 1))
+                echo "Found existing version ${VERSION} with highest build number ${HIGHEST}"
+                echo "Will use build number: ${BUILD_NUMBER}"
+              else
+                echo "No existing builds found for version ${VERSION}"
+                echo "Will use build number: 0"
+              fi
+            else
+              echo "Package directory doesn't exist in pool yet"
+              echo "Will use build number: 0"
+            fi
+          else
+            echo "No existing repository found (this might be the first run)"
+            echo "Will use build number: 0"
+          fi
+          
+          # Export for the build step
+          echo "BUILD_NUMBER=${BUILD_NUMBER}" >> $GITHUB_ENV
+          echo "DEB_VERSION_SUFFIX=${DEB_VERSION_SUFFIX}" >> $GITHUB_ENV
+          echo "VERSION=${VERSION}" >> $GITHUB_ENV
+          
+          # Also set as output for reference
+          echo "build_number=${BUILD_NUMBER}" >> $GITHUB_OUTPUT
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+          echo "deb_version_suffix=${DEB_VERSION_SUFFIX}" >> $GITHUB_OUTPUT
+          
+          echo ""
+          echo "=== Build Configuration ==="
+          echo "Package: ${PACKAGE}_${VERSION}-${BUILD_NUMBER}${DEB_VERSION_SUFFIX}_${ARCH}.deb"
+
+      - name: Build package in Docker
+        env:
+          PACKAGE: ${{ matrix.package }}
+          ARCH: ${{ matrix.debian_arch }}
+          PLATFORM: ${{ matrix.platform }}
+          DEBIAN_VERSION: ${{ matrix.debian_version }}
+          # BUILD_NUMBER and DEB_VERSION_SUFFIX are now set by the previous step via GITHUB_ENV
+        run: |
+          set -e
+          
+          echo "Building $PACKAGE for $ARCH on Debian $DEBIAN_VERSION"
+          echo "Version: $VERSION"
+          echo "Build number: $BUILD_NUMBER"
+          echo "Debian suffix: $DEB_VERSION_SUFFIX"
+          echo "Expected package: ${PACKAGE}_${VERSION}-${BUILD_NUMBER}${DEB_VERSION_SUFFIX}_${ARCH}.deb"
+          
+          # Create proper Debian repository structure
+          POOL_DIR="pool/main/${PACKAGE:0:1}/${PACKAGE}"
+          mkdir -p "$POOL_DIR"
+          
+          # Map Debian version to Docker image tag
+          case "$DEBIAN_VERSION" in
+            bullseye) DEBIAN_TAG="11" ;;
+            bookworm) DEBIAN_TAG="12" ;;
+            trixie)   DEBIAN_TAG="testing" ;;
+            *) DEBIAN_TAG="latest" ;;
+          esac
+          
+          # Build in Docker container
+          docker run --rm \
+            --platform "$PLATFORM" \
+            -v "$(pwd):/workspace" \
+            -w /workspace \
+            -e DEBIAN_VERSION="$DEBIAN_VERSION" \
+            -e ARCH="$ARCH" \
+            -e BUILD_NUMBER="$BUILD_NUMBER" \
+            -e DEB_VERSION_SUFFIX="$DEB_VERSION_SUFFIX" \
+            -e CI=true \
+            -e GITHUB_ACTIONS=true \
+            "debian:${DEBIAN_TAG}" \
+            bash -c "
+              set -e
+              
+              # Update and install build dependencies
+              apt-get update
+              apt-get install -y --no-install-recommends \
+                build-essential \
+                git \
+                ca-certificates \
+                dpkg-dev \
+                debhelper \
+                pkg-config \
+                fakeroot \
+                wget \
+                curl \
+                gnupg \
+                lsb-release \
+                file
+              
+              # Install package-specific dependencies
+              case '$PACKAGE' in
+                dstarclients)
+                  apt-get install -y --no-install-recommends libcurl4-openssl-dev libboost-dev || true
+                  if [ \"\$DEBIAN_VERSION\" = \"bullseye\" ]; then
+                    apt-get install -y --no-install-recommends libwxgtk3.0-gtk3-dev wx3.0-headers || true
+                  else
+                    apt-get install -y --no-install-recommends libwxgtk3.2-dev wx3.2-headers || true
+                  fi
+                  ;;
+                dstarrepeater)
+                  # Similar dependencies to dstarclients but with USB and ALSA support
+                  apt-get install -y --no-install-recommends libusb-1.0-0-dev libasound2-dev || true
+                  if [ \"\$DEBIAN_VERSION\" = \"bullseye\" ]; then
+                    apt-get install -y --no-install-recommends libwxgtk3.0-gtk3-dev wx3.0-headers || true
+                  else
+                    apt-get install -y --no-install-recommends libwxgtk3.2-dev wx3.2-headers || true
+                  fi
+                  
+                  # For ARM, try to get wiringPi for GPIO support (same logic as mmdvmhost)
+                  if [ '$ARCH' = 'armhf' ] || [ '$ARCH' = 'arm64' ]; then
+                    echo 'Looking for wiringPi package for GPIO support...'
+                    WIRINGPI_DEB=\"\"
+                    
+                    # Check if wiringPi was built earlier and is in the pool
+                    if [ -d /workspace/pool/main/w/wiringpi ]; then
+                      WIRINGPI_DEB=\$(find /workspace/pool/main/w/wiringpi -name \"wiringpi*${DEB_VERSION_SUFFIX}_${ARCH}.deb\" -type f | head -1)
+                    fi
+                    
+                    if [ -n \"\$WIRINGPI_DEB\" ] && [ -f \"\$WIRINGPI_DEB\" ]; then
+                      echo \"Installing local wiringPi package: \$WIRINGPI_DEB\"
+                      dpkg -i \"\$WIRINGPI_DEB\" || apt-get install -f -y
+                      echo 'wiringPi installed successfully from local build'
+                    else
+                      # If no local package, query repository properly for wiringPi
+                      echo 'Local wiringPi not found, querying repository metadata...'
+                      
+                      REPO_URL=\"https://deb.pistar.uk\"
+                      WIRINGPI_DOWNLOADED=false
+                      
+                      # Download and parse the Packages file to find the exact package
+                      echo 'Downloading repository Packages file...'
+                      PACKAGES_URL=\"\${REPO_URL}/dists/\${DEBIAN_VERSION}/main/binary-\${ARCH}/Packages.gz\"
+                      TEMP_PACKAGES=\$(mktemp)
+                      
+                      if wget -q -O - \"\$PACKAGES_URL\" 2>/dev/null | gunzip > \"\$TEMP_PACKAGES\" 2>/dev/null; then
+                        echo 'Successfully downloaded Packages.gz'
+                        
+                        # Parse the Packages file to find wiringPi with correct version suffix
+                        WIRINGPI_PATH=\$(awk -v deb_suffix=\"\${DEB_VERSION_SUFFIX}\" '/^Package: wiringpi\$/ { found=1 } found && /^Version:/ { if (index(\$2, deb_suffix)) { version_match=1 } } found && version_match && /^Filename:/ { print \$2; exit }' \"\$TEMP_PACKAGES\")
+                        
+                        if [ -n \"\$WIRINGPI_PATH\" ]; then
+                          echo \"Found wiringPi in repository: \$WIRINGPI_PATH\"
+                          PACKAGE_URL=\"\${REPO_URL}/\${WIRINGPI_PATH}\"
+                          echo \"Downloading from: \$PACKAGE_URL\"
+                          
+                          if wget -q -O /tmp/wiringpi.deb \"\$PACKAGE_URL\" 2>/dev/null; then
+                            if file /tmp/wiringpi.deb | grep -q 'Debian binary package'; then
+                              WIRINGPI_DOWNLOADED=true
+                              echo 'Successfully downloaded wiringPi package'
+                            else
+                              echo 'Downloaded file is not a valid Debian package'
+                              rm -f /tmp/wiringpi.deb
+                            fi
+                          else
+                            echo \"Failed to download from: \$PACKAGE_URL\"
+                          fi
+                        else
+                          echo 'wiringPi package not found in repository metadata'
+                        fi
+                      else
+                        # Try uncompressed Packages file
+                        echo 'Failed to get Packages.gz, trying uncompressed...'
+                        PACKAGES_URL=\"\${REPO_URL}/dists/\${DEBIAN_VERSION}/main/binary-\${ARCH}/Packages\"
+                        
+                        if wget -q -O \"\$TEMP_PACKAGES\" \"\$PACKAGES_URL\" 2>/dev/null; then
+                          WIRINGPI_PATH=\$(awk -v deb_suffix=\"\${DEB_VERSION_SUFFIX}\" '/^Package: wiringpi\$/ { found=1 } found && /^Version:/ { if (index(\$2, deb_suffix)) { version_match=1 } } found && version_match && /^Filename:/ { print \$2; exit }' \"\$TEMP_PACKAGES\")
+                          
+                          if [ -n \"\$WIRINGPI_PATH\" ]; then
+                            echo \"Found wiringPi: \$WIRINGPI_PATH\"
+                            PACKAGE_URL=\"\${REPO_URL}/\${WIRINGPI_PATH}\"
+                            
+                            if wget -q -O /tmp/wiringpi.deb \"\$PACKAGE_URL\" 2>/dev/null; then
+                              if file /tmp/wiringpi.deb | grep -q 'Debian binary package'; then
+                                WIRINGPI_DOWNLOADED=true
+                                echo 'Successfully downloaded wiringPi package'
+                              else
+                                rm -f /tmp/wiringpi.deb
+                              fi
+                            fi
+                          fi
+                        fi
+                      fi
+                      rm -f \"\$TEMP_PACKAGES\"
+                      
+                      # Last resort: use apt with trusted=yes
+                      if [ \"\$WIRINGPI_DOWNLOADED\" = false ]; then
+                        echo 'Repository metadata query failed, trying apt with trusted=yes...'
+                        echo \"deb [trusted=yes] \${REPO_URL}/ \$DEBIAN_VERSION main\" > /etc/apt/sources.list.d/hamradio-temp.list
+                        apt-get update 2>/dev/null || true
+                        if apt-get download wiringpi 2>/dev/null; then
+                          if ls wiringpi*.deb 1> /dev/null 2>&1; then
+                            mv wiringpi*.deb /tmp/wiringpi.deb
+                            WIRINGPI_DOWNLOADED=true
+                          fi
+                        fi
+                        rm -f /etc/apt/sources.list.d/hamradio-temp.list
+                        apt-get update 2>/dev/null || true
+                      fi
+                      
+                      # Install if downloaded
+                      if [ \"\$WIRINGPI_DOWNLOADED\" = true ] && [ -f /tmp/wiringpi.deb ]; then
+                        echo 'Installing wiringPi package...'
+                        dpkg -i /tmp/wiringpi.deb 2>/dev/null || apt-get install -f -y
+                        
+                        if dpkg -l | grep -q '^ii  wiringpi'; then
+                          echo 'wiringPi installed successfully'
+                        else
+                          echo 'Warning: wiringPi installation may have failed'
+                        fi
+                        rm -f /tmp/wiringpi.deb
+                      else
+                        echo 'Warning: Could not download wiringPi package'
+                        echo 'GPIO support will be limited'
+                      fi
+                    fi
+                  fi
+                  ;;
+                mmdvmhost)
+                  if [ '$ARCH' = 'armhf' ] || [ '$ARCH' = 'arm64' ]; then
+                    apt-get install -y --no-install-recommends libi2c-dev i2c-tools || true
+                    
+                    # Install wiringPi if we can find it locally (built earlier in the workflow)
+                    echo 'Looking for locally built wiringPi package...'
+                    WIRINGPI_DEB=\"\"
+                    
+                    # Check if wiringPi was built earlier and is in the pool
+                    if [ -d /workspace/pool/main/w/wiringpi ]; then
+                      WIRINGPI_DEB=\$(find /workspace/pool/main/w/wiringpi -name \"wiringpi*${DEB_VERSION_SUFFIX}_${ARCH}.deb\" -type f | head -1)
+                    fi
+                    
+                    if [ -n \"\$WIRINGPI_DEB\" ] && [ -f \"\$WIRINGPI_DEB\" ]; then
+                      echo \"Installing local wiringPi package: \$WIRINGPI_DEB\"
+                      dpkg -i \"\$WIRINGPI_DEB\" || apt-get install -f -y
+                      echo 'wiringPi installed successfully from local build'
+                    else
+                      # If no local package, query repository properly for wiringPi
+                      echo 'Local wiringPi not found, querying repository metadata...'
+                      
+                      REPO_URL=\"https://deb.pistar.uk\"
+                      WIRINGPI_DOWNLOADED=false
+                      
+                      # Download and parse the Packages file to find the exact package
+                      echo 'Downloading repository Packages file...'
+                      PACKAGES_URL=\"\${REPO_URL}/dists/\${DEBIAN_VERSION}/main/binary-\${ARCH}/Packages.gz\"
+                      TEMP_PACKAGES=\$(mktemp)
+                      
+                      if wget -q -O - \"\$PACKAGES_URL\" 2>/dev/null | gunzip > \"\$TEMP_PACKAGES\" 2>/dev/null; then
+                        echo 'Successfully downloaded Packages.gz'
+                        
+                        # Parse the Packages file to find wiringPi with correct version suffix
+                        WIRINGPI_PATH=\$(awk -v deb_suffix=\"\${DEB_VERSION_SUFFIX}\" '/^Package: wiringpi\$/ { found=1 } found && /^Version:/ { if (index(\$2, deb_suffix)) { version_match=1 } } found && version_match && /^Filename:/ { print \$2; exit }' \"\$TEMP_PACKAGES\")
+                        
+                        if [ -n \"\$WIRINGPI_PATH\" ]; then
+                          echo \"Found wiringPi in repository: \$WIRINGPI_PATH\"
+                          PACKAGE_URL=\"\${REPO_URL}/\${WIRINGPI_PATH}\"
+                          echo \"Downloading from: \$PACKAGE_URL\"
+                          
+                          if wget -q -O /tmp/wiringpi.deb \"\$PACKAGE_URL\" 2>/dev/null; then
+                            if file /tmp/wiringpi.deb | grep -q 'Debian binary package'; then
+                              WIRINGPI_DOWNLOADED=true
+                              echo 'Successfully downloaded wiringPi package'
+                            else
+                              echo 'Downloaded file is not a valid Debian package'
+                              rm -f /tmp/wiringpi.deb
+                            fi
+                          else
+                            echo \"Failed to download from: \$PACKAGE_URL\"
+                          fi
+                        else
+                          echo 'wiringPi package not found in repository metadata'
+                        fi
+                      else
+                        # Try uncompressed Packages file
+                        echo 'Failed to get Packages.gz, trying uncompressed...'
+                        PACKAGES_URL=\"\${REPO_URL}/dists/\${DEBIAN_VERSION}/main/binary-\${ARCH}/Packages\"
+                        
+                        if wget -q -O \"\$TEMP_PACKAGES\" \"\$PACKAGES_URL\" 2>/dev/null; then
+                          WIRINGPI_PATH=\$(awk -v deb_suffix=\"\${DEB_VERSION_SUFFIX}\" '/^Package: wiringpi\$/ { found=1 } found && /^Version:/ { if (index(\$2, deb_suffix)) { version_match=1 } } found && version_match && /^Filename:/ { print \$2; exit }' \"\$TEMP_PACKAGES\")
+                          
+                          if [ -n \"\$WIRINGPI_PATH\" ]; then
+                            echo \"Found wiringPi: \$WIRINGPI_PATH\"
+                            PACKAGE_URL=\"\${REPO_URL}/\${WIRINGPI_PATH}\"
+                            
+                            if wget -q -O /tmp/wiringpi.deb \"\$PACKAGE_URL\" 2>/dev/null; then
+                              if file /tmp/wiringpi.deb | grep -q 'Debian binary package'; then
+                                WIRINGPI_DOWNLOADED=true
+                                echo 'Successfully downloaded wiringPi package'
+                              else
+                                rm -f /tmp/wiringpi.deb
+                              fi
+                            fi
+                          fi
+                        fi
+                      fi
+                      rm -f \"\$TEMP_PACKAGES\"
+                      
+                      # Last resort: use apt with trusted=yes
+                      if [ \"\$WIRINGPI_DOWNLOADED\" = false ]; then
+                        echo 'Repository metadata query failed, trying apt with trusted=yes...'
+                        echo \"deb [trusted=yes] \${REPO_URL}/ \$DEBIAN_VERSION main\" > /etc/apt/sources.list.d/hamradio-temp.list
+                        apt-get update 2>/dev/null || true
+                        if apt-get download wiringpi 2>/dev/null; then
+                          if ls wiringpi*.deb 1> /dev/null 2>&1; then
+                            mv wiringpi*.deb /tmp/wiringpi.deb
+                            WIRINGPI_DOWNLOADED=true
+                          fi
+                        fi
+                        rm -f /etc/apt/sources.list.d/hamradio-temp.list
+                        apt-get update 2>/dev/null || true
+                      fi
+                      
+                      # Install if downloaded
+                      if [ \"\$WIRINGPI_DOWNLOADED\" = true ] && [ -f /tmp/wiringpi.deb ]; then
+                        echo 'Installing wiringPi package...'
+                        dpkg -i /tmp/wiringpi.deb 2>/dev/null || apt-get install -f -y
+                        
+                        if dpkg -l | grep -q '^ii  wiringpi'; then
+                          echo 'wiringPi installed successfully'
+                        else
+                          echo 'Warning: wiringPi installation may have failed'
+                        fi
+                        rm -f /tmp/wiringpi.deb
+                      else
+                        echo 'Warning: Could not download wiringPi package'
+                        echo 'The build.sh script will try again with its own method'
+                      fi
+                    fi
+                  fi
+                  ;;
+                fmclients)
+                  # Install libmd-dev for FM Gateway
+                  apt-get install -y --no-install-recommends libmd-dev || true
+                  ;;
+                wiringpi)
+                  # WiringPi has minimal build dependencies
+                  # Just needs standard build tools which are already installed
+                  ;;
+              esac
+              
+              # Create build user
+              useradd -m -s /bin/bash builder
+              chown -R builder:builder /workspace/packages/$PACKAGE
+              
+              # Build the package
+              cd /workspace/packages/$PACKAGE
+              chmod +x build.sh
+              
+              # Set environment variables for build
+              export OUTPUT_DIR=/tmp/build-output
+              export ARCH=$ARCH
+              export DEBIAN_VERSION=$DEBIAN_VERSION
+              export BUILD_NUMBER=$BUILD_NUMBER
+              export DEB_VERSION_SUFFIX=\"$DEB_VERSION_SUFFIX\"
+              
+              echo \"Building with:\"
+              echo \"  BUILD_NUMBER=\$BUILD_NUMBER\"
+              echo \"  DEB_VERSION_SUFFIX=\$DEB_VERSION_SUFFIX\"
+              echo \"  DEBIAN_VERSION=\$DEBIAN_VERSION\"
+              
+              mkdir -p \$OUTPUT_DIR
+              chown builder:builder \$OUTPUT_DIR
+              su builder -c 'OUTPUT_DIR=/tmp/build-output ARCH=$ARCH DEBIAN_VERSION=$DEBIAN_VERSION DEB_VERSION_SUFFIX=\"'$DEB_VERSION_SUFFIX'\" BUILD_NUMBER=$BUILD_NUMBER ./build.sh'
+              
+              # Move built packages to pool
+              if ls /tmp/build-output/*.deb 1> /dev/null 2>&1; then
+                mv /tmp/build-output/*.deb /workspace/$POOL_DIR/
+                echo 'Package built successfully'
+                ls -la /workspace/$POOL_DIR/*.deb
+              else
+                echo 'No packages found'
+                # For wiringpi on non-ARM architectures, this is expected (dummy package)
+                if [ '$PACKAGE' = 'wiringpi' ] && [ '$ARCH' = 'amd64' ]; then
+                  echo 'Expected: WiringPi creates dummy package for amd64'
+                  exit 0
+                else
+                  exit 1
+                fi
+              fi
+            "
+          
+          echo "Built packages:"
+          ls -la "$POOL_DIR"/*.deb || echo "No packages found"
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: debian-packages-${{ matrix.debian_version }}-${{ matrix.arch }}-${{ matrix.package }}
+          path: pool/
+          retention-days: 7
+          include-hidden-files: false
+
+  process-and-deploy:
+    name: Process Repository and Deploy
+    needs: [prepare, build]
+    runs-on: ubuntu-latest
+    if: |
+      always() && 
+      needs.build.result == 'success' &&
+      (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Clone existing gh-pages
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: deploy
+        continue-on-error: true
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts/
+
+      - name: Install repository tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y dpkg-dev apt-utils gnupg
+
+      - name: Process repository
+        id: process
+        env:
+          CLEANUP_ENABLED: ${{ github.event.inputs.cleanup_after_build || 'true' }}
+          VERSIONS_TO_KEEP: ${{ github.event.inputs.versions_to_keep || '5' }}
+          CLEANUP_ORPHANED: ${{ github.event.inputs.cleanup_orphaned || 'false' }}
+        run: |
+          set -e
+          
+          # Ensure deploy structure exists (in case gh-pages is empty/new)
+          mkdir -p deploy/{dists,pool}
+          
+          echo "========================================="
+          echo "Step 1: Adding new packages to repository"
+          echo "========================================="
+          
+          # Show what's already in the pool
+          if [ -d deploy/pool ]; then
+            existing_count=$(find deploy/pool -name "*.deb" -type f 2>/dev/null | wc -l || echo "0")
+            echo "Existing packages in repository: $existing_count"
+          else
+            echo "No existing pool found, starting fresh"
+          fi
+          
+          # Copy new packages from artifacts to pool
+          new_packages_added=0
+          for artifact_dir in artifacts/debian-packages-*/; do
+            if [ -d "$artifact_dir" ]; then
+              # Find and copy all .deb files to pool, preserving structure
+              cd "$artifact_dir"
+              find . -name "*.deb" -type f | while read deb_file; do
+                # Ensure we maintain the pool/main/x/package structure
+                target_path="../../deploy/pool/${deb_file#./}"
+                mkdir -p "$(dirname "$target_path")"
+                cp "$deb_file" "$target_path"
+                echo "Added: pool/${deb_file#./}"
+                new_packages_added=$((new_packages_added + 1))
+              done
+              cd - > /dev/null
+            fi
+          done
+          echo "New packages added: $new_packages_added"
+          
+          # Copy GPG key if not present
+          if [ ! -f deploy/hamradio.gpg ] && [ -f keys/hamradio.gpg ]; then
+            cp keys/hamradio.gpg deploy/hamradio.gpg
+          fi
+          
+          # Copy or update index.html
+          if [ -f index.html ]; then
+            cp index.html deploy/index.html
+          fi
+          
+          # Ensure CNAME exists
+          echo "deb.pistar.uk" > deploy/CNAME
+          
+          echo ""
+          echo "========================================="
+          echo "Step 2: Cleanup old package versions"
+          echo "========================================="
+          
+          if [ "$CLEANUP_ENABLED" = "true" ]; then
+            echo "Cleanup configuration:"
+            echo "  Versions to keep: $VERSIONS_TO_KEEP"
+            echo "  Cleanup orphaned: $CLEANUP_ORPHANED"
+            echo ""
+            
+            # Validate versions_to_keep
+            if ! [[ "$VERSIONS_TO_KEEP" =~ ^[0-9]+$ ]] || [ "$VERSIONS_TO_KEEP" -lt 1 ]; then
+              echo "Error: VERSIONS_TO_KEEP must be a positive number"
+              exit 1
+            fi
+            
+            # Get list of current packages from source
+            CURRENT_PACKAGES=""
+            for source_conf in packages/*/source.conf; do
+              if [ -f "$source_conf" ]; then
+                package_name=$(basename $(dirname "$source_conf"))
+                CURRENT_PACKAGES="$CURRENT_PACKAGES $package_name"
+              fi
+            done
+            echo "Current packages in source: $CURRENT_PACKAGES"
+            
+            # Function to parse package info from filename
+            parse_deb_filename() {
+              local filepath=$1
+              local filename=$(basename "$filepath")
+              local basename=${filename%.deb}
+              
+              # Extract package name (everything before first underscore)
+              local pkg_name=$(echo "$basename" | cut -d'_' -f1)
+              
+              # Extract version part (between first and last underscore)
+              local version_part=$(echo "$basename" | sed 's/^[^_]*_//' | sed 's/_[^_]*$//')
+              
+              # Extract architecture (after last underscore)
+              local arch=$(echo "$basename" | rev | cut -d'_' -f1 | rev)
+              
+              echo "$pkg_name|$version_part|$arch"
+            }
+            
+            # Find all packages in pool and group them
+            declare -A PACKAGE_GROUPS
+            declare -A PACKAGE_DATES
+            declare -A PACKAGE_PATHS
+            
+            total_packages=0
+            total_deleted=0
+            total_size_deleted=0
+            
+            # Build package groups
+            find deploy/pool -name "*.deb" -type f 2>/dev/null | while read deb_path; do
+              total_packages=$((total_packages + 1))
+              deb_file=$(basename "$deb_path")
+              
+              # Parse package information
+              IFS='|' read -r pkg_name version arch <<< $(parse_deb_filename "$deb_file")
+              
+              # Group by package name, Debian version, and architecture
+              # Extract Debian version from the version string (e.g., ~deb12u1)
+              debian_ver=$(echo "$version" | grep -o '~deb[0-9]*' | sed 's/~deb//' || echo "unknown")
+              group_key="${pkg_name}_${debian_ver}_${arch}"
+              
+              # Store for processing
+              echo "$group_key|$deb_path|$(stat -c %Y "$deb_path" 2>/dev/null || echo "0")" >> /tmp/package_list.txt
+            done
+            
+            # Process each package group
+            if [ -f /tmp/package_list.txt ]; then
+              # Sort and group packages
+              sort -t'|' -k1,1 -k3,3nr /tmp/package_list.txt > /tmp/sorted_packages.txt
+              
+              current_group=""
+              group_packages=""
+              
+              while IFS='|' read -r group_key deb_path mod_time; do
+                if [ "$current_group" != "$group_key" ]; then
+                  # Process previous group if exists
+                  if [ -n "$current_group" ] && [ -n "$group_packages" ]; then
+                    # Count packages in this group
+                    pkg_count=$(echo "$group_packages" | wc -w)
+                    
+                    if [ "$pkg_count" -gt "$VERSIONS_TO_KEEP" ]; then
+                      echo "Package group: $current_group has $pkg_count versions"
+                      
+                      # Keep newest N versions, delete the rest
+                      echo "$group_packages" | tr ' ' '\n' | tail -n +$((VERSIONS_TO_KEEP + 1)) | while read old_pkg; do
+                        if [ -f "$old_pkg" ]; then
+                          file_size=$(stat -c %s "$old_pkg" 2>/dev/null || echo "0")
+                          echo "  Deleting old version: $(basename "$old_pkg") ($(du -h "$old_pkg" 2>/dev/null | cut -f1))"
+                          rm -f "$old_pkg"
+                          total_deleted=$((total_deleted + 1))
+                          total_size_deleted=$((total_size_deleted + file_size))
+                        fi
+                      done
+                    fi
+                  fi
+                  
+                  # Start new group
+                  current_group="$group_key"
+                  group_packages="$deb_path"
+                else
+                  # Add to current group
+                  group_packages="$group_packages $deb_path"
+                fi
+              done < /tmp/sorted_packages.txt
+              
+              # Process last group
+              if [ -n "$current_group" ] && [ -n "$group_packages" ]; then
+                pkg_count=$(echo "$group_packages" | wc -w)
+                
+                if [ "$pkg_count" -gt "$VERSIONS_TO_KEEP" ]; then
+                  echo "Package group: $current_group has $pkg_count versions"
+                  
+                  echo "$group_packages" | tr ' ' '\n' | tail -n +$((VERSIONS_TO_KEEP + 1)) | while read old_pkg; do
+                    if [ -f "$old_pkg" ]; then
+                      file_size=$(stat -c %s "$old_pkg" 2>/dev/null || echo "0")
+                      echo "  Deleting old version: $(basename "$old_pkg") ($(du -h "$old_pkg" 2>/dev/null | cut -f1))"
+                      rm -f "$old_pkg"
+                      total_deleted=$((total_deleted + 1))
+                      total_size_deleted=$((total_size_deleted + file_size))
+                    fi
+                  done
+                fi
+              fi
+            fi
+            
+            # Handle orphaned packages if requested
+            if [ "$CLEANUP_ORPHANED" = "true" ]; then
+              echo ""
+              echo "Checking for orphaned packages..."
+              
+              find deploy/pool -name "*.deb" -type f | while read deb_path; do
+                pkg_name=$(basename "$deb_path" | cut -d'_' -f1)
+                
+                if ! echo "$CURRENT_PACKAGES" | grep -q "\b$pkg_name\b"; then
+                  echo "  Removing orphaned package: $(basename "$deb_path")"
+                  rm -f "$deb_path"
+                  total_deleted=$((total_deleted + 1))
+                fi
+              done
+            fi
+            
+            # Summary
+            if [ "$total_deleted" -gt 0 ]; then
+              total_size_mb=$((total_size_deleted / 1024 / 1024))
+              echo ""
+              echo "Cleanup summary:"
+              echo "  Packages deleted: $total_deleted"
+              echo "  Space freed: ${total_size_mb}MB"
+            else
+              echo "No packages needed cleanup"
+            fi
+          else
+            echo "Cleanup is disabled, skipping..."
+          fi
+          
+          echo ""
+          echo "========================================="
+          echo "Step 3: Generate repository metadata"
+          echo "========================================="
+          
+          cd deploy
+          
+          # Create dists structure for each Debian version
+          for DIST in bullseye bookworm trixie; do
+            echo "Generating metadata for $DIST..."
+            mkdir -p dists/$DIST/main/source
+            
+            # Map distribution to expected suffix for filtering
+            case "$DIST" in
+              bullseye) EXPECTED_SUFFIX="~deb11u1" ;;
+              bookworm) EXPECTED_SUFFIX="~deb12u1" ;;
+              trixie)   EXPECTED_SUFFIX="~deb13u1" ;;
+              *) EXPECTED_SUFFIX="" ;;
+            esac
+            
+            for ARCH in amd64 arm64 armhf; do
+              mkdir -p dists/$DIST/main/binary-$ARCH
+              
+              # Generate Packages file - FILTER BY DEBIAN VERSION
+              echo "  Scanning packages for $ARCH (filtering for $DIST)..."
+              
+              # Create a temporary pool with only packages for this Debian version
+              TEMP_POOL=$(mktemp -d)
+              mkdir -p "$TEMP_POOL/pool"
+              
+              # Copy only packages matching this Debian version and architecture
+              find pool -name "*${EXPECTED_SUFFIX}_${ARCH}.deb" -type f | while read pkg; do
+                # Maintain the pool structure
+                rel_path="${pkg#pool/}"
+                mkdir -p "$TEMP_POOL/pool/$(dirname "$rel_path")"
+                ln -s "$(realpath "$pkg")" "$TEMP_POOL/pool/$rel_path"
+              done
+              
+              # Generate Packages file from filtered pool
+              cd "$TEMP_POOL"
+              dpkg-scanpackages -a $ARCH pool 2>/dev/null > "$OLDPWD/dists/$DIST/main/binary-$ARCH/Packages" || \
+              touch "$OLDPWD/dists/$DIST/main/binary-$ARCH/Packages"
+              cd "$OLDPWD"
+              
+              # Clean up temp pool
+              rm -rf "$TEMP_POOL"
+              
+              # Count packages
+              pkg_count=$(grep -c "^Package:" dists/$DIST/main/binary-$ARCH/Packages 2>/dev/null || echo "0")
+              echo "    Found $pkg_count packages for $ARCH in $DIST"
+              
+              # Compress Packages file
+              gzip -9c dists/$DIST/main/binary-$ARCH/Packages > dists/$DIST/main/binary-$ARCH/Packages.gz
+              bzip2 -9c dists/$DIST/main/binary-$ARCH/Packages > dists/$DIST/main/binary-$ARCH/Packages.bz2
+            done
+            
+            # Create Release file
+            cat > dists/$DIST/Release << EOF
+          Origin: Ham Radio Packages
+          Label: Ham Radio Packages
+          Suite: $DIST
+          Codename: $DIST
+          Version: 1.0
+          Architectures: amd64 arm64 armhf
+          Components: main
+          Description: Amateur Radio Digital Voice packages for Debian $DIST
+          Date: $(date -R)
+          EOF
+            
+            # Add checksums
+            apt-ftparchive release dists/$DIST >> dists/$DIST/Release || true
+          done
+          
+          echo ""
+          echo "Repository Summary:"
+          for DIST in bullseye bookworm trixie; do
+            echo "  Distribution: $DIST"
+            for ARCH in amd64 arm64 armhf; do
+              if [ -f "dists/$DIST/main/binary-$ARCH/Packages" ]; then
+                pkg_count=$(grep -c "^Package:" "dists/$DIST/main/binary-$ARCH/Packages" 2>/dev/null || echo "0")
+                echo "    $ARCH: $pkg_count packages"
+              fi
+            done
+          done
+          
+          # Final package count
+          final_count=$(find pool -name "*.deb" -type f 2>/dev/null | wc -l || echo "0")
+          echo ""
+          echo "Total packages in repository: $final_count"
+          
+          # Set output
+          echo "total_packages=$final_count" >> $GITHUB_OUTPUT
+
+      - name: Sign repository metadata
+        env:
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+          GPG_KEY_ID: ${{ secrets.GPG_KEY_ID }}
+        run: |
+          if [ -n "$GPG_PRIVATE_KEY" ]; then
+            cd deploy
+            
+            # Import GPG key
+            echo "$GPG_PRIVATE_KEY" | gpg --batch --import
+            
+            # Sign Release files for each distribution
+            for DIST in bullseye bookworm trixie; do
+              if [ -f "dists/$DIST/Release" ]; then
+                # Create detached signature
+                gpg --batch --yes --default-key "$GPG_KEY_ID" \
+                  --armor --detach-sign \
+                  -o "dists/$DIST/Release.gpg" "dists/$DIST/Release"
+                
+                # Create inline signature  
+                gpg --batch --yes --default-key "$GPG_KEY_ID" \
+                  --clearsign \
+                  -o "dists/$DIST/InRelease" "dists/$DIST/Release"
+                
+                echo "Signed Release files for $DIST"
+              fi
+            done
+            
+            # Verify the public key is present
+            if [ ! -f "hamradio.gpg" ]; then
+              echo "Warning: Public key hamradio.gpg not found in deploy directory"
+              # Export public key as backup
+              gpg --armor --export "$GPG_KEY_ID" > hamradio.gpg
+            fi
+          else
+            echo "ERROR: GPG_PRIVATE_KEY not set, repository will be unsigned!"
+            echo "Users will not be able to use this repository securely."
+            exit 1
+          fi
+
+      - name: Create index.html
+        run: |
+          # Only create default index.html if custom one wasn't copied from repository
+          if [ ! -f "deploy/index.html" ]; then
+            cat > deploy/index.html << 'EOF'
+          <!DOCTYPE html>
+          <html>
+          <head>
+              <title>Ham Radio Debian Repository</title>
+              <style>
+                  body { font-family: Arial, sans-serif; margin: 40px; }
+                  pre { background: #f4f4f4; padding: 15px; border-radius: 5px; overflow-x: auto; }
+                  code { background: #f4f4f4; padding: 2px 5px; border-radius: 3px; }
+                  h2 { color: #333; border-bottom: 2px solid #007acc; padding-bottom: 5px; }
+                  ul { line-height: 1.8; }
+              </style>
+          </head>
+          <body>
+              <h1>🎙️ Ham Radio Debian Repository</h1>
+              <p>This is a Debian/Ubuntu package repository for Amateur Radio digital voice software.</p>
+              
+              <h2>📦 Quick Setup</h2>
+              
+              <h3>For Modern Debian/Ubuntu (11+)</h3>
+              <pre>
+          # Add GPG key
+          wget -qO - https://deb.pistar.uk/hamradio.gpg | sudo gpg --dearmor -o /usr/share/keyrings/hamradio.gpg
+          
+          # Add repository (choose your Debian version)
+          # For Debian 11 (Bullseye) / Raspberry Pi OS (Legacy)
+          echo "deb [signed-by=/usr/share/keyrings/hamradio.gpg] https://deb.pistar.uk/ bullseye main" | sudo tee /etc/apt/sources.list.d/hamradio.list
+          
+          # For Debian 12 (Bookworm) / Raspberry Pi OS (Current)  
+          echo "deb [signed-by=/usr/share/keyrings/hamradio.gpg] https://deb.pistar.uk/ bookworm main" | sudo tee /etc/apt/sources.list.d/hamradio.list
+          
+          # For Debian 13 (Trixie) / Testing
+          echo "deb [signed-by=/usr/share/keyrings/hamradio.gpg] https://deb.pistar.uk/ trixie main" | sudo tee /etc/apt/sources.list.d/hamradio.list
+          
+          # Update and install
+          sudo apt update
+          sudo apt install mmdvmhost dmrclients ysfclients
+              </pre>
+              
+              <h3>For Older Systems</h3>
+              <pre>
+          # Add GPG key (deprecated method)
+          wget -qO - https://deb.pistar.uk/hamradio.gpg | sudo apt-key add -
+          
+          # Add repository
+          echo "deb https://deb.pistar.uk/ bullseye main" | sudo tee /etc/apt/sources.list.d/hamradio.list
+          
+          # Update and install
+          sudo apt update
+          sudo apt install mmdvmhost dmrclients
+              </pre>
+              
+              <h2>📋 Available Packages</h2>
+              <ul>
+                  <li><strong>mmdvmhost</strong> - MMDVM Host Software and Calibration Tool (ARM builds include display support)</li>
+                  <li><strong>dmrclients</strong> - DMR Gateway and Cross-Mode Tools</li>
+                  <li><strong>ysfclients</strong> - YSF Gateway, Parrot and Cross-Mode Tools</li>
+                  <li><strong>dstarclients</strong> - D-Star ircDDB Gateway and Tools</li>
+                  <li><strong>dstarrepeater</strong> - D-Star Repeater Controller with multiple modem support</li>
+                  <li><strong>nxdnclients</strong> - NXDN Gateway, Parrot and Cross-Mode Tools</li>
+                  <li><strong>p25clients</strong> - P25 Gateway and Parrot</li>
+                  <li><strong>aprsclients</strong> - APRS Gateway</li>
+                  <li><strong>pocsagclients</strong> - DAPNET Gateway for POCSAG</li>
+                  <li><strong>fmclients</strong> - FM Gateway</li>
+                  <li><strong>wiringpi</strong> - GPIO Interface library for Raspberry Pi (ARM only)</li>
+              </ul>
+              
+              <h2>🏗️ Supported Architectures</h2>
+              <ul>
+                  <li><strong>amd64</strong> - Standard 64-bit x86 systems</li>
+                  <li><strong>arm64</strong> - 64-bit ARM (Raspberry Pi 3/4/5 64-bit OS)</li>
+                  <li><strong>armhf</strong> - 32-bit ARM (Raspberry Pi, supports ARMv6/v7)</li>
+              </ul>
+              
+              <p><strong>Note:</strong> The WiringPi package is only functional on ARM architectures (armhf and arm64). 
+              A dummy package is provided for amd64 to satisfy dependencies but contains no functional GPIO libraries.
+              The mmdvmhost package on ARM includes OLED and HD44780 display support and depends on wiringPi.
+              The dstarrepeater package on ARM includes GPIO support for hardware PTT control.</p>
+              
+              <h2>🔍 Browse Repository</h2>
+              <ul>
+                  <li><a href="/dists/">Distribution Releases</a></li>
+                  <li><a href="/pool/">Package Pool</a></li>
+                  <li><a href="/hamradio.gpg">GPG Public Key</a></li>
+              </ul>
+              
+              <h2>📖 Source Code</h2>
+              <p>Package sources: <a href="https://github.com/MW0MWZ/MMDVM_DEB">GitHub Repository</a></p>
+              <p>Upstream sources: <a href="https://github.com/g4klx/">G4KLX Projects</a></p>
+              <p>WiringPi source: <a href="https://github.com/WiringPi/WiringPi">WiringPi GitHub</a></p>
+              
+              <hr>
+              <p><small>Built with ❤️ for the Amateur Radio community by MW0MWZ</small></p>
+          </body>
+          </html>
+          EOF
+          fi
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./deploy
+          destination_dir: .
+          keep_files: false
+          cname: deb.pistar.uk
+          commit_message: "Deploy: Build #${{ github.run_number }} - ${{ steps.process.outputs.total_packages }} packages"
+
+      - name: Purge Cloudflare Cache
+        if: ${{ success() }}
+        env:
+          CLOUDFLARE_ZONE: ${{ secrets.CLOUDFLARE_ZONE }}
+          CLOUDFLARE_TOKEN: ${{ secrets.CLOUDFLARE_TOKEN }}
+        run: |
+          # Purge Debian repository metadata files from Cloudflare cache after deployment
+          if [ -n "$CLOUDFLARE_ZONE" ] && [ -n "$CLOUDFLARE_TOKEN" ]; then
+            echo "Purging Cloudflare cache for Debian repository metadata..."
+            
+            # Build list of critical files to purge
+            # These are the files that apt-get update downloads
+            FILES_TO_PURGE='['
+            FIRST=true
+            
+            # Add Release, InRelease, and Packages files for each distribution
+            for DIST in bullseye bookworm trixie; do
+              for FILE in Release Release.gpg InRelease; do
+                if [ "$FIRST" = true ]; then
+                  FIRST=false
+                else
+                  FILES_TO_PURGE="${FILES_TO_PURGE},"
+                fi
+                FILES_TO_PURGE="${FILES_TO_PURGE}\"https://deb.pistar.uk/dists/${DIST}/${FILE}\""
+              done
+              
+              # Add Packages files for each architecture
+              for ARCH in amd64 arm64 armhf; do
+                for EXT in "" ".gz" ".bz2"; do
+                  FILES_TO_PURGE="${FILES_TO_PURGE},"
+                  FILES_TO_PURGE="${FILES_TO_PURGE}\"https://deb.pistar.uk/dists/${DIST}/main/binary-${ARCH}/Packages${EXT}\""
+                done
+              done
+            done
+            
+            # Add the main index and GPG key
+            FILES_TO_PURGE="${FILES_TO_PURGE},\"https://deb.pistar.uk/index.html\""
+            FILES_TO_PURGE="${FILES_TO_PURGE},\"https://deb.pistar.uk/hamradio.gpg\""
+            FILES_TO_PURGE="${FILES_TO_PURGE}]"
+            
+            echo "Purging $(echo "$FILES_TO_PURGE" | grep -o 'https://' | wc -l) files from cache..."
+            
+            # Send purge request to Cloudflare
+            RESPONSE=$(curl -s -X POST "https://api.cloudflare.com/client/v4/zones/$CLOUDFLARE_ZONE/purge_cache" \
+              -H "Authorization: Bearer $CLOUDFLARE_TOKEN" \
+              -H "Content-Type: application/json" \
+              --data "{\"files\":$FILES_TO_PURGE}")
+            
+            if echo "$RESPONSE" | grep -q '"success":true'; then
+              echo "✅ Successfully purged Cloudflare cache for repository metadata"
+              
+              # Also do a targeted purge of the entire dists/ path to catch any stragglers
+              echo "Performing additional purge of dists/ path..."
+              RESPONSE_PATH=$(curl -s -X POST "https://api.cloudflare.com/client/v4/zones/$CLOUDFLARE_ZONE/purge_cache" \
+                -H "Authorization: Bearer $CLOUDFLARE_TOKEN" \
+                -H "Content-Type: application/json" \
+                --data '{"prefixes":["https://deb.pistar.uk/dists/"]}')
+              
+              if echo "$RESPONSE_PATH" | grep -q '"success":true'; then
+                echo "✅ Successfully purged dists/ path from cache"
+              fi
+            else
+              echo "⚠️ Warning: Cloudflare cache purge may have failed"
+              echo "Response: $RESPONSE"
+              # Don't fail the workflow for cache purge issues
+            fi
+          else
+            echo "ℹ️ Cloudflare credentials not configured, skipping cache purge"
+            echo "Users may need to wait for TTL expiry to see updated packages"
+          fi
+
+      - name: Create workflow summary
+        env:
+          CLEANUP_ENABLED: ${{ github.event.inputs.cleanup_after_build || 'true' }}
+        run: |
+          {
+            echo "## 📦 Debian Package Build and Deploy"
+            echo ""
+            echo "### Build Configuration"
+            echo "| Setting | Value |"
+            echo "|---------|-------|"
+            echo "| Packages | ${{ github.event.inputs.package || 'all' }} |"
+            echo "| Debian Versions | ${{ github.event.inputs.debian_version || 'all' }} |"
+            echo "| Build Number | ${{ github.run_number }} |"
+            echo ""
+            echo "### Repository Status"
+            echo "| Metric | Value |"
+            echo "|--------|-------|"
+            echo "| Total Packages | ${{ steps.process.outputs.total_packages }} |"
+            if [ "$CLEANUP_ENABLED" = "true" ]; then
+              echo "| Cleanup | Enabled (keeping ${{ github.event.inputs.versions_to_keep || '5' }} versions) |"
+            else
+              echo "| Cleanup | Disabled |"
+            fi
+            echo ""
+            echo "### Repository Access"
+            echo "🌐 **Repository URL:** https://deb.pistar.uk/"
+            echo ""
+            echo "📝 **Quick Install:**"
+            echo '```bash'
+            echo 'wget -qO - https://deb.pistar.uk/hamradio.gpg | sudo gpg --dearmor -o /usr/share/keyrings/hamradio.gpg'
+            echo 'echo "deb [signed-by=/usr/share/keyrings/hamradio.gpg] https://deb.pistar.uk/ bookworm main" | sudo tee /etc/apt/sources.list.d/hamradio.list'
+            echo 'sudo apt update && sudo apt install mmdvmhost'
+            echo '```'
+          } >> $GITHUB_STEP_SUMMARY
