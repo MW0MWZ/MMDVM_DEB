@@ -92,17 +92,17 @@ Description: FM Clients for Amateur Radio
  Git commit: 24c509e
 
 Package: mmdvmhost
-Version: 2025.09.20-0~deb13u1
+Version: 2025.09.20-1~deb13u1
 Architecture: arm64
 Maintainer: MW0MWZ <andy@mw0mwz.co.uk>
 Depends: libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11), libi2c0, wiringpi (>= 3.0), i2c-tools
 Recommends: wiringpi
 Suggests: python3-smbus, python3-dev
-Filename: pool/main/m/mmdvmhost/mmdvmhost_2025.09.20-0~deb13u1_arm64.deb
-Size: 3326188
-MD5sum: 7f0beef856f8d7387875d5ed56b61ec2
-SHA1: 8ca8113591c38cc0d4eb6cfaff955c90bdebc7c0
-SHA256: 50ecdbf360916a0c65d9396bd03627cac0170c7e01235088cc967e60510f7b60
+Filename: pool/main/m/mmdvmhost/mmdvmhost_2025.09.20-1~deb13u1_arm64.deb
+Size: 3324784
+MD5sum: b258c3727a32a626373b61108abfe419
+SHA1: 0481b89062821eb4a9bd3be4f5b16ba173dc7360
+SHA256: 4c7f2fec4791ebb94e7489c3534cb47cbd5988469733e4d86101c0f6bd6b7434
 Section: hamradio
 Priority: optional
 Homepage: https://github.com/g4klx/MMDVMHost

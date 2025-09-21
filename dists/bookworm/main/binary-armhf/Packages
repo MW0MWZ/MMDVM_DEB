@@ -92,17 +92,17 @@ Description: FM Clients for Amateur Radio
  Git commit: 24c509e
 
 Package: mmdvmhost
-Version: 2025.09.16-0~deb12u1
+Version: 2025.09.20-0~deb12u1
 Architecture: armhf
 Maintainer: MW0MWZ <andy@mw0mwz.co.uk>
 Depends: libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11), libi2c0, wiringpi (>= 3.0), i2c-tools
 Recommends: wiringpi
 Suggests: python3-smbus, python3-dev
-Filename: pool/main/m/mmdvmhost/mmdvmhost_2025.09.16-0~deb12u1_armhf.deb
-Size: 3363292
-MD5sum: 03b855721019f864700fea032a0f1181
-SHA1: ed562bcb94d01eb14eb1b36e7fbb1c140cf768e6
-SHA256: 3401b112703280c331f177264de9ffc2453e4d69c74338916d9ff189dd053881
+Filename: pool/main/m/mmdvmhost/mmdvmhost_2025.09.20-0~deb12u1_armhf.deb
+Size: 3362144
+MD5sum: fdb92ad922d43420cc35b0610bd67aec
+SHA1: c5cfcff25032b2e2e753483108db0f58ee93d4a7
+SHA256: d218aa47262c807fe50826cae661fc27810dbf4a07a2996756f0064b1177d145
 Section: hamradio
 Priority: optional
 Homepage: https://github.com/g4klx/MMDVMHost
@@ -118,7 +118,7 @@ Description: MMDVM Host Software and Calibration Tool
  - Uses wiringPi package from deb.pistar.uk
  .
  Built for Debian bookworm
- Git commits: MMDVMHost 89b9fc2, MMDVMCal a9247d2, ArduiPi_OLED b575c45
+ Git commits: MMDVMHost 43783d6, MMDVMCal a9247d2, ArduiPi_OLED 50fa499
 
 Package: nxdnclients
 Version: 2025.07.09-0~deb12u1
