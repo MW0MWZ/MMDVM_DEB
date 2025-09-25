@@ -92,15 +92,15 @@ Description: FM Clients for Amateur Radio
  Git commit: 24c509e
 
 Package: mmdvmhost
-Version: 2025.09.20-1~deb13u1
+Version: 2025.09.25-0~deb13u1
 Architecture: amd64
 Maintainer: MW0MWZ <andy@mw0mwz.co.uk>
 Depends: libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11)
-Filename: pool/main/m/mmdvmhost/mmdvmhost_2025.09.20-1~deb13u1_amd64.deb
-Size: 3230440
-MD5sum: 02004ea5bbbdf3f4ed06dd6158ff6389
-SHA1: 0ae6be675e359060557a2361b495434e5d07f13a
-SHA256: c2763a625192a80999e070da84351ab0c0ebe21e1cd35dc042cb73f4312f5518
+Filename: pool/main/m/mmdvmhost/mmdvmhost_2025.09.25-0~deb13u1_amd64.deb
+Size: 3233180
+MD5sum: fc3b814cd571ad6a9ae6a6820d15c117
+SHA1: 5584884ae4ce8424eac7b7e691856250aab916fa
+SHA256: 2f490569a62a46bd3b40a60b0e0687938fc35c9b9c2293887a6c2e51a65f2709
 Section: hamradio
 Priority: optional
 Homepage: https://github.com/g4klx/MMDVMHost
@@ -110,7 +110,7 @@ Description: MMDVM Host Software and Calibration Tool
  Includes MMDVMCal calibration tool
  .
  Built for Debian trixie
- Git commits: MMDVMHost 43783d6, MMDVMCal a9247d2
+ Git commits: MMDVMHost 05b10ac, MMDVMCal a9247d2
 
 Package: nxdnclients
 Version: 2025.07.09-0~deb13u1
