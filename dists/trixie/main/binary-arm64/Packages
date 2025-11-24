@@ -197,16 +197,16 @@ Description: The wiringPi libraries, headers and gpio command
 Uploaders: Grazer Computer Club - GC2 <wiringpi@gc2.at>
 
 Package: ysfclients
-Version: 2025.07.09-0~deb13u1
+Version: 2025.11.24-0~deb13u1
 Architecture: arm64
 Maintainer: MW0MWZ <andy@mw0mwz.co.uk>
 Depends: libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11)
 Recommends: ntp | chrony
-Filename: pool/main/y/ysfclients/ysfclients_2025.07.09-0~deb13u1_arm64.deb
-Size: 2833308
-MD5sum: bb6e468209b4a288008a0b5d61192514
-SHA1: 17e3b8e00a6524d602c3d3e744e88c74750e781a
-SHA256: 7046cf2d15454f38217f0ef58cd4d841d369f2aef263c388507b0ed0ec4d857c
+Filename: pool/main/y/ysfclients/ysfclients_2025.11.24-0~deb13u1_arm64.deb
+Size: 2726084
+MD5sum: 6ec4fece8cbf90abe025cce0b3b9e4a9
+SHA1: a6b3c6679f693a2ec75e780cb3d4e69c74ed9bbf
+SHA256: 8ab0268d45471f7e4f369d04838de7e010a923c0011d79a7d69fdf73b1299897
 Section: hamradio
 Priority: optional
 Homepage: https://github.com/g4klx/YSFClients
@@ -223,6 +223,6 @@ Description: YSF Clients for Amateur Radio
   - YSF2P25: Cross-mode converter from YSF to P25
  .
  Built for Debian trixie
- YSFClients commit: b189b73
+ YSFClients commit: 05aa577
  MMDVM_CM commit: 1dd5383
 

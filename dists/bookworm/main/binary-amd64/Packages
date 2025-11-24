@@ -189,16 +189,16 @@ Description: GPIO Interface library for Raspberry Pi (dummy package)
  but provides no actual functionality.
 
 Package: ysfclients
-Version: 2025.07.09-0~deb12u1
+Version: 2025.11.24-0~deb12u1
 Architecture: amd64
 Maintainer: MW0MWZ <andy@mw0mwz.co.uk>
 Depends: libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11)
 Recommends: ntp | chrony
-Filename: pool/main/y/ysfclients/ysfclients_2025.07.09-0~deb12u1_amd64.deb
-Size: 2939688
-MD5sum: 1d607a531a2f1bad90c29ea404975765
-SHA1: bd641cad59f3203e391ce3d2fa7a29b638b8d032
-SHA256: b716b6ac65af78f579f990225176feb5fbbfeb1861576320366731453e532c1c
+Filename: pool/main/y/ysfclients/ysfclients_2025.11.24-0~deb12u1_amd64.deb
+Size: 2938344
+MD5sum: 1bc7a5059c3b8821e3e152e56515dc1b
+SHA1: 8bc656331445d63183fc01f4a267c3e9c5fbeac5
+SHA256: 9e39a5f0c642bc9548331ad8c1443cb7b9ad401fc4b69bb6c625855ac10d9996
 Section: hamradio
 Priority: optional
 Homepage: https://github.com/g4klx/YSFClients
@@ -215,6 +215,6 @@ Description: YSF Clients for Amateur Radio
   - YSF2P25: Cross-mode converter from YSF to P25
  .
  Built for Debian bookworm
- YSFClients commit: b189b73
+ YSFClients commit: 05aa577
  MMDVM_CM commit: 1dd5383
 
