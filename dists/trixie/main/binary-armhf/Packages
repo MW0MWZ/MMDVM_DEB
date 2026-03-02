@@ -92,33 +92,31 @@ Description: FM Clients for Amateur Radio
  Git commit: 24c509e
 
 Package: mmdvmhost
-Version: 2025.09.25-0~deb13u1
+Version: 2026.02.27-0~deb13u1
 Architecture: armhf
 Maintainer: MW0MWZ <andy@mw0mwz.co.uk>
-Depends: libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11), libi2c0, wiringpi (>= 3.0), i2c-tools
-Recommends: wiringpi
-Suggests: python3-smbus, python3-dev
-Filename: pool/main/m/mmdvmhost/mmdvmhost_2025.09.25-0~deb13u1_armhf.deb
-Size: 3274804
-MD5sum: 0e92bc217bdeb7de58f8c8a4b27f43aa
-SHA1: 570a348af01d838646f4464e1144031f0ef6e0bc
-SHA256: c10c411ccb26e6c7bc05ff8e9e82006c4d7da142c3d154649db7a595edf51731
+Depends: libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11), libmosquitto1t64, libsamplerate0t64, wiringpi (>= 3.0), libi2c0, i2c-tools
+Recommends: mosquitto
+Filename: pool/main/m/mmdvmhost/mmdvmhost_2026.02.27-0~deb13u1_armhf.deb
+Size: 5740192
+MD5sum: 8fbae809137cc8b3f850c75b82c4273a
+SHA1: 495ad7ef500b905447cdfda532268c789f587fd0
+SHA256: 81d4668fa762f617026365439e5535b9b3a51642484e2e38be8599272ea5e50d
 Section: hamradio
 Priority: optional
 Homepage: https://github.com/g4klx/MMDVMHost
-Description: MMDVM Host Software and Calibration Tool
+Description: MMDVM Host Software, Calibration and Display Driver
  Multi-Mode Digital Voice Modem Host Software
  Supports D-Star, DMR, YSF, P25, NXDN, M17 and POCSAG
- Includes MMDVMCal calibration tool
+ Includes MMDVMCal calibration tool and DisplayDriver display server
  .
- This ARM build includes support for:
- - OLED displays (SSD1306, SH1106)
+ This ARM build includes display hardware support for:
+ - OLED displays (SSD1306, SH1106) via ArduiPi_OLED
  - HD44780 LCD displays with I2C PCF8574 expander
- - Direct GPIO and I2C interfaces
  - Uses wiringPi package from deb.pistar.uk
  .
  Built for Debian trixie
- Git commits: MMDVMHost 05b10ac, MMDVMCal a9247d2, ArduiPi_OLED 50fa499
+ Git commits: MMDVMHost f2c45f2, MMDVMCal a9247d2, Display-Driver c25e74e, ArduiPi_OLED 50fa499
 
 Package: nxdnclients
 Version: 2025.07.09-0~deb13u1
