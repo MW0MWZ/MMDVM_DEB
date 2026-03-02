@@ -196,13 +196,18 @@ build_software() {
 
     if [ "$ARCH" = "armhf" ] || [ "$ARCH" = "arm64" ]; then
         OLED_PREFIX="$(pwd)/../oled-install"
-        print_info "Adding ARM display libraries to Display-Driver build..."
+        print_info "Enabling ARM display hardware support in Display-Driver..."
 
-        # Add ArduiPi_OLED include path (no -D defines — Display-Driver compiles all
-        # display types unconditionally and selects at runtime via config file)
-        sed -i '/^CFLAGS/ s|$| -I'"$OLED_PREFIX"'/include|' Makefile
-        # Add OLED and wiringPi libraries for OLED and HD44780 hardware support
-        sed -i '/^LIBS/ s|$| -lArduiPi_OLED -lwiringPi -lwiringPiDev|' Makefile
+        # Enable OLED, HD44780 and PCF8574 display support for ARM
+        # The -D defines enable conditional code in OLED.cpp, HD44780.cpp and DisplayDriver.cpp
+        # Upstream Conf.cpp uses OLED/HD44780 as enum members which clash with the -D defines,
+        # so we rename the enum members to avoid the preprocessor conflict
+        sed -i 's/SECTION::OLED/SECTION::SECT_OLED/g; s/SECTION::HD44780/SECTION::SECT_HD44780/g' Conf.cpp
+        sed -i 's/^\tOLED,/\tSECT_OLED,/; s/^\tHD44780,/\tSECT_HD44780,/' Conf.cpp
+
+        # Replace CFLAGS and LIBS for ARM with OLED + HD44780 + PCF8574 support
+        sed -i 's|^CFLAGS.*=.*|CFLAGS  = -g -O3 -Wall -std=c++0x -pthread -DOLED -DHD44780 -DPCF8574_DISPLAY -I'"$OLED_PREFIX"'/include -I/usr/local/include|' Makefile
+        sed -i 's|^LIBS.*=.*|LIBS    = -lArduiPi_OLED -lwiringPi -lwiringPiDev -lpthread -lutil -lmosquitto|' Makefile
 
         export LIBRARY_PATH="$OLED_PREFIX/lib:$LIBRARY_PATH"
         export CPATH="$OLED_PREFIX/include:$CPATH"
