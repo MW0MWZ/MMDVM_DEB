@@ -194,34 +194,8 @@ build_software() {
     cd Display-Driver
     make clean || true
 
-    if [ "$ARCH" = "armhf" ] || [ "$ARCH" = "arm64" ]; then
-        OLED_PREFIX="$(pwd)/../oled-install"
-        print_info "Enabling ARM display hardware support in Display-Driver..."
-
-        # Enable OLED, HD44780 and PCF8574 display support for ARM
-        # The -D defines enable conditional code in OLED.cpp, HD44780.cpp and DisplayDriver.cpp
-        # Upstream Conf.cpp uses OLED/HD44780 as enum members which clash with the -D defines,
-        # so we rename the enum members to avoid the preprocessor conflict
-        sed -i 's/SECTION::OLED/SECTION::SECT_OLED/g; s/SECTION::HD44780/SECTION::SECT_HD44780/g' Conf.cpp
-        sed -i 's/^\tOLED,/\tSECT_OLED,/; s/^\tHD44780,/\tSECT_HD44780,/' Conf.cpp
-
-        # Replace CFLAGS and LIBS for ARM with OLED + HD44780 + PCF8574 support
-        sed -i 's|^CFLAGS.*=.*|CFLAGS  = -g -O3 -Wall -std=c++0x -pthread -DOLED -DHD44780 -DPCF8574_DISPLAY -I'"$OLED_PREFIX"'/include -I/usr/local/include|' Makefile
-        sed -i 's|^LIBS.*=.*|LIBS    = -lArduiPi_OLED -lwiringPi -lwiringPiDev -lpthread -lutil -lmosquitto|' Makefile
-
-        # Fix upstream bugs in HD44780.cpp:
-        # - m_dmrid does not exist, should be m_id
-        # - Line 605 has misplaced ) in sprintf: dst), DEADSPACE) -> dst, DEADSPACE)
-        # - DEADSPACE is std::string but passed to %s in sprintf (needs .c_str())
-        if [ -f "HD44780.cpp" ]; then
-            sed -i 's/m_dmrid/m_id/g' HD44780.cpp
-            sed -i 's/dst), DEADSPACE)/dst, DEADSPACE)/g' HD44780.cpp
-            sed -i 's/DEADSPACE)/DEADSPACE.c_str())/g' HD44780.cpp
-        fi
-
-        export LIBRARY_PATH="$OLED_PREFIX/lib:$LIBRARY_PATH"
-        export CPATH="$OLED_PREFIX/include:$CPATH"
-    fi
+    # TODO: ARM display hardware support (OLED/HD44780/PCF8574) disabled pending upstream bug fixes
+    # When re-enabled, patch Makefile with -DOLED -DHD44780 -DPCF8574_DISPLAY and link wiringPi/ArduiPi_OLED
 
     make -j$(nproc) all
 
