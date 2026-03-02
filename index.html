@@ -571,14 +571,11 @@
             <div class="version-selector">
                 <strong>Select your Debian/Ubuntu version:</strong>
                 <div class="version-options">
-                    <div class="version-option selected" onclick="selectDebianVersion('bookworm')" data-version="bookworm">
-                        Debian 12 (Bookworm) / Ubuntu 22.04-24.04 / Raspberry Pi OS
+                    <div class="version-option selected" onclick="selectDebianVersion('trixie')" data-version="trixie">
+                        Debian 13 (Trixie) / Raspberry Pi OS (Current)
                     </div>
-                    <div class="version-option" onclick="selectDebianVersion('bullseye')" data-version="bullseye">
-                        Debian 11 (Bullseye) / Ubuntu 20.04 / Raspberry Pi OS Legacy
-                    </div>
-                    <div class="version-option" onclick="selectDebianVersion('trixie')" data-version="trixie">
-                        Debian 13 (Trixie) / Testing
+                    <div class="version-option" onclick="selectDebianVersion('bookworm')" data-version="bookworm">
+                        Debian 12 (Bookworm) / Ubuntu 22.04-25.10 / Raspberry Pi OS (Legacy)
                     </div>
                 </div>
             </div>
@@ -598,7 +595,7 @@
                 <div class="step-content">
                     <strong>Add the repository to your sources:</strong>
                     <div class="code-block">
-                        <span id="repo-command">echo "deb [signed-by=/usr/share/keyrings/hamradio.gpg] https://deb.pistar.uk/ bookworm main" | sudo tee /etc/apt/sources.list.d/hamradio.list</span>
+                        <span id="repo-command">echo "deb [signed-by=/usr/share/keyrings/hamradio.gpg] https://deb.pistar.uk/ trixie main" | sudo tee /etc/apt/sources.list.d/hamradio.list</span>
                         <button class="copy-button" id="repo-copy-btn" onclick="copyToClipboard(this, document.getElementById('repo-command').textContent)">Copy</button>
                     </div>
                 </div>
@@ -628,9 +625,8 @@
                     <strong style="color: var(--success);">Online and Available</strong>
                 </p>
                 <div class="arch-badges">
-                    <span class="badge version">Debian 11 (Bullseye)</span>
-                    <span class="badge version">Debian 12 (Bookworm)</span>
                     <span class="badge version">Debian 13 (Trixie)</span>
+                    <span class="badge version">Debian 12 (Bookworm)</span>
                 </div>
                 <div class="arch-badges">
                     <span class="badge arch">amd64</span>
@@ -687,11 +683,13 @@
                     <div class="package-name">mmdvmhost</div>
                 </div>
                 <div class="package-desc">
-                    The main MMDVM Host software for digital voice modes. Supports DMR, D-Star, YSF, P25, NXDN, POCSAG, and FM. Includes calibration tools and OLED display support on ARM platforms.
+                    The main MMDVM Host software for digital voice modes. Supports DMR, D-Star, YSF, P25, NXDN, M17, POCSAG, and FM. Includes calibration tools and Display Driver for OLED, Nextion, HD44780, and LCDproc displays.
                 </div>
                 <div class="package-components">
                     <span class="component-badge">MMDVMHost</span>
                     <span class="component-badge">MMDVMCal</span>
+                    <span class="component-badge">DisplayDriver</span>
+                    <span class="component-badge">NextionUpdater</span>
                     <span class="component-badge">RemoteCommand</span>
                 </div>
             </div>
