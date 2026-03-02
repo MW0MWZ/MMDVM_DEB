@@ -196,17 +196,13 @@ build_software() {
 
     if [ "$ARCH" = "armhf" ] || [ "$ARCH" = "arm64" ]; then
         OLED_PREFIX="$(pwd)/../oled-install"
-        print_info "Patching Display-Driver for ARM display hardware support..."
+        print_info "Adding ARM display libraries to Display-Driver build..."
 
-        # Append OLED/HD44780 defines to existing CFLAGS (preserve upstream flags)
-        sed -i '/^CFLAGS/ s|$| -DOLED -DHD44780 -DPCF8574_DISPLAY -I'"$OLED_PREFIX"'/include|' Makefile
-        # Append OLED/wiringPi libraries to existing LIBS
+        # Add ArduiPi_OLED include path (no -D defines — Display-Driver compiles all
+        # display types unconditionally and selects at runtime via config file)
+        sed -i '/^CFLAGS/ s|$| -I'"$OLED_PREFIX"'/include|' Makefile
+        # Add OLED and wiringPi libraries for OLED and HD44780 hardware support
         sed -i '/^LIBS/ s|$| -lArduiPi_OLED -lwiringPi -lwiringPiDev|' Makefile
-
-        # Fix upstream HD44780.cpp syntax error (misplaced parenthesis in sprintf)
-        if [ -f "HD44780.cpp" ]; then
-            sed -i 's|group ? "TG" : "", dst), DEADSPACE);|group ? "TG" : "", dst, DEADSPACE.c_str());|' HD44780.cpp
-        fi
 
         export LIBRARY_PATH="$OLED_PREFIX/lib:$LIBRARY_PATH"
         export CPATH="$OLED_PREFIX/include:$CPATH"
