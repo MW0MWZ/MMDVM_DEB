@@ -57,10 +57,11 @@ build_software() {
         BIN_DIR=/usr/bin/ \
         all
 
-    # Validate expected binaries
-    for bin in dstargateway dgwremotecontrol dgwtexttransmit dgwtimeserver dgwvoicetransmit; do
-        if [ ! -f "$bin" ]; then
-            print_error "Build failed - $bin binary not created"
+    # Binaries are built into their respective subdirectories
+    BINARY_MAP="DStarGateway/dstargateway DGWRemoteControl/dgwremotecontrol DGWTextTransmit/dgwtexttransmit DGWTimeServer/dgwtimeserver DGWVoiceTransmit/dgwvoicetransmit"
+    for binary_path in $BINARY_MAP; do
+        if [ ! -f "$binary_path" ]; then
+            print_error "Build failed - $binary_path not created"
             exit 1
         fi
     done
@@ -95,9 +96,11 @@ create_package() {
     mkdir -p "$PKG_DIR/lib/systemd/system"
     mkdir -p "$PKG_DIR/var/log/dstarclients"
 
-    # Copy binaries
-    for bin in dstargateway dgwremotecontrol dgwtexttransmit dgwtimeserver dgwvoicetransmit; do
-        cp "DStarGateway/$bin" "$PKG_DIR/usr/bin/"
+    # Copy binaries from their subdirectories
+    BINARY_MAP="DStarGateway/dstargateway DGWRemoteControl/dgwremotecontrol DGWTextTransmit/dgwtexttransmit DGWTimeServer/dgwtimeserver DGWVoiceTransmit/dgwvoicetransmit"
+    for binary_path in $BINARY_MAP; do
+        bin=$(basename "$binary_path")
+        cp "DStarGateway/$binary_path" "$PKG_DIR/usr/bin/"
         chmod 755 "$PKG_DIR/usr/bin/$bin"
         print_info "Installed: $bin"
     done
