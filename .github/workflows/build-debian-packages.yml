@@ -317,7 +317,9 @@ jobs:
                 gnupg \
                 lsb-release \
                 file \
-                libmosquitto-dev
+                libmosquitto-dev \
+                nlohmann-json3-dev \
+                libsamplerate0-dev
               
               # Install package-specific dependencies
               case '$PACKAGE' in
@@ -448,8 +450,6 @@ jobs:
                   fi
                   ;;
                 mmdvmhost)
-                  # MMDVMHost + Display-Driver build dependencies
-                  apt-get install -y --no-install-recommends nlohmann-json3-dev libsamplerate0-dev libmosquitto-dev || true
                   # ARM: display hardware dependencies for Display-Driver (OLED + HD44780)
                   if [ '$ARCH' = 'armhf' ] || [ '$ARCH' = 'arm64' ]; then
                     apt-get install -y --no-install-recommends libi2c-dev i2c-tools || true
