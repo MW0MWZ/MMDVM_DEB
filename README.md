@@ -38,6 +38,8 @@ Debian/Ubuntu package repository for Ham Radio software, hosted on GitHub Pages.
 - Debian 12 "Bookworm" (oldstable)
 
 ### Ubuntu
+- Ubuntu 25.10 "Questing Quokka" (use bookworm packages)
+- Ubuntu 25.04 "Plucky Puffin" (use bookworm packages)
 - Ubuntu 24.04 LTS "Noble" (use bookworm packages)
 - Ubuntu 22.04 LTS "Jammy" (use bookworm packages)
 
@@ -65,7 +67,7 @@ wget -qO - https://deb.pistar.uk/hamradio.gpg | sudo gpg --dearmor -o /usr/share
 # For Debian 13 (Trixie) / Raspberry Pi OS (Current)
 echo "deb [signed-by=/usr/share/keyrings/hamradio.gpg] https://deb.pistar.uk/ trixie main" | sudo tee /etc/apt/sources.list.d/hamradio.list
 
-# For Debian 12 (Bookworm) / Ubuntu 22.04-24.04 / Raspberry Pi OS (Legacy)
+# For Debian 12 (Bookworm) / Ubuntu 22.04-25.10 / Raspberry Pi OS (Legacy)
 echo "deb [signed-by=/usr/share/keyrings/hamradio.gpg] https://deb.pistar.uk/ bookworm main" | sudo tee /etc/apt/sources.list.d/hamradio.list
 
 # Update and install
