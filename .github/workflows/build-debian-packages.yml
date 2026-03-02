@@ -28,7 +28,6 @@ on:
         type: choice
         options:
           - all
-          - bullseye
           - bookworm
           - trixie
       cleanup_after_build:
@@ -63,7 +62,7 @@ jobs:
         id: versions
         run: |
           if [ "${{ github.event.inputs.debian_version }}" = "all" ] || [ -z "${{ github.event.inputs.debian_version }}" ]; then
-            echo 'versions=["bullseye","bookworm","trixie"]' >> $GITHUB_OUTPUT
+            echo 'versions=["bookworm","trixie"]' >> $GITHUB_OUTPUT
           else
             echo 'versions=["${{ github.event.inputs.debian_version }}"]' >> $GITHUB_OUTPUT
           fi
@@ -330,11 +329,7 @@ jobs:
                 dstarrepeater)
                   # Similar dependencies to dstarclients but with USB and ALSA support
                   apt-get install -y --no-install-recommends libusb-1.0-0-dev libasound2-dev || true
-                  if [ \"\$DEBIAN_VERSION\" = \"bullseye\" ]; then
-                    apt-get install -y --no-install-recommends libwxgtk3.0-gtk3-dev wx3.0-headers || true
-                  else
-                    apt-get install -y --no-install-recommends libwxgtk3.2-dev wx3.2-headers || true
-                  fi
+                  apt-get install -y --no-install-recommends libwxgtk3.2-dev wx3.2-headers || true
                   
                   # For ARM, try to get wiringPi for GPIO support (same logic as mmdvmhost)
                   if [ '$ARCH' = 'armhf' ] || [ '$ARCH' = 'arm64' ]; then

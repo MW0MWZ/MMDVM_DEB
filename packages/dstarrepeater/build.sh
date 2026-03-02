@@ -189,12 +189,6 @@ EOF
     
     # Set dependencies based on Debian version
     case "$DEBIAN_VERSION" in
-        bullseye)
-            WX_DEPS="libwxgtk3.0-gtk3-0v5, libwxbase3.0-0v5"
-            ;;
-        bookworm)
-            WX_DEPS="libwxgtk3.2-1, libwxbase3.2-1"
-            ;;
         trixie)
             WX_DEPS="libwxgtk3.2-1t64, libwxbase3.2-1t64"
             ;;

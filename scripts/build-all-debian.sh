@@ -13,7 +13,7 @@ CYAN='\033[0;36m'
 NC='\033[0m' # No Color
 
 # Configuration
-DEBIAN_VERSIONS=("bullseye" "bookworm")  # Debian 11 and 12
+DEBIAN_VERSIONS=("bookworm" "trixie")  # Debian 12 and 13
 ARCHITECTURES=("amd64" "arm64" "armhf")
 PACKAGES=("aprsclients" "dmrclients" "dstarclients" "ysfclients" "nxdnclients" "p25clients" "pocsagclients" "fmclients" "mmdvmhost")
 REPO_BASE="repo"  # Root of repository structure (no /deb subdirectory)
@@ -263,14 +263,14 @@ wget -qO - https://deb.pistar.uk/hamradio.gpg | sudo tee /usr/share/keyrings/ham
 
 ### 2. Add the repository:
 
-For Debian 11 (Bullseye):
-```bash
-echo "deb https://deb.pistar.uk/ bullseye main" | sudo tee /etc/apt/sources.list.d/hamradio.list
-```
-
 For Debian 12 (Bookworm):
 ```bash
 echo "deb https://deb.pistar.uk/ bookworm main" | sudo tee /etc/apt/sources.list.d/hamradio.list
+```
+
+For Debian 13 (Trixie):
+```bash
+echo "deb https://deb.pistar.uk/ trixie main" | sudo tee /etc/apt/sources.list.d/hamradio.list
 ```
 
 ### 3. Update and install packages:
@@ -284,7 +284,7 @@ sudo apt install mmdvmhost dmrclients ysfclients
 - **mmdvmhost** - MMDVM Host Software and Calibration Tool
 - **dmrclients** - DMR Gateway and Cross-Mode converters
 - **ysfclients** - YSF Gateway, Parrot, and Cross-Mode converters
-- **dstarclients** - D-Star ircDDB Gateway and DStarGateway
+- **dstarclients** - D-Star Gateway and Tools
 - **nxdnclients** - NXDN Gateway, Parrot and Cross-Mode converters
 - **p25clients** - P25 Gateway and Parrot
 - **aprsclients** - APRS Gateway
