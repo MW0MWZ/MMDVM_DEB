@@ -205,16 +205,16 @@ EOF
     # Set dependencies based on Debian version
     case "$DEBIAN_VERSION" in
         bullseye)
-            DEPENDS="libc6 (>= 2.31), libgcc-s1 (>= 3.0), libstdc++6 (>= 5.2), libwxgtk3.0-gtk3-0v5, libportaudio2, libusb-1.0-0"
+            DEPENDS="libc6 (>= 2.31), libgcc-s1 (>= 3.0), libstdc++6 (>= 5.2), libwxgtk3.0-gtk3-0v5, libportaudio2, libusb-1.0-0, libmosquitto1"
             ;;
         bookworm)
-            DEPENDS="libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11), libwxgtk3.2-1, libportaudio2, libusb-1.0-0"
+            DEPENDS="libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11), libwxgtk3.2-1, libportaudio2, libusb-1.0-0, libmosquitto1"
             ;;
         trixie)
-            DEPENDS="libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11), libwxgtk3.2-1t64, libportaudio2t64, libusb-1.0-0t64"
+            DEPENDS="libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11), libwxgtk3.2-1t64, libportaudio2t64, libusb-1.0-0t64, libmosquitto1t64"
             ;;
         *)
-            DEPENDS="libc6 (>= 2.31), libgcc-s1 (>= 3.0), libstdc++6 (>= 5.2), libwxbase3.0-0v5, libportaudio2, libusb-1.0-0"
+            DEPENDS="libc6 (>= 2.31), libgcc-s1 (>= 3.0), libstdc++6 (>= 5.2), libwxbase3.0-0v5, libportaudio2, libusb-1.0-0, libmosquitto1"
             ;;
     esac
     

@@ -316,7 +316,8 @@ jobs:
                 curl \
                 gnupg \
                 lsb-release \
-                file
+                file \
+                libmosquitto-dev
               
               # Install package-specific dependencies
               case '$PACKAGE' in
@@ -447,10 +448,13 @@ jobs:
                   fi
                   ;;
                 mmdvmhost)
+                  # MMDVMHost + Display-Driver build dependencies
+                  apt-get install -y --no-install-recommends nlohmann-json3-dev libsamplerate0-dev libmosquitto-dev || true
+                  # ARM: display hardware dependencies for Display-Driver (OLED + HD44780)
                   if [ '$ARCH' = 'armhf' ] || [ '$ARCH' = 'arm64' ]; then
                     apt-get install -y --no-install-recommends libi2c-dev i2c-tools || true
-                    
-                    # Install wiringPi if we can find it locally (built earlier in the workflow)
+
+                    # Install wiringPi for Display-Driver HD44780 support
                     echo 'Looking for locally built wiringPi package...'
                     WIRINGPI_DEB=\"\"
                     
