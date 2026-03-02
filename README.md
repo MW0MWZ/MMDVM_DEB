@@ -33,13 +33,17 @@ Debian/Ubuntu package repository for Ham Radio software, hosted on GitHub Pages.
 
 ## 🐧 Supported Debian/Ubuntu Versions
 
-- Debian 13 "Trixie" (testing)
-- Debian 12 "Bookworm" (stable)
-- Debian 11 "Bullseye" (oldstable)
-- Ubuntu 24.04 LTS "Noble" (uses bookworm)
-- Ubuntu 22.04 LTS "Jammy" (uses bookworm)
-- Raspberry Pi OS (Current - uses bookworm)
-- Raspberry Pi OS (Legacy - uses bullseye)
+### Debian
+- Debian 13 "Trixie" (stable)
+- Debian 12 "Bookworm" (oldstable)
+
+### Ubuntu
+- Ubuntu 24.04 LTS "Noble" (use bookworm packages)
+- Ubuntu 22.04 LTS "Jammy" (use bookworm packages)
+
+### Raspberry Pi OS
+- Raspberry Pi OS (Current - based on Trixie, use trixie packages)
+- Raspberry Pi OS (Legacy - based on Bookworm, use bookworm packages)
 
 ## 🖥️ Supported Architectures
 
@@ -53,39 +57,20 @@ Debian/Ubuntu package repository for Ham Radio software, hosted on GitHub Pages.
 
 Add the repository and install packages on your Debian/Ubuntu system:
 
-#### Modern Systems (Debian 11+, Ubuntu 20.04+)
-
 ```bash
 # Add GPG key
 wget -qO - https://deb.pistar.uk/hamradio.gpg | sudo gpg --dearmor -o /usr/share/keyrings/hamradio.gpg
 
 # Add repository (choose your Debian version)
-# For Debian 12 (Bookworm) / Ubuntu 22.04-24.04 / Raspberry Pi OS (Current)
-echo "deb [signed-by=/usr/share/keyrings/hamradio.gpg] https://deb.pistar.uk/ bookworm main" | sudo tee /etc/apt/sources.list.d/hamradio.list
-
-# For Debian 11 (Bullseye) / Ubuntu 20.04 / Raspberry Pi OS (Legacy)
-echo "deb [signed-by=/usr/share/keyrings/hamradio.gpg] https://deb.pistar.uk/ bullseye main" | sudo tee /etc/apt/sources.list.d/hamradio.list
-
-# For Debian 13 (Trixie) / Testing
+# For Debian 13 (Trixie) / Raspberry Pi OS (Current)
 echo "deb [signed-by=/usr/share/keyrings/hamradio.gpg] https://deb.pistar.uk/ trixie main" | sudo tee /etc/apt/sources.list.d/hamradio.list
+
+# For Debian 12 (Bookworm) / Ubuntu 22.04-24.04 / Raspberry Pi OS (Legacy)
+echo "deb [signed-by=/usr/share/keyrings/hamradio.gpg] https://deb.pistar.uk/ bookworm main" | sudo tee /etc/apt/sources.list.d/hamradio.list
 
 # Update and install
 sudo apt update
 sudo apt install mmdvmhost dmrclients ysfclients
-```
-
-#### Legacy Systems (Debian 10 and older)
-
-```bash
-# Add GPG key (deprecated method)
-wget -qO - https://deb.pistar.uk/hamradio.gpg | sudo apt-key add -
-
-# Add repository
-echo "deb https://deb.pistar.uk/ bullseye main" | sudo tee /etc/apt/sources.list.d/hamradio.list
-
-# Update and install
-sudo apt update
-sudo apt install mmdvmhost dmrclients
 ```
 
 ### Configuration
@@ -211,7 +196,6 @@ MMDVM_DEB/
 └── deploy/                 # GitHub Pages deployment (auto-generated)
     ├── index.html         # Repository landing page
     ├── dists/             # APT repository structure
-    │   ├── bullseye/
     │   ├── bookworm/
     │   └── trixie/
     └── pool/              # Package pool
