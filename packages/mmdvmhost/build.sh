@@ -209,6 +209,16 @@ build_software() {
         sed -i 's|^CFLAGS.*=.*|CFLAGS  = -g -O3 -Wall -std=c++0x -pthread -DOLED -DHD44780 -DPCF8574_DISPLAY -I'"$OLED_PREFIX"'/include -I/usr/local/include|' Makefile
         sed -i 's|^LIBS.*=.*|LIBS    = -lArduiPi_OLED -lwiringPi -lwiringPiDev -lpthread -lutil -lmosquitto|' Makefile
 
+        # Fix upstream bugs in HD44780.cpp:
+        # - m_dmrid does not exist, should be m_id
+        # - Line 605 has misplaced ) in sprintf: dst), DEADSPACE) -> dst, DEADSPACE)
+        # - DEADSPACE is std::string but passed to %s in sprintf (needs .c_str())
+        if [ -f "HD44780.cpp" ]; then
+            sed -i 's/m_dmrid/m_id/g' HD44780.cpp
+            sed -i 's/dst), DEADSPACE)/dst, DEADSPACE)/g' HD44780.cpp
+            sed -i 's/DEADSPACE)/DEADSPACE.c_str())/g' HD44780.cpp
+        fi
+
         export LIBRARY_PATH="$OLED_PREFIX/lib:$LIBRARY_PATH"
         export CPATH="$OLED_PREFIX/include:$CPATH"
     fi
