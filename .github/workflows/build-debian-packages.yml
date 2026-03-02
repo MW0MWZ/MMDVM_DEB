@@ -324,12 +324,8 @@ jobs:
               # Install package-specific dependencies
               case '$PACKAGE' in
                 dstarclients)
+                  # DStarGateway: no wxWidgets needed, just libcurl and boost headers
                   apt-get install -y --no-install-recommends libcurl4-openssl-dev libboost-dev || true
-                  if [ \"\$DEBIAN_VERSION\" = \"bullseye\" ]; then
-                    apt-get install -y --no-install-recommends libwxgtk3.0-gtk3-dev wx3.0-headers || true
-                  else
-                    apt-get install -y --no-install-recommends libwxgtk3.2-dev wx3.2-headers || true
-                  fi
                   ;;
                 dstarrepeater)
                   # Similar dependencies to dstarclients but with USB and ALSA support
