@@ -37,23 +37,25 @@ Description: DMR Clients for Amateur Radio
  Git commits: DMRGateway 3d099ae, MMDVM_CM 1dd5383
 
 Package: dstarclients
-Version: 2025.04.27-0~deb13u1
+Version: 2026.02.28-0~deb13u1
 Architecture: arm64
 Maintainer: MW0MWZ <andy@mw0mwz.co.uk>
-Depends: libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11), libwxgtk3.2-1t64, libportaudio2t64, libusb-1.0-0t64
-Filename: pool/main/d/dstarclients/dstarclients_2025.04.27-0~deb13u1_arm64.deb
-Size: 949304
-MD5sum: 84a23ae819fb6bcf6f4451e393b1fe8a
-SHA1: bdc040a17a0ba39e44c4dc5aac26ab880847c3f9
-SHA256: 31f028985d7421c9a84f48332ff5bd5c7b60a5b2147400bed2fcd69780ef33ad
+Depends: libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11), libcurl4t64, libmosquitto1t64
+Recommends: mosquitto
+Filename: pool/main/d/dstarclients/dstarclients_2026.02.28-0~deb13u1_arm64.deb
+Size: 806156
+MD5sum: 2fefa1964bf746348b91de6505e13a42
+SHA1: 4d55efdd9e85cbcad69103c8678c9ec84007821c
+SHA256: f6a98fb2b7ae8b3d2c2c8ac5caaf48224896c8041613fc852ebd20f188b98eca
 Section: hamradio
 Priority: optional
-Homepage: https://github.com/g4klx/ircDDBGateway
-Description: D-Star ircDDB Gateway and Tools
- ircDDB Gateway for D-Star digital voice
+Homepage: https://github.com/g4klx/DStarGateway
+Description: D-Star Gateway and Tools
+ D-Star Gateway for digital voice amateur radio
  Includes gateway, time server, remote control, and transmit tools
+ .
  Built for Debian trixie
- Git commit: 6680e4b
+ Git commit: 94c9f54
 
 Package: dstarrepeater
 Version: 2021.12.12-0~deb13u1
