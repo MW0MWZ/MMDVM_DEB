@@ -198,7 +198,7 @@ build_software() {
     if [ "$ARCH" = "armhf" ] || [ "$ARCH" = "arm64" ]; then
         OLED_PREFIX="$(pwd)/../oled-install"
         print_info "Patching Makefile for OLED/HD44780/PCF8574 display support..."
-        sed -i "s|^CFLAGS.*=.*|CFLAGS  = -g -O3 -Wall -std=c++0x -pthread -DOLED -DHD44780 -DPCF8574_DISPLAY -I${OLED_PREFIX}/include -I/usr/local/include|" Makefile
+        sed -i "s|^CFLAGS.*=.*|CFLAGS  = -g -O3 -Wall -std=c++0x -pthread -DUSE_OLED -DUSE_HD44780 -DUSE_PCF8574_DISPLAY -I${OLED_PREFIX}/include -I/usr/local/include|" Makefile
         sed -i "s|^LIBS.*=.*|LIBS    = -lArduiPi_OLED -lwiringPi -lwiringPiDev -lpthread -lutil -lmosquitto|" Makefile
         export LIBRARY_PATH="${OLED_PREFIX}/lib"
         export CPATH="${OLED_PREFIX}/include"
