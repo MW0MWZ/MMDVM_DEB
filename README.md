@@ -23,7 +23,7 @@ Debian/Ubuntu package repository for Ham Radio software, hosted on GitHub Pages.
 | Package | Description | Components | Upstream |
 |---------|-------------|------------|----------|
 | **dmrclients** | DMR Gateway and Cross-Mode converters | DMRGateway, DMR2YSF, DMR2NXDN | [DMRGateway](https://github.com/g4klx/DMRGateway) & [MMDVM_CM](https://github.com/nostar/MMDVM_CM) |
-| **dstarclients** | D-Star Gateways and tools | ircDDBGateway, DStarGateway, remotecontrold, starnetserverd, and more | [ircDDBGateway](https://github.com/g4klx/ircDDBGateway) & [DStarGateway](https://github.com/F4FXL/DStarGateway) |
+| **dstarclients** | D-Star Gateway and tools | DStarGateway, dgwremotecontrol, dgwtimeserver, and more | [DStarGateway](https://github.com/g4klx/DStarGateway) |
 | **ysfclients** | YSF Gateway, Parrot, DGId Gateway and Cross-Mode converters | YSFGateway, YSFParrot, DGIdGateway, YSF2DMR, YSF2NXDN, YSF2P25 | [YSFClients](https://github.com/g4klx/YSFClients) & [MMDVM_CM](https://github.com/nostar/MMDVM_CM) |
 | **nxdnclients** | NXDN Gateway, Parrot and Cross-Mode converter | NXDNGateway, NXDNParrot, NXDN2DMR | [NXDNClients](https://github.com/g4klx/NXDNClients) & [MMDVM_CM](https://github.com/nostar/MMDVM_CM) |
 | **p25clients** | P25 Gateway and Parrot | P25Gateway, P25Parrot | [P25Clients](https://github.com/g4klx/P25Clients) |
@@ -114,7 +114,7 @@ Services are managed via systemd:
 sudo systemctl start mmdvmhost      # MMDVM Host
 sudo systemctl start dmrgateway     # DMR Gateway
 sudo systemctl start ysfgateway     # YSF Gateway
-sudo systemctl start ircddbgateway  # ircDDB Gateway for D-Star
+sudo systemctl start dstargateway   # D-Star Gateway
 sudo systemctl start dstarrepeater  # D-Star Repeater Controller
 sudo systemctl start nxdngateway    # NXDN Gateway
 sudo systemctl start p25gateway     # P25 Gateway
@@ -182,7 +182,7 @@ MMDVM_DEB/
 ├── packages/                # Package definitions
 │   ├── mmdvmhost/
 │   ├── dmrclients/         # DMRGateway, DMR2YSF, DMR2NXDN
-│   ├── dstarclients/       # ircDDBGateway, DStarGateway, and tools
+│   ├── dstarclients/       # DStarGateway and tools
 │   ├── dstarrepeater/      # D-Star Repeater Controller
 │   ├── ysfclients/         # YSFGateway, YSFParrot, DGIdGateway, YSF2*
 │   ├── nxdnclients/        # NXDNGateway, NXDNParrot, NXDN2DMR

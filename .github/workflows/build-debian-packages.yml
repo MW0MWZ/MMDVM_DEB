@@ -148,7 +148,7 @@ jobs:
               SOURCE_REPO="https://github.com/g4klx/DStarRepeater.git"
               ;;
             dstarclients)
-              SOURCE_REPO="https://github.com/g4klx/ircDDBGateway.git"
+              SOURCE_REPO="https://github.com/g4klx/DStarGateway.git"
               ;;
             mmdvmhost)
               SOURCE_REPO="https://github.com/g4klx/MMDVMHost.git"

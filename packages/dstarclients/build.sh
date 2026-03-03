@@ -3,7 +3,7 @@ set -e
 
 # D-Star Clients package build script for Debian
 # For GitHub Actions ONLY
-# Version: 2.0.0 - Replaced ircDDBGateway with DStarGateway
+# Version: 2.1.0 - DStarGateway package
 
 # Color codes
 RED='\033[0;31m'
@@ -168,7 +168,7 @@ ${PACKAGE_NAME} (${FULL_VERSION}) ${DEBIAN_VERSION}; urgency=medium
   * Package built from git commit ${GIT_COMMIT_FULL}
   * Built for Debian ${DEBIAN_VERSION}
   * Build number: ${BUILD_NUMBER}
-  * Replaced ircDDBGateway with DStarGateway (wxWidgets-free)
+  * DStarGateway package (wxWidgets-free)
 
  -- MW0MWZ <andy@mw0mwz.co.uk>  $(date -R)
 EOF
