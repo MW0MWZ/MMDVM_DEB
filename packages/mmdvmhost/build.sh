@@ -194,8 +194,15 @@ build_software() {
     cd Display-Driver
     make clean || true
 
-    # TODO: ARM display hardware support (OLED/HD44780/PCF8574) disabled pending upstream bug fixes
-    # When re-enabled, patch Makefile with -DOLED -DHD44780 -DPCF8574_DISPLAY and link wiringPi/ArduiPi_OLED
+    # Enable display hardware support on ARM platforms
+    if [ "$ARCH" = "armhf" ] || [ "$ARCH" = "arm64" ]; then
+        OLED_PREFIX="$(pwd)/../oled-install"
+        print_info "Patching Makefile for OLED/HD44780/PCF8574 display support..."
+        sed -i "s|^CFLAGS.*=.*|CFLAGS  = -g -O3 -Wall -std=c++0x -pthread -DOLED -DHD44780 -DPCF8574_DISPLAY -I${OLED_PREFIX}/include -I/usr/local/include|" Makefile
+        sed -i "s|^LIBS.*=.*|LIBS    = -lArduiPi_OLED -lwiringPi -lwiringPiDev -lpthread -lutil -lmosquitto|" Makefile
+        export LIBRARY_PATH="${OLED_PREFIX}/lib"
+        export CPATH="${OLED_PREFIX}/include"
+    fi
 
     make -j$(nproc) all
 
