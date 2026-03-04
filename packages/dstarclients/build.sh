@@ -58,7 +58,7 @@ build_software() {
         all
 
     # Binaries are built into their respective subdirectories
-    BINARY_MAP="DStarGateway/dstargateway DGWRemoteControl/dgwremotecontrol DGWTextTransmit/dgwtexttransmit DGWTimeServer/dgwtimeserver DGWVoiceTransmit/dgwvoicetransmit"
+    BINARY_MAP="DStarGateway/dstargateway DGWTextTransmit/dgwtexttransmit DGWTimeServer/dgwtimeserver DGWVoiceTransmit/dgwvoicetransmit"
     for binary_path in $BINARY_MAP; do
         if [ ! -f "$binary_path" ]; then
             print_error "Build failed - $binary_path not created"
@@ -97,7 +97,7 @@ create_package() {
     mkdir -p "$PKG_DIR/var/log/dstarclients"
 
     # Copy binaries from their subdirectories
-    BINARY_MAP="DStarGateway/dstargateway DGWRemoteControl/dgwremotecontrol DGWTextTransmit/dgwtexttransmit DGWTimeServer/dgwtimeserver DGWVoiceTransmit/dgwvoicetransmit"
+    BINARY_MAP="DStarGateway/dstargateway DGWTextTransmit/dgwtexttransmit DGWTimeServer/dgwtimeserver DGWVoiceTransmit/dgwvoicetransmit"
     for binary_path in $BINARY_MAP; do
         bin=$(basename "$binary_path")
         cp "DStarGateway/$binary_path" "$PKG_DIR/usr/bin/"

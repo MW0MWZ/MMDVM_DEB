@@ -27,7 +27,7 @@ The repository currently builds the following packages:
 | Package | Description | Components | Dependencies |
 |---------|-------------|------------|--------------|
 | **dmrclients** | DMR Gateway and Cross-Mode | DMRGateway, DMR2YSF, DMR2NXDN | `build-essential`, `git` |
-| **dstarclients** | D-Star Gateway and tools | DStarGateway, dgwremotecontrol, dgwtimeserver, dgwtexttransmit, dgwvoicetransmit | `libcurl4-openssl-dev`, `libmosquitto-dev` |
+| **dstarclients** | D-Star Gateway and tools | DStarGateway, dgwtimeserver, dgwtexttransmit, dgwvoicetransmit | `libcurl4-openssl-dev`, `libmosquitto-dev` |
 | **ysfclients** | YSF Gateway, Parrot and Cross-Mode | YSFGateway, YSFParrot, DGIdGateway, YSF2DMR, YSF2NXDN, YSF2P25 | `build-essential`, `git` |
 | **nxdnclients** | NXDN Gateway, Parrot and Cross-Mode | NXDNGateway, NXDNParrot, NXDN2DMR | `build-essential`, `git` |
 | **p25clients** | P25 Gateway and Parrot | P25Gateway, P25Parrot | `build-essential`, `git` |
@@ -340,7 +340,7 @@ main "$@"
 ### dstarclients
 - Builds from DStarGateway repository
 - Requires libcurl and libmosquitto
-- Binaries: dstargateway, dgwremotecontrol, dgwtimeserver, dgwtexttransmit, dgwvoicetransmit
+- Binaries: dstargateway, dgwtimeserver, dgwtexttransmit, dgwvoicetransmit
 
 ### Cross-Mode Packages
 - dmrclients, ysfclients, nxdnclients build from multiple repositories

@@ -58,7 +58,6 @@ All gateway packages follow the "*clients" naming convention and include gateway
 
 #### D-Star Gateway & Tools (`dstarclients`)
 - **DStarGateway** - D-Star Gateway for reflector connections
-- **dgwremotecontrol** - Remote control tool
 - **dgwtimeserver** - Time server
 - **dgwtexttransmit** - Text transmit tool
 - **dgwvoicetransmit** - Voice transmit tool

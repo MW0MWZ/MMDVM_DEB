@@ -23,7 +23,7 @@ Debian/Ubuntu package repository for Ham Radio software, hosted on GitHub Pages.
 | Package | Description | Components | Upstream |
 |---------|-------------|------------|----------|
 | **dmrclients** | DMR Gateway and Cross-Mode converters | DMRGateway, DMR2YSF, DMR2NXDN | [DMRGateway](https://github.com/g4klx/DMRGateway) & [MMDVM_CM](https://github.com/nostar/MMDVM_CM) |
-| **dstarclients** | D-Star Gateway and tools | DStarGateway, dgwremotecontrol, dgwtimeserver, and more | [DStarGateway](https://github.com/g4klx/DStarGateway) |
+| **dstarclients** | D-Star Gateway and tools | DStarGateway, dgwtimeserver, dgwtexttransmit, dgwvoicetransmit | [DStarGateway](https://github.com/g4klx/DStarGateway) |
 | **ysfclients** | YSF Gateway, Parrot, DGId Gateway and Cross-Mode converters | YSFGateway, YSFParrot, DGIdGateway, YSF2DMR, YSF2NXDN, YSF2P25 | [YSFClients](https://github.com/g4klx/YSFClients) & [MMDVM_CM](https://github.com/nostar/MMDVM_CM) |
 | **nxdnclients** | NXDN Gateway, Parrot and Cross-Mode converter | NXDNGateway, NXDNParrot, NXDN2DMR | [NXDNClients](https://github.com/g4klx/NXDNClients) & [MMDVM_CM](https://github.com/nostar/MMDVM_CM) |
 | **p25clients** | P25 Gateway and Parrot | P25Gateway, P25Parrot | [P25Clients](https://github.com/g4klx/P25Clients) |
