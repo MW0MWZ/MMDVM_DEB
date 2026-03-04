@@ -269,6 +269,11 @@ create_package() {
             mkdir -p "$PKG_DIR/usr/lib/mmdvmhost"
             if [ -f "oled-install/lib/libArduiPi_OLED.so.1.0" ]; then
                 cp -a oled-install/lib/libArduiPi_OLED.so* "$PKG_DIR/usr/lib/mmdvmhost/"
+                # Ensure soname symlink exists (ArduiPi_OLED build doesn't create .so.1)
+                cd "$PKG_DIR/usr/lib/mmdvmhost"
+                ln -sf libArduiPi_OLED.so.1.0 libArduiPi_OLED.so.1
+                ln -sf libArduiPi_OLED.so.1.0 libArduiPi_OLED.so
+                cd - > /dev/null
             elif [ -f "oled-install/lib/libArduiPi_OLED.so" ]; then
                 cp -L oled-install/lib/libArduiPi_OLED.so "$PKG_DIR/usr/lib/mmdvmhost/libArduiPi_OLED.so.1.0"
                 cd "$PKG_DIR/usr/lib/mmdvmhost"
