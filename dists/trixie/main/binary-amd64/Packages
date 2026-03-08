@@ -173,14 +173,14 @@ Description: POCSAG/DAPNET Gateway for Amateur Radio
  Git commit: 475c802
 
 Package: wiringpi
-Version: 3.16-0~deb13u1
+Version: 3.18-0~deb13u1
 Architecture: amd64
 Maintainer: MW0MWZ <andy@mw0mwz.co.uk>
-Filename: pool/main/w/wiringpi/wiringpi_3.16-0~deb13u1_amd64.deb
-Size: 2036
-MD5sum: 2f60d0a708fdf20b4dd958d0aefa5a16
-SHA1: 1c50e1f99961cd881cb5946f0266840cb5086355
-SHA256: 48161b7a6011260b558968defdbc256d77847d3c71fe3b28ae80e4319a30a585
+Filename: pool/main/w/wiringpi/wiringpi_3.18-0~deb13u1_amd64.deb
+Size: 2032
+MD5sum: 8560b17891a1e80183e8c5fb20506f7e
+SHA1: 50b68115a7286b5a757886f2b611351381da3045
+SHA256: 1ee725c801f1ccdff1dc27de4a5ea39117a7d406459fa6e65e5c4748132ce267
 Section: libs
 Priority: optional
 Homepage: https://github.com/WiringPi/WiringPi
