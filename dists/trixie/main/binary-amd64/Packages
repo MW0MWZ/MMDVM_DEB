@@ -94,16 +94,16 @@ Description: FM Clients for Amateur Radio
  Git commit: f71fe41
 
 Package: mmdvmhost
-Version: 2026.02.27-2~deb13u1
+Version: 2026.03.08-0~deb13u1
 Architecture: amd64
 Maintainer: MW0MWZ <andy@mw0mwz.co.uk>
 Depends: libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11), libmosquitto1t64, libsamplerate0t64
 Recommends: mosquitto
-Filename: pool/main/m/mmdvmhost/mmdvmhost_2026.02.27-2~deb13u1_amd64.deb
-Size: 5906492
-MD5sum: dd220d4e0c5e39eef4a992af01f72a87
-SHA1: 41acc350ff0e516d60479864b97be22144189aa3
-SHA256: 5dd80582f2db1c09fea1e3f7d1cceed7d073a3a02b9c40afa72c00c25bb51260
+Filename: pool/main/m/mmdvmhost/mmdvmhost_2026.03.08-0~deb13u1_amd64.deb
+Size: 5974348
+MD5sum: 2a9f81c81346ddbee485a28543b7016d
+SHA1: 7fb63ab2664a80d18ce6b399f95f2eeeb5bf2ae2
+SHA256: c739ebe1c0be9a6c765b534ab5d3ed01dfac353da39dce5c6f79547668ad5b1d
 Section: hamradio
 Priority: optional
 Homepage: https://github.com/g4klx/MMDVMHost
@@ -113,7 +113,7 @@ Description: MMDVM Host Software, Calibration and Display Driver
  Includes MMDVMCal calibration tool and DisplayDriver display server
  .
  Built for Debian trixie
- Git commits: MMDVMHost f2c45f2, MMDVMCal a9247d2, Display-Driver bd4b9df
+ Git commits: MMDVMHost ed6c28c, MMDVMCal a9247d2, Display-Driver ead5a34
 
 Package: nxdnclients
 Version: 2025.07.09-0~deb13u1
