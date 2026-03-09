@@ -1,5 +1,5 @@
 Package: pi-star
-Version: 2026.03.08.3-1~deb13u1
+Version: 2026.03.08-4~deb13u1
 Section: hamradio
 Priority: optional
 Architecture: arm64
@@ -11,46 +11,10 @@ Description: Pi-Star MCP — web dashboard and process supervisor
  .
  Built for Debian trixie
 Homepage: https://pistar.uk
-Filename: pool/main/p/pi-star/pi-star_2026.03.08.3-1~deb13u1_arm64.deb
-Size: 2995400
-MD5sum: 898f15b9745a0ff41003bb03d0923518
-SHA256: 97781b6a18b9f1b69095bed299aebcdcfe8081b895d5ea34024f490cef5f6e63
-
-Package: pi-star
-Version: 2026.03.08.1-1~deb13u1
-Section: hamradio
-Priority: optional
-Architecture: arm64
-Depends: mosquitto, mmdvmhost, dmrclients, dstarclients, ysfclients, nxdnclients, p25clients, fmclients, aprsclients, pocsagclients, dstarrepeater
-Maintainer: MW0MWZ <andy@mw0mwz.co.uk>
-Description: Pi-Star MCP — web dashboard and process supervisor
- Single Go binary that serves the Pi-Star web dashboard and manages
- all amateur radio digital voice services (MMDVMHost, gateways, bridges).
- .
- Built for Debian trixie
-Homepage: https://pistar.uk
-Filename: pool/main/p/pi-star/pi-star_2026.03.08.1-1~deb13u1_arm64.deb
-Size: 2823048
-MD5sum: e8f66a7facc19b2258ea3ca721bf3233
-SHA256: d7a67e9d7a26f00f20e98853ccc1dfee9253081435839218f4ba12a82b066450
-
-Package: pi-star
-Version: 2026.03.08-1~deb13u1
-Section: hamradio
-Priority: optional
-Architecture: arm64
-Depends: mosquitto, mmdvmhost, dmrclients, dstarclients, ysfclients, nxdnclients, p25clients, fmclients, aprsclients, pocsagclients, dstarrepeater
-Maintainer: MW0MWZ <andy@mw0mwz.co.uk>
-Description: Pi-Star MCP — web dashboard and process supervisor
- Single Go binary that serves the Pi-Star web dashboard and manages
- all amateur radio digital voice services (MMDVMHost, gateways, bridges).
- .
- Built for Debian trixie
-Homepage: https://pistar.uk
-Filename: pool/main/p/pi-star/pi-star_2026.03.08-1~deb13u1_arm64.deb
-Size: 2799992
-MD5sum: 3677d11b05d9e793b12f20ab63e74b4e
-SHA256: ba31cdda78dfa08a2574a30e8c19b3fa7c71eed1137d793f69750409533f179f
+Filename: pool/main/p/pi-star/pi-star_2026.03.08-4~deb13u1_arm64.deb
+Size: 3021032
+MD5sum: 2c1a1d0c270551c50ce27aea41331263
+SHA256: 566d9b818bfd46d604a2e9112efefa4ec42ec49aa45c6972913c6c0b0dd43c77
 
 Package: pocsagclients
 Version: 2026.03.08-0~deb13u1

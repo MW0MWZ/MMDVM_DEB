@@ -4,18 +4,18 @@ Suite: trixie
 Codename: trixie
 Architectures: amd64 armhf arm64
 Components: main
-Date: Mon, 09 Mar 2026 18:06:03 +0000
+Date: Mon, 09 Mar 2026 18:32:23 +0000
 MD5Sum:
- da18742fb6cc12f75dcbe2f26fcfeb66 5592 main/binary-armhf/Packages.gz
- c1ac98996acbb5faed7e95f49c8a6588 31923 main/binary-armhf/Packages
- 8e19a28c4e0f95daff646a31a63688fc 5590 main/binary-arm64/Packages.gz
- 2b1ea19643adaf2e91f41857e449cee7 31923 main/binary-arm64/Packages
- faf829ed9e824ff721f54bd81d9b43bd 5352 main/binary-amd64/Packages.gz
- c652ef3750f951fa8855cddd5a0f1a6a 30361 main/binary-amd64/Packages
+ 6b9cda28cd7a801aab0cc6c3e4245188 5429 main/binary-armhf/Packages.gz
+ 4792f1c0e29b50214dff7e7b7f304144 30411 main/binary-armhf/Packages
+ 39b1a775e8ad371a7141155f243652ba 5418 main/binary-arm64/Packages.gz
+ 8357e429093127e56eebb254b6d08e26 30411 main/binary-arm64/Packages
+ 185da1851072ae443b12c58da4ca0db2 5192 main/binary-amd64/Packages.gz
+ 14991d1ab07f06a8da23e590f4e8f9af 28849 main/binary-amd64/Packages
 SHA256:
- b8e921a47e1ffc2a96a193bbd5ddffef0c5f0e561e869e31d0507e953e3a79b5 5592 main/binary-armhf/Packages.gz
- 074d26a9a6a3206b50965524dba19cf3dc767ab7e4b5977a13e2ee1b22c5828a 31923 main/binary-armhf/Packages
- 38dece2188b93abc243acf11842ee88a6ff1b88b3c57eb0d9b85fbe7f60233ba 5590 main/binary-arm64/Packages.gz
- 0f67f7913c2da80c20f38d37788cb6a716bc3ea914ed2de2362890f4774d4bc6 31923 main/binary-arm64/Packages
- 14570145db98f7d6f4c90b6a94404957edf69d136b765e706e218a12f98fb5eb 5352 main/binary-amd64/Packages.gz
- 358d0b61eef2ffdee1d3ffe793da3bd518aece90b82599b4e35713d7d4023506 30361 main/binary-amd64/Packages
+ 327450e1e84bc83887cc1805dfd1e96fb6ea9b8a4c019197ad7045b00e73d3a3 5429 main/binary-armhf/Packages.gz
+ 25e95662f2d3e563a994c67a823e191d793944ca009545ae6faf20e32f12729d 30411 main/binary-armhf/Packages
+ f1c23050e85eb0a10a043baf64c64083d4904b386dd36e782286bb2f35f19ba5 5418 main/binary-arm64/Packages.gz
+ 087066bfde5d361795d8b5f72f96c5204f924673066ca9310d879266914b14d9 30411 main/binary-arm64/Packages
+ 7a741ac6688bd995f865e7354cf450c68cac43b9cade4c5e1368a923b91c707f 5192 main/binary-amd64/Packages.gz
+ c5de76c5cd3744a47767acac8529e1fa1fa7a82f8f3b87764d68185d6553a24d 28849 main/binary-amd64/Packages
