@@ -154,15 +154,15 @@ Description: P25 Clients for Amateur Radio
  Git commit: 9507e3d
 
 Package: pocsagclients
-Version: 2025.08.20-0~deb12u1
+Version: 2026.03.08-0~deb12u1
 Architecture: amd64
 Maintainer: MW0MWZ <andy@mw0mwz.co.uk>
-Depends: libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11)
-Filename: pool/main/p/pocsagclients/pocsagclients_2025.08.20-0~deb12u1_amd64.deb
-Size: 734028
-MD5sum: 34763dd2dbb9a509961798f4c049cc32
-SHA1: 2b07973713168b218664abadcf5e67d27f2b40d4
-SHA256: da0f10cf50894a0ed900349bb5c5f0bfc28288adfee8e2a3a799d3792039fb09
+Depends: libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11), libmosquitto1
+Filename: pool/main/p/pocsagclients/pocsagclients_2026.03.08-0~deb12u1_amd64.deb
+Size: 1142852
+MD5sum: 4fba59b4bedc828895554f6bd05983e4
+SHA1: 827807b1981c90883e2051ae27338c1982e09595
+SHA256: a900ed6cfa6850ec26e8b46c605af1c2ce62d3b863298f36df4dbda9dc647858
 Section: hamradio
 Priority: optional
 Homepage: https://github.com/g4klx/DAPNETGateway
@@ -170,7 +170,7 @@ Description: POCSAG/DAPNET Gateway for Amateur Radio
  DAPNET Gateway for POCSAG paging network
  Supports connection to the DAPNET amateur radio paging network
  Built for Debian bookworm
- Git commit: 475c802
+ Git commit: c97ce09
 
 Package: wiringpi
 Version: 3.18-0~deb12u1
