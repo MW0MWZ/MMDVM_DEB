@@ -140,15 +140,15 @@ Description: NXDN Clients for Amateur Radio
  Git commits: NXDNClients fdaf991, MMDVM_CM 1dd5383
 
 Package: p25clients
-Version: 2025.07.09-0~deb12u1
+Version: 2026.03.08-0~deb12u1
 Architecture: armhf
 Maintainer: MW0MWZ <andy@mw0mwz.co.uk>
-Depends: libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11)
-Filename: pool/main/p/p25clients/p25clients_2025.07.09-0~deb12u1_armhf.deb
-Size: 386436
-MD5sum: 0b9f81e1966af3da2a488e6a4d2cd033
-SHA1: c5f82b0f2961e02c2899c924da7894265724d75c
-SHA256: e2f07d90ba9976eba3090f57428b68cd98de6d320657bfd3e2c0082f465bf2a3
+Depends: libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11), libmosquitto1
+Filename: pool/main/p/p25clients/p25clients_2026.03.08-0~deb12u1_armhf.deb
+Size: 1140824
+MD5sum: 0d1bffc1e81a7a1082f7c0f5244bbffb
+SHA1: 2c9816681834b40fce545bf2faa521e064e20840
+SHA256: b4381ef24eec2efcb3ac5f7c6a768c73374e4d6743cc7318c127756702a495f7
 Section: hamradio
 Priority: optional
 Homepage: https://github.com/g4klx/P25Clients
@@ -156,7 +156,7 @@ Description: P25 Clients for Amateur Radio
  P25 Gateway and Parrot for digital communications
  Includes P25Gateway and P25Parrot
  Built for Debian bookworm
- Git commit: 72b85eb
+ Git commit: 9507e3d
 
 Package: pocsagclients
 Version: 2025.08.20-0~deb12u1
