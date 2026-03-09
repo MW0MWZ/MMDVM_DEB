@@ -12,9 +12,9 @@ Description: Pi-Star MCP — web dashboard and process supervisor
  Built for Debian trixie
 Homepage: https://pistar.uk
 Filename: pool/main/p/pi-star/pi-star_2026.03.09-1~deb13u1_arm64.deb
-Size: 3026644
-MD5sum: 69668c74139ed1551b541b7c8ed9e13a
-SHA256: 9d4d60b83854babffe613296c7fd397b12f313e0efb57bf9c4391513b03eb079
+Size: 3026392
+MD5sum: 0483c1b694f129db4cfed81aea1f1318
+SHA256: 284dee3f1bbaa433a90bde8c55230e9a14bb509f7220cba0af9d247ddc01d62f
 
 Package: pocsagclients
 Version: 2026.03.08-0~deb13u1

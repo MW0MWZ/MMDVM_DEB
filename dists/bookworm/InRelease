@@ -1,40 +1,42 @@
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA512
 
-Origin: Pi-Star
-Label: Pi-Star MMDVM Packages
+Origin: Ham Radio Packages
+Label: Ham Radio Packages
 Suite: bookworm
 Codename: bookworm
+Version: 1.0
 Architectures: amd64 armhf arm64
 Components: main
-Date: Mon, 09 Mar 2026 22:50:03 +0000
+Description: Amateur Radio Digital Voice packages for Debian bookworm
+Date: Mon, 09 Mar 2026 22:59:27 +0000
 MD5Sum:
- 0f2a424d3555d5ee8d3bc7040ed5251d 5962 main/binary-armhf/Packages.gz
- 9fbc24115cd1603184d74443cb1c37aa 35118 main/binary-armhf/Packages
- c790b460900ba2f347a496b8c71fd738 5941 main/binary-arm64/Packages.gz
- 7b48ee5d74e9640e9927de8fb3065372 35118 main/binary-arm64/Packages
- 8c9e9350d89572dae393e6a1aa91c39e 5711 main/binary-amd64/Packages.gz
- 76936cfcbc564042b7b0bafc460506a7 33558 main/binary-amd64/Packages
+ 49a5c68587b81c62b59ef6424f43c655 5958 main/binary-armhf/Packages.gz
+ e5f8a54b7771e13393c363f7f279c16a 35118 main/binary-armhf/Packages
+ cf8c38400f738890f54d4f1955713e90 5947 main/binary-arm64/Packages.gz
+ ba21db069b118f16d49d4580b680d997 35118 main/binary-arm64/Packages
+ 84e99bcee6822f04f733e5ac4588272a 5714 main/binary-amd64/Packages.gz
+ d7d91d8b71a87dd3862f6af4d73a191d 33558 main/binary-amd64/Packages
 SHA256:
- 956907f0c6c0d4a31b4c7d5a6f0b1cc58f0fe62c40b400360bb9855626900cdb 5962 main/binary-armhf/Packages.gz
- 16e75fa51b5190c2d615557168ac586245c844b393f2da576b9d06ad69f8f496 35118 main/binary-armhf/Packages
- 5a15785d4abbe2706e0681b5b3b4a77f3aca2ff807ff1e33aab7af4043b59900 5941 main/binary-arm64/Packages.gz
- 0e8409602c2e461d75ac9efcefd515f1fc053a835a7628cc484e1155b8db078d 35118 main/binary-arm64/Packages
- 3b4288ca2eb02003fb9bb26710a2cc7b29ea8a6d31f6a379c46cccf100525c6b 5711 main/binary-amd64/Packages.gz
- a308e57029605212fad72ae0f638cfa1f031a1f7e426950dd59719185ef3b4ea 33558 main/binary-amd64/Packages
+ ad3954d908827af9ca00823a97005b387a1e26d65c8299f7b07e14bf3c39cbce 5958 main/binary-armhf/Packages.gz
+ 710b6db6225232edfd815e22f47dac6df514d498a82924865ef64905b26eee4f 35118 main/binary-armhf/Packages
+ 9f6991ae014a39c0fd94ea1fe45e18da8d0e9a688e1dddedf9392fcaa4d460a9 5947 main/binary-arm64/Packages.gz
+ 3e95d7836eaf1dc290c2496d4afb1e8896588f5733ea7b0800ba300fbb4ad5fb 35118 main/binary-arm64/Packages
+ 00e963a07019546ea44e12166962fea1d723384dc7d489915e96466cb133ace7 5714 main/binary-amd64/Packages.gz
+ 5f4ac37daac42bbbe4bce6a117c5e460344d69fc781f136b01659cd9335e3167 33558 main/binary-amd64/Packages
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCgAdFiEEwSrrXjspA+i6MsGAzeIzmBVRrGEFAmmvTpsACgkQzeIzmBVR
-rGHEoxAAhPTiHOW5FBb9BA20T9RjAAjEED4pvkB1NLxFaQaX5yS7Z5QjHz8cpo88
-GohIu5qH+0IFVMa3ursMQ2nl2BkL1bLQONFAGLZ84qHSdEDxkOkAh5iiu78DgiWo
-4zKkzpZ8P4PsHmt8E+ZHo9bJIjqeY0cfxNHvQnrc251C5yCxwZx+4DA0iJTYp4g2
-Up9xbGO+VpgV5x7gyIz5AWHYkyFVKipkj3bgDnF58juWhDvqeqC3ZV2tXN6i2Q5x
-RQBAEN97G4Fn7tuKk9mvX+/Dq+8kDAAhi96TXCirKaXDbl0lkfhwQmf01p+mY3s5
-DUkhiDZh2Vf0JRUFyG9by2daO4Vv/VC9xPzKgbDwA/mfO6QCTq+t50KjyzxUH+oe
-j48zGCrV+koXS+xKC4MYOz+kay2vuzvZzIlyCWzsc/ANIGFEKCg4SUu747TbNYm+
-UgDdqMTBvyqc2QZXbr05e8cSBFmmg9PJ13IAllpyRksJWQOejDO20LS5ob/l8eZ7
-sfwSaQtJjC1SJW/VD7p0UnZj0FI1wDLy44/VpaGqmvckhrVgnU2Y1LinUOjHhiT1
-VgR1AatF2khJ7JltiT5/mh01ZCxzLzOn7Aj5obTgt/QEz0DTrrTL3/41awGxL94j
-9PS7CnaYAfwwlmI5by5/uhH9mMW+i6ogHoNvL+qv0wC29yMsuP0=
-=1x6M
+iQIzBAEBCgAdFiEEwSrrXjspA+i6MsGAzeIzmBVRrGEFAmmvUM8ACgkQzeIzmBVR
+rGG8+w//TZctT3OFoIYmMYj11CihvTd9T1s3iRmq3mokXiMSeWVldrNut5flp56q
+6+vRjoCSKHru0DRnBWTDl1X2C3ITn8CezNJoVIUle4aZ8dBlHHEjg7t/IL3doLYi
+3eda0z4qMQYnO/15mwDczMVeDHm/U+pgRgMTSe+GLhJJK22aoxVLorNLJT1deS5+
+WMdB7aaX17RCdGthPxwxQBIB5nQ7HKe9w3cofT/r2TOmpcYOtmRG1PEAYkyYWsv2
+JPVJKgkIomnbf95qSR3oFjCbmvAVc6719sYej2cMdg62I6cWakQr4POHA9nMqSTn
+l2z6f/axLRYhlVLwoHCd+riQFCBdRjkzPa7i+zmwo4TFUjyBELIGB9TzzuNuFuH/
+RYGLerH9csYw6v1YnvlciisCRUzyZiwQ3CqAZZjJgumRZNuAXAzXnJrL1gFRRiiN
+BTDts3GAKB3ezQh7xNJvBrKQ7TRdwGQeJYzBI8/XEY4LrvuAouN+CzFzp9yXupUO
+Dwta/V0glFfadzFp1iDMtruWwXW4YGkaAqBnbHgagVQWEc+k6ah9/5+/BNKVuk2f
+iudAhGD3xEHjz01cN6KzwGIoZeGxsOoWAcK4Un6xr58P22H/TX0rWXEqFIQTi08I
+1R35nzNTlQzgfDOCkTt2B6/yAH5aplaQ56gErhZFS4QQAJvUV04=
+=0nwb
 -----END PGP SIGNATURE-----
