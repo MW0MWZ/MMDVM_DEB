@@ -197,16 +197,16 @@ Description: The wiringPi libraries, headers and gpio command
 Uploaders: Grazer Computer Club - GC2 <wiringpi@gc2.at>
 
 Package: ysfclients
-Version: 2026.03.08-0~deb13u1
+Version: 2026.03.08-1~deb13u1
 Architecture: arm64
 Maintainer: MW0MWZ <andy@mw0mwz.co.uk>
 Depends: libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11), libmosquitto1t64
 Recommends: ntp | chrony
-Filename: pool/main/y/ysfclients/ysfclients_2026.03.08-0~deb13u1_arm64.deb
-Size: 4407632
-MD5sum: cda5b2834df11ca49ca2544008f4386f
-SHA1: 2ea934ad8e3fbedc38341537ce35349b9e1e5e00
-SHA256: a7c7cbb3158cdce6daf735b909522f95a544f07307f4bdee19ad34fa8d814245
+Filename: pool/main/y/ysfclients/ysfclients_2026.03.08-1~deb13u1_arm64.deb
+Size: 4407792
+MD5sum: fd251cd828eca09a336af8c79dfee801
+SHA1: 6cf09b28c0ab0ec753f7f3cb84f7fea05048ffad
+SHA256: 11ed21a95d4c8b2b6353d883a0b1f69c6f818ea8df1a203fc0476b88a65d3194
 Section: hamradio
 Priority: optional
 Homepage: https://github.com/g4klx/YSFClients

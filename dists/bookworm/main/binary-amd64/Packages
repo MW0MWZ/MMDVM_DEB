@@ -192,16 +192,16 @@ Description: GPIO Interface library for Raspberry Pi (dummy package)
  but provides no actual functionality.
 
 Package: ysfclients
-Version: 2026.03.08-0~deb12u1
+Version: 2026.03.08-1~deb12u1
 Architecture: amd64
 Maintainer: MW0MWZ <andy@mw0mwz.co.uk>
 Depends: libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11), libmosquitto1
 Recommends: ntp | chrony
-Filename: pool/main/y/ysfclients/ysfclients_2026.03.08-0~deb12u1_amd64.deb
-Size: 4670792
-MD5sum: af0ff6e8de8bd8fe6dd279feea0290ce
-SHA1: 36112d4ac75b950104586812bec4da58407434e5
-SHA256: c499274eac511859efac237d5379f5784723d6ad9e41559fd4fd346bb389b920
+Filename: pool/main/y/ysfclients/ysfclients_2026.03.08-1~deb12u1_amd64.deb
+Size: 4669132
+MD5sum: efcaf28659b86d1dc04230bd60e0a87a
+SHA1: c8a5e0ac83ab8b30f7cd91e1ee8a391431e00a2c
+SHA256: ed2c632fe84d8482880aa01a519d4f15cddfd8e27c6a7d2bb8b2ab85d1a5784b
 Section: hamradio
 Priority: optional
 Homepage: https://github.com/g4klx/YSFClients
