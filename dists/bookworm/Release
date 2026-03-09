@@ -4,18 +4,18 @@ Suite: bookworm
 Codename: bookworm
 Architectures: amd64 armhf arm64
 Components: main
-Date: Mon, 09 Mar 2026 21:04:40 +0000
+Date: Mon, 09 Mar 2026 22:33:49 +0000
 MD5Sum:
- 70609745b970f4f71c804f0a18d8ddb4 5653 main/binary-armhf/Packages.gz
- 38d50d296dd300138b374152387927d9 32648 main/binary-armhf/Packages
- fa43575115bbc4f0c56dbc89e2923235 5636 main/binary-arm64/Packages.gz
- a59fb06c0e984ed067ba12a0eb23628d 32648 main/binary-arm64/Packages
- 9d86ccb2f3499d18d915dd320894dc1b 5414 main/binary-amd64/Packages.gz
- 92cb77cb377966ce688c41d9557bdbb3 31086 main/binary-amd64/Packages
+ 34d0004ac0a54b58438e9718e9036c8f 5734 main/binary-armhf/Packages.gz
+ f992cc0cb09f52d1a0c6556cc6a1d46d 33400 main/binary-armhf/Packages
+ 6b937e88fff36bb2d47e3b222d76621c 5717 main/binary-arm64/Packages.gz
+ fe6df8d13cfd0a15031480e6a206e659 33400 main/binary-arm64/Packages
+ ea5d2c40c8756e8c190466ec25bd006f 5500 main/binary-amd64/Packages.gz
+ a06a0242f41dae0782cc559fb29ff3b6 31840 main/binary-amd64/Packages
 SHA256:
- 7f4290034acd44ee6944d91e918972eba09293b2943e4a4b3fbfc97c97b11b11 5653 main/binary-armhf/Packages.gz
- c8c4bf2fb10d70ee6cda098a73c0ea799ffb878bf3babb973e94bf0c6092b53f 32648 main/binary-armhf/Packages
- f43218228af5e2e2d6c347ab8aba9b20652a63a0687509de1ff8582fca04b86d 5636 main/binary-arm64/Packages.gz
- d41f7bbaefabe38f1e6221c5b6fa980882c006d368716f8cf3b580a3d65fd28b 32648 main/binary-arm64/Packages
- d46765db334e727ebfa40e9d7b373e07cb778660a2ab20841e64292f78500b38 5414 main/binary-amd64/Packages.gz
- ae9dc1cd31ea9b07868bfed6fe1fc5e9de35283e808f86c8ebc1b09e8d5c20a4 31086 main/binary-amd64/Packages
+ f50ae8b78a221cac787dceb8401ef8c94e99832f17c4ee7a49d09a8289c4f74c 5734 main/binary-armhf/Packages.gz
+ 542167608629412a375fdc3ed53ae0314f7c833a0442bd4bcad62d87d98d7903 33400 main/binary-armhf/Packages
+ dfd5710151043b1cde8022a6779b3044f021c2b8ac8a388367217be3f4861f2a 5717 main/binary-arm64/Packages.gz
+ b5fbe342176722c2bf4db5f2fbdf820ea08e2861e702cf202a19980477cefe52 33400 main/binary-arm64/Packages
+ d0bb0c0a0a9b8863c6df80f1ef26db773b3db7fdc749ff09608c04efcebb9036 5500 main/binary-amd64/Packages.gz
+ 221913ec11115f2e47d1114e4f58c5d7739f9afa148820815a1c1ed09d009d75 31840 main/binary-amd64/Packages

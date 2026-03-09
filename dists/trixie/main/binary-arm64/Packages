@@ -53,6 +53,24 @@ MD5sum: d300ae1061ac6031a800914f41c0dc4f
 SHA256: e068784cc4f074f21871881462f281dd61dc442b5edbe7b60f1f309972ff3a31
 
 Package: pi-star
+Version: 2026.03.09-1~deb13u1
+Section: hamradio
+Priority: optional
+Architecture: arm64
+Depends: mosquitto, mmdvmhost, dmrclients, dstarclients, ysfclients, nxdnclients, p25clients, fmclients, aprsclients, pocsagclients, dstarrepeater
+Maintainer: MW0MWZ <andy@mw0mwz.co.uk>
+Description: Pi-Star MCP — web dashboard and process supervisor
+ Single Go binary that serves the Pi-Star web dashboard and manages
+ all amateur radio digital voice services (MMDVMHost, gateways, bridges).
+ .
+ Built for Debian trixie
+Homepage: https://pistar.uk
+Filename: pool/main/p/pi-star/pi-star_2026.03.09-1~deb13u1_arm64.deb
+Size: 3026948
+MD5sum: 01971180f5533529c9a148c254ab5ed0
+SHA256: b9b84a7cc8609bb205999cbd8b47c3aecc7fd23f4a100c09d27564e406cc1ebb
+
+Package: pi-star
 Version: 2026.03.08-4~deb13u1
 Section: hamradio
 Priority: optional
@@ -691,7 +709,6 @@ Description: The wiringPi libraries, headers and gpio command
   programs as well as from the command-line
 Homepage: https://github.com/WiringPi/WiringPi
 Bugs: https://github.com/WiringPi/WiringPi/issues
-
 Filename: pool/main/w/wiringpi/wiringpi_3.18-0~deb13u1_arm64.deb
 Size: 73108
 MD5sum: 3d58642b3cf8a7242235cfc0f994c446
@@ -710,7 +727,6 @@ Description: The wiringPi libraries, headers and gpio command
   programs as well as from the command-line
 Homepage: https://github.com/WiringPi/WiringPi
 Bugs: https://github.com/WiringPi/WiringPi/issues
-
 Filename: pool/main/w/wiringpi/wiringpi_3.16-0~deb13u1_arm64.deb
 Size: 73040
 MD5sum: 94d41b4274e0a9412bc5f916ccf13c2f
