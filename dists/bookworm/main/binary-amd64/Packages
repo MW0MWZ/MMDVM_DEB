@@ -177,10 +177,10 @@ Version: 3.18-0~deb12u1
 Architecture: amd64
 Maintainer: MW0MWZ <andy@mw0mwz.co.uk>
 Filename: pool/main/w/wiringpi/wiringpi_3.18-0~deb12u1_amd64.deb
-Size: 2044
-MD5sum: 8c090f3b7c86d446329b82eeb06af1fd
-SHA1: 7f5a424afe259882e93e17762aadbc423dfde0e7
-SHA256: ad07007e5951f45ae8594acdcd90dd71a829a100e3dd8d222dec77081a3f561e
+Size: 2036
+MD5sum: 1ff1cb85b70605a80e91fd0872263e3a
+SHA1: 1e64577d2325a975a7c934110713e2cc4d18a7cb
+SHA256: 44408625319588361f922b83a2d3380d5a69bff186f31af915478524205784f8
 Section: libs
 Priority: optional
 Homepage: https://github.com/WiringPi/WiringPi

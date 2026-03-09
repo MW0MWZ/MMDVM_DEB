@@ -184,10 +184,10 @@ Bugs: https://github.com/WiringPi/WiringPi/issues
 Maintainer: MW0MWZ <andy@mw0mwz.co.uk>
 Depends: libc6
 Filename: pool/main/w/wiringpi/wiringpi_3.18-0~deb12u1_arm64.deb
-Size: 72440
-MD5sum: 01feae3d4cc55d10a6f04e69afb5e7a4
-SHA1: 6aaae34c7b4b51ddd56e8ebd4b5930e93c17a6e3
-SHA256: ff2655ccc53c9a90d38da7e604894a630fe5f5e1be362603af62d0576a1a87c6
+Size: 72528
+MD5sum: 54443cc7ef1130481f8c7a47b523c828
+SHA1: 4fe3bb61bb3d7c45878813390e36ec8cbf61c6ca
+SHA256: 728a121af529f5c761620f619b150b28a0d25db134570cb5a6ba463d2875bc3e
 Section: libraries
 Priority: optional
 Homepage: https://github.com/WiringPi/WiringPi
