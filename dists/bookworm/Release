@@ -4,18 +4,18 @@ Suite: bookworm
 Codename: bookworm
 Architectures: amd64 armhf arm64
 Components: main
-Date: Mon, 09 Mar 2026 19:18:07 +0000
+Date: Mon, 09 Mar 2026 20:09:55 +0000
 MD5Sum:
- c32bbca165a16ea897fa88251b53d24d 5487 main/binary-armhf/Packages.gz
- 60fd65f32cf70c4f4057fc182086ca20 31140 main/binary-armhf/Packages
- a7f5adb5eaa5771f79547fd66cd4e8ac 5479 main/binary-arm64/Packages.gz
- d1851186a2bcfd3898e0e97b84c7b06a 31140 main/binary-arm64/Packages
- 6456fcdfa2c4958e4cdfc6ab57f0c2de 5251 main/binary-amd64/Packages.gz
- d41996a16f5679bc1781207702ff2898 29578 main/binary-amd64/Packages
+ 1fb507ed836d0a5b8e7462c27d9eeb02 5569 main/binary-armhf/Packages.gz
+ 744738ca03e78f48ddf140c700b3adfd 31894 main/binary-armhf/Packages
+ 82fd31615eeb8bf84ad1bb6206617c48 5558 main/binary-arm64/Packages.gz
+ 78bec4972b773155ca04a555f27e06d3 31894 main/binary-arm64/Packages
+ e5bb7e516589bfd333f742e9444212fa 5337 main/binary-amd64/Packages.gz
+ 6e88abd6e4fe94e94d7c8440e421ab14 30332 main/binary-amd64/Packages
 SHA256:
- 6cdda7101ea56607e3b71929b0c338ff01a3cb74d0ee5727db918378a914e945 5487 main/binary-armhf/Packages.gz
- 29e59357cbd63b169f92e179a807b94a554e27cdfbc183ac0795c8ae9e3fe438 31140 main/binary-armhf/Packages
- 8efbfc46cd1653dd42b5e654457a6b4d2e9952a96a8de70a572a6ed6a43f85f3 5479 main/binary-arm64/Packages.gz
- 38eaeda87da53c6d253706597cfadebe1cd8924fc0dd9731291cbbb272c455e1 31140 main/binary-arm64/Packages
- d2cf3c4e5a333551f0c45d2bca7189b6e9aacee782c7f1dd6c078532b2407064 5251 main/binary-amd64/Packages.gz
- 726a2b8bf9377bd520deac39370eee94802c4d1fd0ece8097c0bba0d01eb7aac 29578 main/binary-amd64/Packages
+ e196d7a0c2dc773502e81648a8a5b2e30757be0db88b79a3b3b4f29c09b4ac65 5569 main/binary-armhf/Packages.gz
+ df3b5e7d6fc17085e93e7704cf2f72675bedc500a4f3ccaca17764b4bfda3736 31894 main/binary-armhf/Packages
+ edf7971e10cb8739b69165a4fb7c4cb28a4303f3d3fa135db3d28a88c230f8e6 5558 main/binary-arm64/Packages.gz
+ 2a2685e84fa7ea20184846fc2ec780b6d7d6f50589dc9e6f0f25b2adafeda242 31894 main/binary-arm64/Packages
+ ebc6d1291e62b0284ab6cc875a78aee2635601119abe29b2a0fe0e28b8df3ce4 5337 main/binary-amd64/Packages.gz
+ 2462adb4f6abeb39847a62dcbb4d07611a1a03195b5d23e6ae8bbf1d031039ee 30332 main/binary-amd64/Packages
