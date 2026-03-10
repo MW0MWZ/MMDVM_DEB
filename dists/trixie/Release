@@ -6,18 +6,18 @@ Version: 1.0
 Architectures: amd64 armhf arm64
 Components: main
 Description: Amateur Radio Digital Voice packages for Debian trixie
-Date: Tue, 10 Mar 2026 09:57:26 +0000
+Date: Tue, 10 Mar 2026 11:00:27 +0000
 MD5Sum:
- 35307663e73a6e4ed460b155dd0417f1 6759 main/binary-armhf/Packages.gz
- 45ac00b92495fef252cf05e12b096b7d 42103 main/binary-armhf/Packages
- 68241f091e46108842925304af81460b 6766 main/binary-arm64/Packages.gz
- 20469c60aceb612b2a34a0d6bcd4cae4 42103 main/binary-arm64/Packages
- 6b7c31ce067b5248ac13a3ad9d2d3abd 6530 main/binary-amd64/Packages.gz
- d0f33a06c9cebaf686a5f6287b45b0ed 40593 main/binary-amd64/Packages
+ 3fbfca3a0630ec1f36d48754217b44b3 6836 main/binary-armhf/Packages.gz
+ 5338ecf0cd5eb466e78448ed0f447f94 42855 main/binary-armhf/Packages
+ 46d3ed99271f08a2c9ff49123bf85c99 6836 main/binary-arm64/Packages.gz
+ 1529bec48d056dd4147dbbd293ddc011 42855 main/binary-arm64/Packages
+ e9394ee03cf97eddeac4b574f621175f 6606 main/binary-amd64/Packages.gz
+ 0ad5b4ab589768442024ae42e208ccd4 41345 main/binary-amd64/Packages
 SHA256:
- 95aea5beda424cff67ec3e1dc6ea03c6f8aadebfae721ee4d5166ab17f200888 6759 main/binary-armhf/Packages.gz
- ec254f1f10635d51e28820d7ae0a6114bac7ec82525d2921df80e40cb908f1e0 42103 main/binary-armhf/Packages
- 8093b6914457f761d53635a2dbd11f15bc2204ab989c7ec6cc9f89bfc5306262 6766 main/binary-arm64/Packages.gz
- c258d796dd5ba2d29ada85f661a37e519f5c90fd41f42fd7f13ac7bf3cadf3b0 42103 main/binary-arm64/Packages
- ab872a4c2f3c2bdc1470e3a19ab8bc9c2adb5b79e400bc3f0c9c7e50f1effd50 6530 main/binary-amd64/Packages.gz
- cb2c8dfe01370ada4757a81d9fb676485f51482b4a89f12e46e3ce7218138c3f 40593 main/binary-amd64/Packages
+ d497490056e8356ced408dcd7c2feac4bb846e78606ecc5f9537b42adb79bbfb 6836 main/binary-armhf/Packages.gz
+ 42c60a4f8c65eadcbd425d2787a6473772c499b1ce32295723fc0035517847c1 42855 main/binary-armhf/Packages
+ 139abb2fa71e27d37816399f66ba64f4657986beef805d9b36d6cd7e220e07db 6836 main/binary-arm64/Packages.gz
+ a3777d77e2038754692e26092a1c293dd9e9e859196c184ace72d35f5080da3a 42855 main/binary-arm64/Packages
+ 0844364715a2d355b89eb2281ffb05343ec7c58c99072912dcfaf63f8e6e0d5c 6606 main/binary-amd64/Packages.gz
+ fa96a758eb9b9a67a3ce14806ec1f4e11721f398ff3c88e273887206bc7fb7bd 41345 main/binary-amd64/Packages
