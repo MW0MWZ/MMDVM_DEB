@@ -6,18 +6,18 @@ Version: 1.0
 Architectures: amd64 armhf arm64
 Components: main
 Description: Amateur Radio Digital Voice packages for Debian trixie
-Date: Tue, 10 Mar 2026 13:33:43 +0000
+Date: Tue, 10 Mar 2026 14:59:47 +0000
 MD5Sum:
- a3d5a0c6e0b13aae7e29d7841bf3bddd 7540 main/binary-armhf/Packages.gz
- c3d77735e5f0dab7a2029d64c0eef614 49633 main/binary-armhf/Packages
- dda62c8095c593b168e055b2ad1d37a0 7544 main/binary-arm64/Packages.gz
- a25cdefa3c566e0520b51d154e958a76 49633 main/binary-arm64/Packages
- c65309421ae6ff1045b3b783368019c5 7296 main/binary-amd64/Packages.gz
- 0cb111e9d4bd770e0e056d716c323964 48123 main/binary-amd64/Packages
+ 8638c337fac7894b9bf4e732b3b0ab34 7619 main/binary-armhf/Packages.gz
+ b5eeaf086193b43cded0eb3759659c12 50387 main/binary-armhf/Packages
+ bdb9117de7c705b758c17b1bda9e1241 7622 main/binary-arm64/Packages.gz
+ 693792c886082475b7364ac8638224f1 50387 main/binary-arm64/Packages
+ 57780a2798ba178b762c4f241862c004 7377 main/binary-amd64/Packages.gz
+ d94a25060f4ef4010501f27b09b9aee8 48877 main/binary-amd64/Packages
 SHA256:
- 9bd4a32b1acff40fbe12ad28a6d3013df49a3f8d6a9e596217e666afe5543570 7540 main/binary-armhf/Packages.gz
- cb47d0c4acdb8d1c45e882da93975eb0ab343791390a78e507251040b5019e61 49633 main/binary-armhf/Packages
- fca8bf7f6463138d45812a7c78496b2acadb1119254655b64751f6d06ac2ae07 7544 main/binary-arm64/Packages.gz
- c131125d9b4aeda6f5d2c80473ffd435bc53b6b8abda4ead44b80897ae4a395f 49633 main/binary-arm64/Packages
- 934d64684f11bcaeda6f772c1eb0487d42ad614d3423872a188469a4e573f553 7296 main/binary-amd64/Packages.gz
- 6be7ad7f5df9ad020a89ee5421f61898597bb055ee6b03cb1d84af3bf6fab8cf 48123 main/binary-amd64/Packages
+ 079fc2a1ae9047a8bc0db8b4703267af13aebdecf910e62aac23072731fba228 7619 main/binary-armhf/Packages.gz
+ 35adcfea272641c80b4c30b12364fc9c8c78bcdff0b80eea8bca860644e2699b 50387 main/binary-armhf/Packages
+ 7d7db164573b2db153e750a73e6b97bcb5521a5348d9b553bdb3654bab4be72e 7622 main/binary-arm64/Packages.gz
+ c8ae046ac21803b167a71b670738fcc19df8cc6f42edb9052845cd0856eda3c7 50387 main/binary-arm64/Packages
+ fd1e00014ff2382e51aa9e8b5838fa974aa829987034f7fd00664d8770866395 7377 main/binary-amd64/Packages.gz
+ 43f691017082110db770cdad6d91e464d1daf4a4bc55936b382dd4b1dc9ef033 48877 main/binary-amd64/Packages
