@@ -1,4 +1,22 @@
 Package: pi-star
+Version: 2026.03.10-11~deb12u1
+Section: hamradio
+Priority: optional
+Architecture: amd64
+Depends: mosquitto, mmdvmhost, dmrclients, dstarclients, ysfclients, nxdnclients, p25clients, fmclients, aprsclients, pocsagclients, dstarrepeater
+Maintainer: MW0MWZ <andy@mw0mwz.co.uk>
+Description: Pi-Star MCP — web dashboard and process supervisor
+ Single Go binary that serves the Pi-Star web dashboard and manages
+ all amateur radio digital voice services (MMDVMHost, gateways, bridges).
+ .
+ Built for Debian bookworm
+Homepage: https://pistar.uk
+Filename: pool/main/p/pi-star/pi-star_2026.03.10-11~deb12u1_amd64.deb
+Size: 3537008
+MD5sum: 1d5e3388b52476e4136fbb4fcb29d742
+SHA256: 1d51d2ff8e7f9d8c7febceccecba0c35b7e4a0223cfbb397150336155d3cc38c
+
+Package: pi-star
 Version: 2026.03.10-7~deb12u1
 Section: hamradio
 Priority: optional
