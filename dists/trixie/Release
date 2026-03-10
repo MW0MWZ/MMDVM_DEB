@@ -6,18 +6,18 @@ Version: 1.0
 Architectures: amd64 armhf arm64
 Components: main
 Description: Amateur Radio Digital Voice packages for Debian trixie
-Date: Tue, 10 Mar 2026 09:50:23 +0000
+Date: Tue, 10 Mar 2026 09:57:26 +0000
 MD5Sum:
- cf8e23f4e7b0db344f78b1f34acf8ba7 6680 main/binary-armhf/Packages.gz
- 91f64b0a09d0600f6a4b7f64f57b6081 41351 main/binary-armhf/Packages
- e1164cd97a381958c600caf0499f4ed8 6689 main/binary-arm64/Packages.gz
- 16cf9acffa6a2d01a3f536c2117a877d 41351 main/binary-arm64/Packages
- 7d613fce261ff098e8a7db3b0268a1ca 6450 main/binary-amd64/Packages.gz
- 11c96c1b2ebd64136ec03679795d2c7f 39841 main/binary-amd64/Packages
+ 35307663e73a6e4ed460b155dd0417f1 6759 main/binary-armhf/Packages.gz
+ 45ac00b92495fef252cf05e12b096b7d 42103 main/binary-armhf/Packages
+ 68241f091e46108842925304af81460b 6766 main/binary-arm64/Packages.gz
+ 20469c60aceb612b2a34a0d6bcd4cae4 42103 main/binary-arm64/Packages
+ 6b7c31ce067b5248ac13a3ad9d2d3abd 6530 main/binary-amd64/Packages.gz
+ d0f33a06c9cebaf686a5f6287b45b0ed 40593 main/binary-amd64/Packages
 SHA256:
- c24314953871bcdb921495169d9f7b44bc8e5fc423c40d029f92ac4f324fc459 6680 main/binary-armhf/Packages.gz
- 2de869fd5b713e42734755e0dfba1b80f189c161e341c2bbba6fa887a98c3e67 41351 main/binary-armhf/Packages
- 94b890508a89c7603fa3e930fcf18e433c2381be3a838a8db576280a0c03c273 6689 main/binary-arm64/Packages.gz
- eb62dce1bb22340c92babe265c69c7e03ea4de9247613cd5778f0b17b030a509 41351 main/binary-arm64/Packages
- b68a87eb73226d4a59b319cdae16a019487b960506a298d1f5cdef0884cd28f8 6450 main/binary-amd64/Packages.gz
- 35610c28c415e71dc9a731e20c145c8d166347c80050e52be010b3839bb14b4d 39841 main/binary-amd64/Packages
+ 95aea5beda424cff67ec3e1dc6ea03c6f8aadebfae721ee4d5166ab17f200888 6759 main/binary-armhf/Packages.gz
+ ec254f1f10635d51e28820d7ae0a6114bac7ec82525d2921df80e40cb908f1e0 42103 main/binary-armhf/Packages
+ 8093b6914457f761d53635a2dbd11f15bc2204ab989c7ec6cc9f89bfc5306262 6766 main/binary-arm64/Packages.gz
+ c258d796dd5ba2d29ada85f661a37e519f5c90fd41f42fd7f13ac7bf3cadf3b0 42103 main/binary-arm64/Packages
+ ab872a4c2f3c2bdc1470e3a19ab8bc9c2adb5b79e400bc3f0c9c7e50f1effd50 6530 main/binary-amd64/Packages.gz
+ cb2c8dfe01370ada4757a81d9fb676485f51482b4a89f12e46e3ce7218138c3f 40593 main/binary-amd64/Packages
