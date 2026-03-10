@@ -6,18 +6,18 @@ Version: 1.0
 Architectures: amd64 armhf arm64
 Components: main
 Description: Amateur Radio Digital Voice packages for Debian bookworm
-Date: Tue, 10 Mar 2026 11:49:02 +0000
+Date: Tue, 10 Mar 2026 11:54:49 +0000
 MD5Sum:
- 231d8af327570dce582f109f54ff660d 7136 main/binary-armhf/Packages.gz
- 1d94e952380ecdd0b9c096f4f0371c7f 45834 main/binary-armhf/Packages
- 21f74e7f4bfee4b4ecd441c2ee1ddd11 7142 main/binary-arm64/Packages.gz
- 2b187f343cf2adb022d29f5c5aae8a41 45834 main/binary-arm64/Packages
- 336ed0cb29f7f7607057be78c9d1e684 6896 main/binary-amd64/Packages.gz
- 98dc7c8909398b82d28802c8b6555e78 44324 main/binary-amd64/Packages
+ 26e81d2f391f14007e461979ea93f9d2 7217 main/binary-armhf/Packages.gz
+ 4047fda92ec51e6d25d33ab1a52566f9 46590 main/binary-armhf/Packages
+ 7456e5ad4227af0480eafead199b277a 7216 main/binary-arm64/Packages.gz
+ cebb171719ebdc3409077d70acfb6222 46590 main/binary-arm64/Packages
+ 1daf9bcba48383a01ab5c297825718d1 6983 main/binary-amd64/Packages.gz
+ dc0f3db5e2bac05d6f577787b952ce2c 45080 main/binary-amd64/Packages
 SHA256:
- 2e1888356f0872ba99a8f6f7bac7401996b5b28dda54d0ae8361e27baad41925 7136 main/binary-armhf/Packages.gz
- c58c0c17038bbadbaeb99a45df1b0383dd243d4315a069b7b528952e75913ce5 45834 main/binary-armhf/Packages
- 5a418e224cd635a50a2de26f2a70db87f18a21ba159b936ba260da44675931d2 7142 main/binary-arm64/Packages.gz
- 5440713ec2932bf2de9d6c404d83c4c9a39dcdcf64cf08970037aadfe96a13f9 45834 main/binary-arm64/Packages
- cff2ba0f8d420d1b763892a02273707dc8a85014708d154fe2f1d4903127d135 6896 main/binary-amd64/Packages.gz
- 6e74fe4d11b7ad892a637918841e682d769051ded4aefba16b71e96980eaf82c 44324 main/binary-amd64/Packages
+ 689b874b29a9ebec1412c5799ccc83e68eaf1973266ef48d4c57cd6e380f6f27 7217 main/binary-armhf/Packages.gz
+ cea48f39a3f3984faf0dee7050b1bbd515be7f1c9044edf56cfe13f6897fabee 46590 main/binary-armhf/Packages
+ 27dae53a1ff212f15e8c96416d22975470436fb70b7970441eca47663fad4fdc 7216 main/binary-arm64/Packages.gz
+ 1722be725aac6c90b1f882805d49a95437a8bc6cbdf6a67d5c5b33216a19b4f1 46590 main/binary-arm64/Packages
+ dda2a5e7afc160b029673b090864db82433e50dd1637b889291fca255cab4443 6983 main/binary-amd64/Packages.gz
+ b828ec71cbea358382a9411af6f063967b97096da32ddaf398f775dc9442505f 45080 main/binary-amd64/Packages
