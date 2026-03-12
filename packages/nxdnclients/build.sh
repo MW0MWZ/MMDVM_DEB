@@ -130,8 +130,9 @@ create_package() {
     fi
     if [ -f "NXDNGateway/NXDNGateway.ini" ]; then
         cp "NXDNGateway/NXDNGateway.ini" "$PKG_DIR/etc/nxdnclients/NXDNGateway.ini"
+        cp "NXDNGateway/NXDNGateway.ini" "$PKG_DIR/etc/nxdnclients/NXDNGateway.ini.example"
     fi
-    
+
     # NXDNParrot
     if [ -f "NXDNParrot/NXDNParrot" ]; then
         cp "NXDNParrot/NXDNParrot" "$PKG_DIR/usr/bin/"
@@ -139,8 +140,9 @@ create_package() {
     fi
     if [ -f "NXDNParrot/NXDNParrot.ini" ]; then
         cp "NXDNParrot/NXDNParrot.ini" "$PKG_DIR/etc/nxdnclients/NXDNParrot.ini"
+        cp "NXDNParrot/NXDNParrot.ini" "$PKG_DIR/etc/nxdnclients/NXDNParrot.ini.example"
     fi
-    
+
     # Copy data files
     for datafile in NXDNHosts.txt NXDNIds.dat; do
         for dir in NXDNGateway NXDNParrot; do
@@ -163,8 +165,9 @@ create_package() {
     fi
     if [ -f "NXDN2DMR/NXDN2DMR.ini" ]; then
         cp "NXDN2DMR/NXDN2DMR.ini" "$PKG_DIR/etc/nxdnclients/NXDN2DMR.ini"
+        cp "NXDN2DMR/NXDN2DMR.ini" "$PKG_DIR/etc/nxdnclients/NXDN2DMR.ini.example"
     fi
-    
+
     # Copy ID files
     for id_file in DMRIds.dat NXDNIds.dat TGList_BM.txt; do
         if [ -f "NXDN2DMR/$id_file" ]; then
@@ -246,17 +249,11 @@ EOF
     
     # Set dependencies based on Debian version
     case "$DEBIAN_VERSION" in
-        bullseye)
-            DEPENDS="libc6 (>= 2.31), libgcc-s1 (>= 3.0), libstdc++6 (>= 5.2)"
-            ;;
-        bookworm)
-            DEPENDS="libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11)"
-            ;;
         trixie)
-            DEPENDS="libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11)"
+            DEPENDS="libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11), libmosquitto1t64"
             ;;
         *)
-            DEPENDS="libc6 (>= 2.31), libgcc-s1 (>= 3.0), libstdc++6 (>= 5.2)"
+            DEPENDS="libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11), libmosquitto1"
             ;;
     esac
     

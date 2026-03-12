@@ -163,8 +163,9 @@ create_package() {
     fi
     if [ -f "YSFGateway/YSFGateway.ini" ]; then
         cp "YSFGateway/YSFGateway.ini" "$PKG_DIR/etc/ysfclients/YSFGateway.ini"
+        cp "YSFGateway/YSFGateway.ini" "$PKG_DIR/etc/ysfclients/YSFGateway.ini.example"
     fi
-    
+
     # YSFParrot
     if [ -f "YSFParrot/YSFParrot" ]; then
         cp "YSFParrot/YSFParrot" "$PKG_DIR/usr/bin/"
@@ -172,8 +173,9 @@ create_package() {
     fi
     if [ -f "YSFParrot/YSFParrot.ini" ]; then
         cp "YSFParrot/YSFParrot.ini" "$PKG_DIR/etc/ysfclients/YSFParrot.ini"
+        cp "YSFParrot/YSFParrot.ini" "$PKG_DIR/etc/ysfclients/YSFParrot.ini.example"
     fi
-    
+
     # DGIdGateway
     if [ -f "DGIdGateway/DGIdGateway" ]; then
         cp "DGIdGateway/DGIdGateway" "$PKG_DIR/usr/bin/"
@@ -181,8 +183,9 @@ create_package() {
     fi
     if [ -f "DGIdGateway/DGIdGateway.ini" ]; then
         cp "DGIdGateway/DGIdGateway.ini" "$PKG_DIR/etc/ysfclients/DGIdGateway.ini"
+        cp "DGIdGateway/DGIdGateway.ini" "$PKG_DIR/etc/ysfclients/DGIdGateway.ini.example"
     fi
-    
+
     # Copy data files
     for datafile in YSFHosts.txt FCSHosts.txt FCSRooms.txt; do
         for dir in YSFGateway YSFParrot DGIdGateway; do
@@ -205,8 +208,9 @@ create_package() {
     fi
     if [ -f "YSF2DMR/YSF2DMR.ini" ]; then
         cp "YSF2DMR/YSF2DMR.ini" "$PKG_DIR/etc/ysfclients/YSF2DMR.ini"
+        cp "YSF2DMR/YSF2DMR.ini" "$PKG_DIR/etc/ysfclients/YSF2DMR.ini.example"
     fi
-    
+
     # YSF2NXDN
     if [ -f "YSF2NXDN/YSF2NXDN" ]; then
         cp "YSF2NXDN/YSF2NXDN" "$PKG_DIR/usr/bin/"
@@ -214,8 +218,9 @@ create_package() {
     fi
     if [ -f "YSF2NXDN/YSF2NXDN.ini" ]; then
         cp "YSF2NXDN/YSF2NXDN.ini" "$PKG_DIR/etc/ysfclients/YSF2NXDN.ini"
+        cp "YSF2NXDN/YSF2NXDN.ini" "$PKG_DIR/etc/ysfclients/YSF2NXDN.ini.example"
     fi
-    
+
     # YSF2P25
     if [ -f "YSF2P25/YSF2P25" ]; then
         cp "YSF2P25/YSF2P25" "$PKG_DIR/usr/bin/"
@@ -223,8 +228,9 @@ create_package() {
     fi
     if [ -f "YSF2P25/YSF2P25.ini" ]; then
         cp "YSF2P25/YSF2P25.ini" "$PKG_DIR/etc/ysfclients/YSF2P25.ini"
+        cp "YSF2P25/YSF2P25.ini" "$PKG_DIR/etc/ysfclients/YSF2P25.ini.example"
     fi
-    
+
     # Copy ID files
     for id_file in DMRIds.dat NXDNIds.dat TGList_BM.txt TGList_FCS.txt; do
         for dir in YSF2DMR YSF2NXDN YSF2P25; do
@@ -322,17 +328,11 @@ EOF
     
     # Set dependencies based on Debian version
     case "$DEBIAN_VERSION" in
-        bullseye)
-            DEPENDS="libc6 (>= 2.31), libgcc-s1 (>= 3.0), libstdc++6 (>= 5.2)"
-            ;;
-        bookworm)
-            DEPENDS="libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11)"
-            ;;
         trixie)
-            DEPENDS="libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11)"
+            DEPENDS="libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11), libmosquitto1t64"
             ;;
         *)
-            DEPENDS="libc6 (>= 2.31), libgcc-s1 (>= 3.0), libstdc++6 (>= 5.2)"
+            DEPENDS="libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11), libmosquitto1"
             ;;
     esac
     

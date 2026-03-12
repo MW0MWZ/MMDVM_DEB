@@ -28,7 +28,6 @@ on:
         type: choice
         options:
           - all
-          - bullseye
           - bookworm
           - trixie
       cleanup_after_build:
@@ -63,7 +62,7 @@ jobs:
         id: versions
         run: |
           if [ "${{ github.event.inputs.debian_version }}" = "all" ] || [ -z "${{ github.event.inputs.debian_version }}" ]; then
-            echo 'versions=["bullseye","bookworm","trixie"]' >> $GITHUB_OUTPUT
+            echo 'versions=["bookworm","trixie"]' >> $GITHUB_OUTPUT
           else
             echo 'versions=["${{ github.event.inputs.debian_version }}"]' >> $GITHUB_OUTPUT
           fi
@@ -149,7 +148,7 @@ jobs:
               SOURCE_REPO="https://github.com/g4klx/DStarRepeater.git"
               ;;
             dstarclients)
-              SOURCE_REPO="https://github.com/g4klx/ircDDBGateway.git"
+              SOURCE_REPO="https://github.com/g4klx/DStarGateway.git"
               ;;
             mmdvmhost)
               SOURCE_REPO="https://github.com/g4klx/MMDVMHost.git"
@@ -283,7 +282,7 @@ jobs:
           case "$DEBIAN_VERSION" in
             bullseye) DEBIAN_TAG="11" ;;
             bookworm) DEBIAN_TAG="12" ;;
-            trixie)   DEBIAN_TAG="testing" ;;
+            trixie)   DEBIAN_TAG="trixie" ;;
             *) DEBIAN_TAG="latest" ;;
           esac
           
@@ -316,26 +315,21 @@ jobs:
                 curl \
                 gnupg \
                 lsb-release \
-                file
+                file \
+                libmosquitto-dev \
+                nlohmann-json3-dev \
+                libsamplerate0-dev
               
               # Install package-specific dependencies
               case '$PACKAGE' in
                 dstarclients)
+                  # DStarGateway: no wxWidgets needed, just libcurl and boost headers
                   apt-get install -y --no-install-recommends libcurl4-openssl-dev libboost-dev || true
-                  if [ \"\$DEBIAN_VERSION\" = \"bullseye\" ]; then
-                    apt-get install -y --no-install-recommends libwxgtk3.0-gtk3-dev wx3.0-headers || true
-                  else
-                    apt-get install -y --no-install-recommends libwxgtk3.2-dev wx3.2-headers || true
-                  fi
                   ;;
                 dstarrepeater)
-                  # Similar dependencies to dstarclients but with USB and ALSA support
-                  apt-get install -y --no-install-recommends libusb-1.0-0-dev libasound2-dev || true
-                  if [ \"\$DEBIAN_VERSION\" = \"bullseye\" ]; then
-                    apt-get install -y --no-install-recommends libwxgtk3.0-gtk3-dev wx3.0-headers || true
-                  else
-                    apt-get install -y --no-install-recommends libwxgtk3.2-dev wx3.2-headers || true
-                  fi
+                  # USB, ALSA, wxWidgets, and MQTT support
+                  apt-get install -y --no-install-recommends libusb-1.0-0-dev libasound2-dev libmosquitto-dev || true
+                  apt-get install -y --no-install-recommends libwxgtk3.2-dev wx3.2-headers || true
                   
                   # For ARM, try to get wiringPi for GPIO support (same logic as mmdvmhost)
                   if [ '$ARCH' = 'armhf' ] || [ '$ARCH' = 'arm64' ]; then
@@ -447,10 +441,11 @@ jobs:
                   fi
                   ;;
                 mmdvmhost)
+                  # ARM: display hardware dependencies for Display-Driver (OLED + HD44780)
                   if [ '$ARCH' = 'armhf' ] || [ '$ARCH' = 'arm64' ]; then
                     apt-get install -y --no-install-recommends libi2c-dev i2c-tools || true
-                    
-                    # Install wiringPi if we can find it locally (built earlier in the workflow)
+
+                    # Install wiringPi for Display-Driver HD44780 support
                     echo 'Looking for locally built wiringPi package...'
                     WIRINGPI_DEB=\"\"
                     
@@ -563,8 +558,10 @@ jobs:
                   apt-get install -y --no-install-recommends libmd-dev || true
                   ;;
                 wiringpi)
-                  # WiringPi has minimal build dependencies
-                  # Just needs standard build tools which are already installed
+                  # On Trixie, crypt.h moved to libcrypt-dev (no longer in glibc headers)
+                  if [ '$DEBIAN_VERSION' = 'trixie' ]; then
+                    apt-get install -y --no-install-recommends libcrypt-dev || true
+                  fi
                   ;;
               esac
               
@@ -841,10 +838,18 @@ jobs:
             if [ "$CLEANUP_ORPHANED" = "true" ]; then
               echo ""
               echo "Checking for orphaned packages..."
-              
+
+              # Packages built by other workflows (not orphans)
+              EXTERNAL_PACKAGES="pi-star"
+
               find deploy/pool -name "*.deb" -type f | while read deb_path; do
                 pkg_name=$(basename "$deb_path" | cut -d'_' -f1)
-                
+
+                # Skip packages built by other workflows
+                if echo "$EXTERNAL_PACKAGES" | grep -q "\b$pkg_name\b"; then
+                  continue
+                fi
+
                 if ! echo "$CURRENT_PACKAGES" | grep -q "\b$pkg_name\b"; then
                   echo "  Removing orphaned package: $(basename "$deb_path")"
                   rm -f "$deb_path"
@@ -907,7 +912,10 @@ jobs:
               
               # Generate Packages file from filtered pool
               cd "$TEMP_POOL"
-              dpkg-scanpackages -a $ARCH pool 2>/dev/null > "$OLDPWD/dists/$DIST/main/binary-$ARCH/Packages" || \
+              # Strip blank lines from output — some .deb control files
+              # (e.g. wiringpi) contain stray blank lines that split stanzas.
+              dpkg-scanpackages -a $ARCH pool 2>/dev/null | sed '/^[[:space:]]*$/d' | \
+                perl -pe 'print "\n" if /^Package:/ && $. > 1' > "$OLDPWD/dists/$DIST/main/binary-$ARCH/Packages" || \
               touch "$OLDPWD/dists/$DIST/main/binary-$ARCH/Packages"
               cd "$OLDPWD"
               

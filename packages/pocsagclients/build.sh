@@ -94,8 +94,9 @@ create_package() {
     # Copy config if exists
     if [ -f "DAPNETGateway/DAPNETGateway.ini" ]; then
         cp "DAPNETGateway/DAPNETGateway.ini" "$PKG_DIR/etc/pocsagclients/DAPNETGateway.ini"
+        cp "DAPNETGateway/DAPNETGateway.ini" "$PKG_DIR/etc/pocsagclients/DAPNETGateway.ini.example"
     fi
-    
+
     # Create systemd service file
     cat > "$PKG_DIR/lib/systemd/system/dapnetgateway.service" << 'EOF'
 [Unit]
@@ -159,17 +160,11 @@ EOF
     
     # Set dependencies based on Debian version
     case "$DEBIAN_VERSION" in
-        bullseye)
-            DEPENDS="libc6 (>= 2.31), libgcc-s1 (>= 3.0), libstdc++6 (>= 5.2)"
-            ;;
-        bookworm)
-            DEPENDS="libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11)"
-            ;;
         trixie)
-            DEPENDS="libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11)"
+            DEPENDS="libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11), libmosquitto1t64"
             ;;
         *)
-            DEPENDS="libc6 (>= 2.31), libgcc-s1 (>= 3.0), libstdc++6 (>= 5.2)"
+            DEPENDS="libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11), libmosquitto1"
             ;;
     esac
     

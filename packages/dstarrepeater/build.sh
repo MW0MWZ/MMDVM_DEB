@@ -3,7 +3,7 @@ set -e
 
 # D-Star Repeater package build script for Debian
 # For GitHub Actions ONLY
-# Version: 1.4.0
+# Version: 1.5.0
 
 # Color codes
 RED='\033[0;31m'
@@ -46,18 +46,21 @@ prepare_source() {
 patch_makefiles() {
     print_message "Patching Makefiles for Debian build..."
     cd DStarRepeater
-    
+
     # Patch main Makefile
     if [ -f "Makefile" ]; then
         sed -i '/^export CFLAGS.*=/a export CXXFLAGS := $(CFLAGS)' Makefile
     fi
-    
+
     # Patch ARM Makefile
     if [ -f "MakefilePi" ]; then
         sed -i 's/export CFLAGS.*:=.*/& -DNDEBUG -DwxDEBUG_LEVEL=0/' MakefilePi
         sed -i '/^export CFLAGS.*=/a export CXXFLAGS := $(CFLAGS)' MakefilePi
+        # Add MQTT support (MakefilePi doesn't have the MQTT conditional from the main Makefile)
+        sed -i 's/export CFLAGS  :=.*/& -DMQTT/' MakefilePi
+        sed -i 's/export LIBS    :=.*/& -lmosquitto/' MakefilePi
     fi
-    
+
     cd ..
 }
 
@@ -82,8 +85,8 @@ build_software() {
             fi
             ;;
         *)
-            print_info "Building for x86"
-            make BUILD=release -j$(nproc) all
+            print_info "Building for x86 with MQTT support"
+            make BUILD=release MQTT=1 -j$(nproc) all
             ;;
     esac
     
@@ -139,6 +142,12 @@ create_package() {
                 SplitRepeater/*.conf; do
         [ -f "$conf" ] && cp "$conf" "$PKG_DIR/etc/dstarrepeater/$(basename $conf).example"
     done
+
+    # Install the Linux example config (includes MQTT settings)
+    if [ -f "linux/dstarrepeater.example" ]; then
+        cp "linux/dstarrepeater.example" "$PKG_DIR/etc/dstarrepeater/dstarrepeater.conf.example"
+        print_info "Installed: linux/dstarrepeater.example as dstarrepeater.conf.example"
+    fi
     
     # Copy docs
     for doc in README* CHANGES* AUTHORS *.md LICENSE COPYING; do
@@ -189,12 +198,6 @@ EOF
     
     # Set dependencies based on Debian version
     case "$DEBIAN_VERSION" in
-        bullseye)
-            WX_DEPS="libwxgtk3.0-gtk3-0v5, libwxbase3.0-0v5"
-            ;;
-        bookworm)
-            WX_DEPS="libwxgtk3.2-1, libwxbase3.2-1"
-            ;;
         trixie)
             WX_DEPS="libwxgtk3.2-1t64, libwxbase3.2-1t64"
             ;;
@@ -210,7 +213,7 @@ Version: ${FULL_VERSION}
 Section: hamradio
 Priority: optional
 Architecture: ${PKG_ARCH}
-Depends: libc6, libgcc-s1, libstdc++6, ${WX_DEPS}, libusb-1.0-0, libasound2
+Depends: libc6, libgcc-s1, libstdc++6, ${WX_DEPS}, libusb-1.0-0, libasound2, libmosquitto1
 Maintainer: MW0MWZ <andy@mw0mwz.co.uk>
 Description: D-Star Repeater Controller for Amateur Radio
  Complete D-Star repeater system with multiple hardware support

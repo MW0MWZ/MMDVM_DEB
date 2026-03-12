@@ -56,12 +56,11 @@ All gateway packages follow the "*clients" naming convention and include gateway
 - **DMR2YSF** - Cross-mode: DMR to YSF converter
 - **DMR2NXDN** - Cross-mode: DMR to NXDN converter
 
-#### D-Star Gateway & Clients (`dstarclients`)
-- **ircDDBGateway** - IRC DDB Gateway for D-Star networking
+#### D-Star Gateway & Tools (`dstarclients`)
 - **DStarGateway** - D-Star Gateway for reflector connections
-- **remotecontrold** - Remote control daemon
-- **starnetserverd** - STARnet server for group calls
-- **Additional tools** - Time server, text/voice transmit tools
+- **dgwtimeserver** - Time server
+- **dgwtexttransmit** - Text transmit tool
+- **dgwvoicetransmit** - Voice transmit tool
 
 #### YSF/Fusion Ecosystem (`ysfclients`)
 - **YSFGateway** - Yaesu System Fusion gateway
@@ -293,9 +292,6 @@ create_package() {
     DEPENDS="libc6 (>= 2.31), libgcc-s1 (>= 3.0) | libgcc1, libstdc++6 (>= 5.2)"
     
     case "$DEBIAN_VERSION" in
-        bullseye)
-            DEPENDS="libc6 (>= 2.31), libgcc-s1 (>= 3.0) | libgcc1, libstdc++6 (>= 5.2)"
-            ;;
         bookworm)
             DEPENDS="libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11)"
             ;;
@@ -570,7 +566,7 @@ ARCH=arm64 ./build.sh
 ARCH=armhf ./build.sh
 
 # Test with different Debian versions
-DEBIAN_VERSION=bullseye ./build.sh
+DEBIAN_VERSION=bookworm ./build.sh
 DEBIAN_VERSION=trixie ./build.sh
 ```
 
@@ -657,18 +653,17 @@ The build script handles:
 - YSFGateway, YSFParrot, DGIdGateway from g4klx/YSFClients
 - YSF2DMR, YSF2NXDN, YSF2P25 from nostar/MMDVM_CM
 
-### Complex Multi-Source Example (dstarclients)
+### Gateway Example (dstarclients)
 
-Multiple binaries from multiple sources:
+D-Star gateway with supporting tools:
 ```
 dstarclients/
-├── build.sh        # Builds from 2 repositories
+├── build.sh        # Builds from DStarGateway repository
 └── source.conf     # Source configuration
 ```
 
 Builds:
-- ircDDBGateway and tools from g4klx/ircDDBGateway
-- DStarGateway and tools from F4FXL/DStarGateway
+- DStarGateway and tools from g4klx/DStarGateway
 
 ### Simple Package Example (pocsagclients)
 
@@ -754,7 +749,7 @@ done
 ### 4. Debian Version Testing
 ```bash
 # Test all supported Debian versions
-for version in bullseye bookworm trixie; do
+for version in bookworm trixie; do
     echo "Testing $version..."
     DEBIAN_VERSION=$version ./build.sh
 done

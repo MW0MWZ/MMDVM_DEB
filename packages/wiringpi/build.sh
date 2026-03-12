@@ -215,12 +215,6 @@ build_and_package() {
     
     # Verify we're in the expected container
     case "$DEBIAN_VERSION" in
-        bullseye)
-            if [[ ! "$ACTUAL_GLIBC" =~ ^2\.31 ]]; then
-                print_error "Wrong GLIBC! Expected 2.31 for Bullseye, got $ACTUAL_GLIBC"
-                exit 1
-            fi
-            ;;
         bookworm)
             if [[ ! "$ACTUAL_GLIBC" =~ ^2\.36 ]]; then
                 print_error "Wrong GLIBC! Expected 2.36 for Bookworm, got $ACTUAL_GLIBC"
@@ -228,7 +222,7 @@ build_and_package() {
             fi
             ;;
         trixie)
-            # Trixie is testing, GLIBC version may vary (2.37-2.38+)
+            # Trixie uses GLIBC 2.41+
             print_info "Trixie build with GLIBC $ACTUAL_GLIBC"
             ;;
     esac
@@ -280,15 +274,6 @@ build_and_package() {
         
         # Verify it's appropriate for the target Debian version
         case "$DEBIAN_VERSION" in
-            bullseye)
-                if [[ "$REQUIRED_GLIBC" > "2.31" ]]; then
-                    print_error "ERROR: Library requires GLIBC $REQUIRED_GLIBC but Bullseye only has 2.31!"
-                    print_error "This package will NOT work on Bullseye systems!"
-                    rm -rf "$TEMP_EXTRACT"
-                    exit 1
-                fi
-                print_info "✓ Package is compatible with Bullseye (GLIBC 2.31)"
-                ;;
             bookworm)
                 if [[ "$REQUIRED_GLIBC" > "2.36" ]]; then
                     print_error "ERROR: Library requires GLIBC $REQUIRED_GLIBC but Bookworm only has 2.36!"
@@ -321,6 +306,11 @@ build_and_package() {
     # Update the control file with our version and maintainer info
     sed -i "s/^Version:.*/Version: ${FULL_VERSION}/" "$EXTRACT_DIR/DEBIAN/control"
     sed -i "s/^Maintainer:.*/Maintainer: MW0MWZ <andy@mw0mwz.co.uk>/" "$EXTRACT_DIR/DEBIAN/control"
+    # Remove the Bugs field — it adds a blank line that breaks
+    # dpkg-scanpackages Packages file generation.
+    sed -i '/^Bugs:/d' "$EXTRACT_DIR/DEBIAN/control"
+    # Strip any trailing blank lines from the control file
+    sed -i -e :a -e '/^\n*$/{$d;N;ba' -e '}' "$EXTRACT_DIR/DEBIAN/control"
     
     # Add our changelog if it doesn't exist
     if [ ! -f "$EXTRACT_DIR/usr/share/doc/wiringpi/changelog.Debian.gz" ]; then
