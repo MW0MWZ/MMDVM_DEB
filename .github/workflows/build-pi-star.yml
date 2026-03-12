@@ -1,0 +1,323 @@
+name: Build Pi-Star DEB
+
+# Triggered exclusively by Pi-Star_MCP release workflow
+on:
+  repository_dispatch:
+    types: [build-pi-star]
+
+concurrency:
+  group: build-pi-star
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build pi-star for ${{ matrix.arch }} on Debian ${{ matrix.debian_version }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        arch: [amd64, armhf, arm64]
+        debian_version: [bookworm, trixie]
+        include:
+          - arch: amd64
+            platform: linux/amd64
+            binary: pistar-mcp-linux-amd64
+          - arch: armhf
+            platform: linux/arm/v7
+            binary: pistar-mcp-linux-arm
+          - arch: arm64
+            platform: linux/arm64
+            binary: pistar-mcp-linux-arm64
+          - debian_version: bookworm
+            debian_tag: '12'
+          - debian_version: trixie
+            debian_tag: '13'
+      fail-fast: false
+      max-parallel: 3
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Checkout gh-pages for version checking
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: gh-pages-check
+        continue-on-error: true
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: all
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Download release assets from Pi-Star_MCP
+        env:
+          GH_TOKEN: ${{ secrets.PISTAR_MCP_TOKEN }}
+        run: |
+          set -e
+          VERSION="${{ github.event.client_payload.version }}"
+          REPO="${{ github.event.client_payload.repo }}"
+          TAG="${{ github.event.client_payload.tag }}"
+
+          echo "Downloading Pi-Star MCP $VERSION from $REPO"
+
+          mkdir -p release-assets
+          cd release-assets
+
+          # Download the binary for this architecture
+          gh release download "$TAG" \
+            --repo "$REPO" \
+            --pattern "${{ matrix.binary }}"
+
+          # Download Debian packaging files
+          gh release download "$TAG" \
+            --repo "$REPO" \
+            --pattern "packaging-debian.tar.gz"
+
+          # Also download Alpine packaging (for example config)
+          gh release download "$TAG" \
+            --repo "$REPO" \
+            --pattern "packaging-alpine.tar.gz"
+
+          # Extract packaging files
+          tar xzf packaging-debian.tar.gz
+          tar xzf packaging-alpine.tar.gz
+          rm -f packaging-debian.tar.gz packaging-alpine.tar.gz
+
+          ls -la
+
+      - name: Determine build number
+        id: buildnum
+        run: |
+          VERSION="${{ github.event.client_payload.version }}"
+          RELEASE="${{ github.event.client_payload.release }}"
+
+          # Use release number from dispatch payload (from tag YYYY.MM.DD.RR)
+          # Fall back to auto-increment if not provided (backwards compatibility)
+          if [ -n "$RELEASE" ]; then
+            BUILD_NUMBER="$RELEASE"
+          else
+            BUILD_NUMBER="1"
+
+            # Check existing packages in gh-pages
+            for CHECK_VERSION in bookworm trixie; do
+              for CHECK_ARCH in amd64 armhf arm64; do
+                GH_DIR="gh-pages-check/pool/main/p/pi-star"
+                if [ -d "$GH_DIR" ]; then
+                  EXISTING=$(ls -1 "$GH_DIR/pi-star_${VERSION}-"*"_${CHECK_ARCH}.deb" 2>/dev/null | sort -V || true)
+                  if [ -n "$EXISTING" ]; then
+                    for PKG_FILE in $EXISTING; do
+                      NUM=$(echo "$PKG_FILE" | sed -n "s/.*_${VERSION}-\([0-9]*\).*/\1/p")
+                      if [ -n "$NUM" ] && [ "$NUM" -ge "$BUILD_NUMBER" ]; then
+                        BUILD_NUMBER=$((NUM + 1))
+                      fi
+                    done
+                  fi
+                fi
+              done
+            done
+          fi
+
+          echo "build_number=${BUILD_NUMBER}" >> $GITHUB_OUTPUT
+          echo "Build number: ${BUILD_NUMBER}"
+
+      - name: Build DEB package
+        env:
+          ARCH: ${{ matrix.arch }}
+          PLATFORM: ${{ matrix.platform }}
+          DEBIAN_VERSION: ${{ matrix.debian_version }}
+          DEBIAN_TAG: ${{ matrix.debian_tag }}
+          VERSION: ${{ github.event.client_payload.version }}
+          BUILD_NUMBER: ${{ steps.buildnum.outputs.build_number }}
+        run: |
+          set -e
+
+          OUTPUT_DIR="pool/main/p/pi-star"
+          mkdir -p "$OUTPUT_DIR"
+
+          docker run --rm \
+            --platform "$PLATFORM" \
+            -v "$(pwd)/release-assets:/release:ro" \
+            -v "$(pwd)/$OUTPUT_DIR:/output" \
+            -e ARCH="$ARCH" \
+            -e VERSION="$VERSION" \
+            -e BUILD_NUMBER="$BUILD_NUMBER" \
+            -e DEBIAN_VERSION="$DEBIAN_VERSION" \
+            -e BINARY_PATH="/release/${{ matrix.binary }}" \
+            -e OUTPUT_DIR="/output" \
+            "debian:${DEBIAN_TAG}" \
+            bash -c '
+              set -e
+              apt-get update
+              apt-get install -y fakeroot file
+
+              # Run the build script
+              bash /release/debian/build.sh
+            '
+
+          echo "Built packages:"
+          ls -la "$OUTPUT_DIR"/*.deb 2>/dev/null || echo "No packages found"
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: pi-star-${{ matrix.debian_version }}-${{ matrix.arch }}
+          path: pool/
+          retention-days: 7
+
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: build
+    runs-on: ubuntu-latest
+    if: needs.build.result == 'success'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Checkout gh-pages branch
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: gh-pages
+
+      - name: Download all build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts/
+
+      - name: Merge new packages into repository
+        run: |
+          set -e
+
+          TARGET_DIR="gh-pages/pool/main/p/pi-star"
+          mkdir -p "$TARGET_DIR"
+
+          for ARTIFACT_DIR in artifacts/pi-star-*/; do
+            find "$ARTIFACT_DIR" -name "*.deb" -type f | while read pkg; do
+              cp "$pkg" "$TARGET_DIR/"
+              echo "Copied: $(basename "$pkg")"
+            done
+          done
+
+          echo "All packages in repository:"
+          ls -la "$TARGET_DIR"/*.deb 2>/dev/null || echo "No packages"
+
+      - name: Generate Debian repository metadata
+        env:
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+        run: |
+          set -e
+          cd gh-pages
+
+          # Import GPG key for signing
+          if [ -n "$GPG_PRIVATE_KEY" ]; then
+            echo "$GPG_PRIVATE_KEY" | gpg --batch --import
+          fi
+
+          # Generate Packages files for each arch/distribution
+          for DEBIAN_VERSION in bookworm trixie; do
+            for ARCH in amd64 armhf arm64; do
+              DIST_DIR="dists/${DEBIAN_VERSION}/main/binary-${ARCH}"
+              mkdir -p "$DIST_DIR"
+
+              # Generate Packages file from all .deb files matching this arch
+              > "$DIST_DIR/Packages"
+              find pool/main -name "*_${ARCH}.deb" -type f | while read deb; do
+                # Only include packages for this Debian version
+                case "$DEBIAN_VERSION" in
+                  bookworm) MATCH="~deb12" ;;
+                  trixie)   MATCH="~deb13" ;;
+                esac
+                if echo "$deb" | grep -q "$MATCH" || ! echo "$deb" | grep -q "~deb"; then
+                  # Strip trailing blank lines from control to prevent
+                  # split stanzas (some debs like wiringpi have them).
+                  dpkg-deb -I "$deb" control 2>/dev/null | sed '/^[[:space:]]*$/d' >> "$DIST_DIR/Packages" || true
+                  echo "Filename: $deb" >> "$DIST_DIR/Packages"
+                  echo "Size: $(stat -c%s "$deb")" >> "$DIST_DIR/Packages"
+                  echo "MD5sum: $(md5sum "$deb" | cut -d' ' -f1)" >> "$DIST_DIR/Packages"
+                  echo "SHA256: $(sha256sum "$deb" | cut -d' ' -f1)" >> "$DIST_DIR/Packages"
+                  echo "" >> "$DIST_DIR/Packages"
+                fi
+              done
+
+              gzip -9c "$DIST_DIR/Packages" > "$DIST_DIR/Packages.gz"
+            done
+
+            # Generate Release file
+            RELEASE_FILE="dists/${DEBIAN_VERSION}/Release"
+            cat > "$RELEASE_FILE" << EOF
+          Origin: Ham Radio Packages
+          Label: Ham Radio Packages
+          Suite: ${DEBIAN_VERSION}
+          Codename: ${DEBIAN_VERSION}
+          Version: 1.0
+          Architectures: amd64 armhf arm64
+          Components: main
+          Description: Amateur Radio Digital Voice packages for Debian ${DEBIAN_VERSION}
+          Date: $(date -Ru)
+          EOF
+
+            # Add checksums
+            echo "MD5Sum:" >> "$RELEASE_FILE"
+            find "dists/${DEBIAN_VERSION}/main" -type f \( -name "Packages" -o -name "Packages.gz" \) | while read f; do
+              REL=$(echo "$f" | sed "s|dists/${DEBIAN_VERSION}/||")
+              echo " $(md5sum "$f" | cut -d' ' -f1) $(stat -c%s "$f") $REL" >> "$RELEASE_FILE"
+            done
+
+            echo "SHA256:" >> "$RELEASE_FILE"
+            find "dists/${DEBIAN_VERSION}/main" -type f \( -name "Packages" -o -name "Packages.gz" \) | while read f; do
+              REL=$(echo "$f" | sed "s|dists/${DEBIAN_VERSION}/||")
+              echo " $(sha256sum "$f" | cut -d' ' -f1) $(stat -c%s "$f") $REL" >> "$RELEASE_FILE"
+            done
+
+            # Sign Release file if GPG key available
+            if [ -n "$GPG_PRIVATE_KEY" ]; then
+              gpg --batch --yes --pinentry-mode loopback \
+                --passphrase "$GPG_PASSPHRASE" \
+                -abs -o "dists/${DEBIAN_VERSION}/Release.gpg" \
+                "$RELEASE_FILE"
+              gpg --batch --yes --pinentry-mode loopback \
+                --passphrase "$GPG_PASSPHRASE" \
+                --clearsign -o "dists/${DEBIAN_VERSION}/InRelease" \
+                "$RELEASE_FILE"
+            fi
+          done
+
+      - name: Deploy to gh-pages
+        run: |
+          set -e
+          cd gh-pages
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No changes to deploy"
+          else
+            VERSION="${{ github.event.client_payload.version }}"
+            git commit -m "pi-star ${VERSION}"
+            git push
+          fi
+
+      - name: Purge Cloudflare cache
+        if: success()
+        env:
+          CF_ZONE_ID: ${{ secrets.CF_ZONE_ID }}
+          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+        run: |
+          if [ -n "$CF_ZONE_ID" ] && [ -n "$CF_API_TOKEN" ]; then
+            curl -s -X POST \
+              "https://api.cloudflare.com/client/v4/zones/${CF_ZONE_ID}/purge_cache" \
+              -H "Authorization: Bearer ${CF_API_TOKEN}" \
+              -H "Content-Type: application/json" \
+              --data '{"purge_everything":true}'
+            echo "Cloudflare cache purged"
+          else
+            echo "Cloudflare credentials not configured, skipping cache purge"
+          fi

@@ -93,8 +93,9 @@ create_package() {
     # Copy config if exists
     if [ -f "FMGateway/FMGateway.ini" ]; then
         cp "FMGateway/FMGateway.ini" "$PKG_DIR/etc/fmclients/FMGateway.ini"
+        cp "FMGateway/FMGateway.ini" "$PKG_DIR/etc/fmclients/FMGateway.ini.example"
     fi
-    
+
     # Copy docs
     for doc in README.md README LICENSE COPYING; do
         if [ -f "FMGateway/$doc" ]; then
@@ -127,17 +128,11 @@ EOF
     
     # Set dependencies based on Debian version
     case "$DEBIAN_VERSION" in
-        bullseye)
-            DEPENDS="libc6 (>= 2.31), libgcc-s1 (>= 3.0), libstdc++6 (>= 5.2), libmd0 (>= 1.0.3)"
-            ;;
-        bookworm)
-            DEPENDS="libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11), libmd0 (>= 1.0.3)"
-            ;;
         trixie)
-            DEPENDS="libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11), libmd0 (>= 1.0.3)"
+            DEPENDS="libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11), libmd0 (>= 1.0.3), libmosquitto1t64"
             ;;
         *)
-            DEPENDS="libc6 (>= 2.31), libgcc-s1 (>= 3.0), libstdc++6 (>= 5.2), libmd0 (>= 1.0.3)"
+            DEPENDS="libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11), libmd0 (>= 1.0.3), libmosquitto1"
             ;;
     esac
     

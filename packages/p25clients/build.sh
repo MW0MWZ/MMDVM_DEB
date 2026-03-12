@@ -107,8 +107,9 @@ create_package() {
     fi
     if [ -f "P25Gateway/P25Gateway.ini" ]; then
         cp "P25Gateway/P25Gateway.ini" "$PKG_DIR/etc/p25clients/P25Gateway.ini"
+        cp "P25Gateway/P25Gateway.ini" "$PKG_DIR/etc/p25clients/P25Gateway.ini.example"
     fi
-    
+
     # P25Parrot
     if [ -f "P25Parrot/P25Parrot" ]; then
         cp "P25Parrot/P25Parrot" "$PKG_DIR/usr/bin/"
@@ -116,8 +117,9 @@ create_package() {
     fi
     if [ -f "P25Parrot/P25Parrot.ini" ]; then
         cp "P25Parrot/P25Parrot.ini" "$PKG_DIR/etc/p25clients/P25Parrot.ini"
+        cp "P25Parrot/P25Parrot.ini" "$PKG_DIR/etc/p25clients/P25Parrot.ini.example"
     fi
-    
+
     # Copy data files
     for datafile in P25Hosts.txt P25Ids.dat; do
         for dir in P25Gateway P25Parrot; do
@@ -197,17 +199,11 @@ EOF
     
     # Set dependencies based on Debian version
     case "$DEBIAN_VERSION" in
-        bullseye)
-            DEPENDS="libc6 (>= 2.31), libgcc-s1 (>= 3.0), libstdc++6 (>= 5.2)"
-            ;;
-        bookworm)
-            DEPENDS="libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11)"
-            ;;
         trixie)
-            DEPENDS="libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11)"
+            DEPENDS="libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11), libmosquitto1t64"
             ;;
         *)
-            DEPENDS="libc6 (>= 2.31), libgcc-s1 (>= 3.0), libstdc++6 (>= 5.2)"
+            DEPENDS="libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11), libmosquitto1"
             ;;
     esac
     

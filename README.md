@@ -23,7 +23,7 @@ Debian/Ubuntu package repository for Ham Radio software, hosted on GitHub Pages.
 | Package | Description | Components | Upstream |
 |---------|-------------|------------|----------|
 | **dmrclients** | DMR Gateway and Cross-Mode converters | DMRGateway, DMR2YSF, DMR2NXDN | [DMRGateway](https://github.com/g4klx/DMRGateway) & [MMDVM_CM](https://github.com/nostar/MMDVM_CM) |
-| **dstarclients** | D-Star Gateways and tools | ircDDBGateway, DStarGateway, remotecontrold, starnetserverd, and more | [ircDDBGateway](https://github.com/g4klx/ircDDBGateway) & [DStarGateway](https://github.com/F4FXL/DStarGateway) |
+| **dstarclients** | D-Star Gateway and tools | DStarGateway, dgwtimeserver, dgwtexttransmit, dgwvoicetransmit | [DStarGateway](https://github.com/g4klx/DStarGateway) |
 | **ysfclients** | YSF Gateway, Parrot, DGId Gateway and Cross-Mode converters | YSFGateway, YSFParrot, DGIdGateway, YSF2DMR, YSF2NXDN, YSF2P25 | [YSFClients](https://github.com/g4klx/YSFClients) & [MMDVM_CM](https://github.com/nostar/MMDVM_CM) |
 | **nxdnclients** | NXDN Gateway, Parrot and Cross-Mode converter | NXDNGateway, NXDNParrot, NXDN2DMR | [NXDNClients](https://github.com/g4klx/NXDNClients) & [MMDVM_CM](https://github.com/nostar/MMDVM_CM) |
 | **p25clients** | P25 Gateway and Parrot | P25Gateway, P25Parrot | [P25Clients](https://github.com/g4klx/P25Clients) |
@@ -33,13 +33,19 @@ Debian/Ubuntu package repository for Ham Radio software, hosted on GitHub Pages.
 
 ## 🐧 Supported Debian/Ubuntu Versions
 
-- Debian 13 "Trixie" (testing)
-- Debian 12 "Bookworm" (stable)
-- Debian 11 "Bullseye" (oldstable)
-- Ubuntu 24.04 LTS "Noble" (uses bookworm)
-- Ubuntu 22.04 LTS "Jammy" (uses bookworm)
-- Raspberry Pi OS (Current - uses bookworm)
-- Raspberry Pi OS (Legacy - uses bullseye)
+### Debian
+- Debian 13 "Trixie" (stable)
+- Debian 12 "Bookworm" (oldstable)
+
+### Ubuntu
+- Ubuntu 25.10 "Questing Quokka" (use bookworm packages)
+- Ubuntu 25.04 "Plucky Puffin" (use bookworm packages)
+- Ubuntu 24.04 LTS "Noble" (use bookworm packages)
+- Ubuntu 22.04 LTS "Jammy" (use bookworm packages)
+
+### Raspberry Pi OS
+- Raspberry Pi OS (Current - based on Trixie, use trixie packages)
+- Raspberry Pi OS (Legacy - based on Bookworm, use bookworm packages)
 
 ## 🖥️ Supported Architectures
 
@@ -53,39 +59,20 @@ Debian/Ubuntu package repository for Ham Radio software, hosted on GitHub Pages.
 
 Add the repository and install packages on your Debian/Ubuntu system:
 
-#### Modern Systems (Debian 11+, Ubuntu 20.04+)
-
 ```bash
 # Add GPG key
 wget -qO - https://deb.pistar.uk/hamradio.gpg | sudo gpg --dearmor -o /usr/share/keyrings/hamradio.gpg
 
 # Add repository (choose your Debian version)
-# For Debian 12 (Bookworm) / Ubuntu 22.04-24.04 / Raspberry Pi OS (Current)
-echo "deb [signed-by=/usr/share/keyrings/hamradio.gpg] https://deb.pistar.uk/ bookworm main" | sudo tee /etc/apt/sources.list.d/hamradio.list
-
-# For Debian 11 (Bullseye) / Ubuntu 20.04 / Raspberry Pi OS (Legacy)
-echo "deb [signed-by=/usr/share/keyrings/hamradio.gpg] https://deb.pistar.uk/ bullseye main" | sudo tee /etc/apt/sources.list.d/hamradio.list
-
-# For Debian 13 (Trixie) / Testing
+# For Debian 13 (Trixie) / Raspberry Pi OS (Current)
 echo "deb [signed-by=/usr/share/keyrings/hamradio.gpg] https://deb.pistar.uk/ trixie main" | sudo tee /etc/apt/sources.list.d/hamradio.list
+
+# For Debian 12 (Bookworm) / Ubuntu 22.04-25.10 / Raspberry Pi OS (Legacy)
+echo "deb [signed-by=/usr/share/keyrings/hamradio.gpg] https://deb.pistar.uk/ bookworm main" | sudo tee /etc/apt/sources.list.d/hamradio.list
 
 # Update and install
 sudo apt update
 sudo apt install mmdvmhost dmrclients ysfclients
-```
-
-#### Legacy Systems (Debian 10 and older)
-
-```bash
-# Add GPG key (deprecated method)
-wget -qO - https://deb.pistar.uk/hamradio.gpg | sudo apt-key add -
-
-# Add repository
-echo "deb https://deb.pistar.uk/ bullseye main" | sudo tee /etc/apt/sources.list.d/hamradio.list
-
-# Update and install
-sudo apt update
-sudo apt install mmdvmhost dmrclients
 ```
 
 ### Configuration
@@ -106,8 +93,8 @@ All packages store configuration in package-specific directories:
 /etc/fmclients/       # FM gateway config
 
 # Example: Configure MMDVM Host
-sudo cp /etc/mmdvmhost/MMDVM.ini.example /etc/mmdvmhost/MMDVM.ini
-sudo nano /etc/mmdvmhost/MMDVM.ini
+sudo cp /etc/mmdvmhost/MMDVMHost.ini.example /etc/mmdvmhost/MMDVMHost.ini
+sudo nano /etc/mmdvmhost/MMDVMHost.ini
 
 # Example: Configure DMR Gateway
 sudo cp /etc/dmrclients/DMRGateway.ini.example /etc/dmrclients/DMRGateway.ini
@@ -127,7 +114,7 @@ Services are managed via systemd:
 sudo systemctl start mmdvmhost      # MMDVM Host
 sudo systemctl start dmrgateway     # DMR Gateway
 sudo systemctl start ysfgateway     # YSF Gateway
-sudo systemctl start ircddbgateway  # ircDDB Gateway for D-Star
+sudo systemctl start dstargateway   # D-Star Gateway
 sudo systemctl start dstarrepeater  # D-Star Repeater Controller
 sudo systemctl start nxdngateway    # NXDN Gateway
 sudo systemctl start p25gateway     # P25 Gateway
@@ -195,7 +182,7 @@ MMDVM_DEB/
 ├── packages/                # Package definitions
 │   ├── mmdvmhost/
 │   ├── dmrclients/         # DMRGateway, DMR2YSF, DMR2NXDN
-│   ├── dstarclients/       # ircDDBGateway, DStarGateway, and tools
+│   ├── dstarclients/       # DStarGateway and tools
 │   ├── dstarrepeater/      # D-Star Repeater Controller
 │   ├── ysfclients/         # YSFGateway, YSFParrot, DGIdGateway, YSF2*
 │   ├── nxdnclients/        # NXDNGateway, NXDNParrot, NXDN2DMR
@@ -211,7 +198,6 @@ MMDVM_DEB/
 └── deploy/                 # GitHub Pages deployment (auto-generated)
     ├── index.html         # Repository landing page
     ├── dists/             # APT repository structure
-    │   ├── bullseye/
     │   ├── bookworm/
     │   └── trixie/
     └── pool/              # Package pool

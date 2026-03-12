@@ -27,7 +27,7 @@ The repository currently builds the following packages:
 | Package | Description | Components | Dependencies |
 |---------|-------------|------------|--------------|
 | **dmrclients** | DMR Gateway and Cross-Mode | DMRGateway, DMR2YSF, DMR2NXDN | `build-essential`, `git` |
-| **dstarclients** | D-Star Gateways and tools | ircDDBGateway, DStarGateway, remotecontrold, starnetserverd, and more | `libwxgtk3.0-gtk3-dev` or `libwxgtk3.2-dev`, `libcurl4-openssl-dev`, `libboost-dev` |
+| **dstarclients** | D-Star Gateway and tools | DStarGateway, dgwtimeserver, dgwtexttransmit, dgwvoicetransmit | `libcurl4-openssl-dev`, `libmosquitto-dev` |
 | **ysfclients** | YSF Gateway, Parrot and Cross-Mode | YSFGateway, YSFParrot, DGIdGateway, YSF2DMR, YSF2NXDN, YSF2P25 | `build-essential`, `git` |
 | **nxdnclients** | NXDN Gateway, Parrot and Cross-Mode | NXDNGateway, NXDNParrot, NXDN2DMR | `build-essential`, `git` |
 | **p25clients** | P25 Gateway and Parrot | P25Gateway, P25Parrot | `build-essential`, `git` |
@@ -64,8 +64,7 @@ Several packages build from multiple upstream repositories:
   - DMR2YSF, DMR2NXDN from `nostar/MMDVM_CM`
 
 - **dstarclients**:
-  - ircDDBGateway and tools from `g4klx/ircDDBGateway`
-  - DStarGateway and tools from `F4FXL/DStarGateway`
+  - DStarGateway and tools from `g4klx/DStarGateway`
 
 - **ysfclients**:
   - YSFGateway, YSFParrot, DGIdGateway from `g4klx/YSFClients`
@@ -85,31 +84,24 @@ Builds run for three architectures:
 ### 5. Build Environment
 
 Each build runs in a Debian Docker container matching the target version:
-- Debian 11 (Bullseye)
 - Debian 12 (Bookworm)
-- Debian 13 (Trixie/Testing)
+- Debian 13 (Trixie)
 
 ### 6. Debian-Specific Dependencies
 
 Packages have version-specific dependencies based on the Debian release:
 
-**Bullseye (11)**:
-- libc6 (>= 2.31)
-- libgcc-s1 (>= 3.0) | libgcc1
-- libstdc++6 (>= 5.2)
-- libwxbase3.0-0v5, libwxgtk3.0-gtk3-0v5 (for dstarrepeater, dstarclients)
-
 **Bookworm (12)**:
 - libc6 (>= 2.36)
 - libgcc-s1 (>= 3.0)
 - libstdc++6 (>= 11)
-- libwxbase3.2-1, libwxgtk3.2-1 (for dstarrepeater, dstarclients)
+- libwxbase3.2-1, libwxgtk3.2-1 (for dstarrepeater)
 
 **Trixie (13)**:
 - libc6 (>= 2.38)
 - libgcc-s1 (>= 3.0)
 - libstdc++6 (>= 13)
-- libwxbase3.2-1, libwxgtk3.2-1 (for dstarrepeater, dstarclients)
+- libwxbase3.2-1, libwxgtk3.2-1 (for dstarrepeater)
 
 ## Automatic Build Triggers
 
@@ -129,8 +121,7 @@ Monitored repositories:
 - https://github.com/g4klx/MMDVMCal
 - https://github.com/g4klx/DStarRepeater
 - https://github.com/g4klx/DMRGateway
-- https://github.com/g4klx/ircDDBGateway
-- https://github.com/F4FXL/DStarGateway
+- https://github.com/g4klx/DStarGateway
 - https://github.com/g4klx/YSFClients
 - https://github.com/g4klx/NXDNClients
 - https://github.com/g4klx/P25Clients
@@ -155,10 +146,10 @@ Monitored repositories:
 ### Build Matrix
 
 With "all" options selected, the build matrix includes:
-- 3 Debian versions (bullseye, bookworm, trixie)
+- 2 Debian versions (bookworm, trixie)
 - 3 architectures (amd64, arm64, armhf)
 - 11 packages
-= **99 total build jobs**
+= **66 total build jobs**
 
 ## Local Testing
 
@@ -333,7 +324,6 @@ main "$@"
   - Software-only operation
 
 **Dependencies by Debian Version:**
-- **Bullseye**: `libwxgtk3.0-gtk3-0v5`, `libwxbase3.0-0v5`
 - **Bookworm/Trixie**: `libwxgtk3.2-1`, `libwxbase3.2-1`
 - **All versions**: `libusb-1.0-0`, `libasound2`
 
@@ -348,9 +338,9 @@ main "$@"
 - Logs to `/var/log/dstarrepeater/`
 
 ### dstarclients
-- Requires wxWidgets (3.0 for Bullseye, 3.2 for Bookworm/Trixie)
-- Builds from two repositories (ircDDBGateway and DStarGateway)
-- Multiple binaries from each source
+- Builds from DStarGateway repository
+- Requires libcurl and libmosquitto
+- Binaries: dstargateway, dgwtimeserver, dgwtexttransmit, dgwvoicetransmit
 
 ### Cross-Mode Packages
 - dmrclients, ysfclients, nxdnclients build from multiple repositories
@@ -371,7 +361,7 @@ deploy/
 ├── hamradio.gpg           # GPG public key
 ├── CNAME                  # GitHub Pages domain
 ├── dists/                 # Distribution metadata
-│   ├── bullseye/
+│   ├── bookworm/
 │   │   ├── Release        # Repository metadata
 │   │   ├── Release.gpg    # Signature (optional)
 │   │   ├── InRelease      # Inline signature (optional)
@@ -382,7 +372,6 @@ deploy/
 │   │       │   └── Packages.bz2
 │   │       ├── binary-arm64/
 │   │       └── binary-armhf/
-│   ├── bookworm/
 │   └── trixie/
 └── pool/                  # Package files
     └── main/
@@ -416,10 +405,10 @@ All packages follow a consistent directory structure:
 - `/usr/share/{package}/` - Data files, samples, documentation
 
 Examples:
-- `/etc/mmdvmhost/MMDVM.ini`
+- `/etc/mmdvmhost/MMDVMHost.ini`
 - `/etc/dstarrepeater/dstarrepeater.conf`
 - `/etc/dmrclients/DMRGateway.ini`
-- `/etc/dstarclients/ircddbgateway.conf`
+- `/etc/dstarclients/DStarGateway.ini`
 - `/usr/share/ysfclients/YSFHosts.txt.example`
 
 ## Troubleshooting
@@ -441,11 +430,8 @@ apt-get install -y build-essential git dpkg-dev fakeroot
 export ARCH=amd64  # or arm64, armhf
 ```
 
-**wxWidgets issues (dstarrepeater, dstarclients)**:
+**wxWidgets issues (dstarrepeater)**:
 ```bash
-# Debian 11
-apt-get install -y libwxgtk3.0-gtk3-dev
-# Debian 12+
 apt-get install -y libwxgtk3.2-dev
 ```
 

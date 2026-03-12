@@ -126,8 +126,9 @@ create_package() {
     
     if [ -f "DMRGateway/DMRGateway.ini" ]; then
         cp "DMRGateway/DMRGateway.ini" "$PKG_DIR/etc/dmrclients/DMRGateway.ini"
+        cp "DMRGateway/DMRGateway.ini" "$PKG_DIR/etc/dmrclients/DMRGateway.ini.example"
     fi
-    
+
     # Copy data files
     for datafile in XLXHosts.txt DMR_Hosts.txt; do
         if [ -f "DMRGateway/$datafile" ]; then
@@ -142,16 +143,18 @@ create_package() {
     fi
     if [ -f "MMDVM_CM/DMR2YSF/DMR2YSF.ini" ]; then
         cp "MMDVM_CM/DMR2YSF/DMR2YSF.ini" "$PKG_DIR/etc/dmrclients/DMR2YSF.ini"
+        cp "MMDVM_CM/DMR2YSF/DMR2YSF.ini" "$PKG_DIR/etc/dmrclients/DMR2YSF.ini.example"
     fi
-    
+
     if [ -f "MMDVM_CM/DMR2NXDN/DMR2NXDN" ]; then
         cp "MMDVM_CM/DMR2NXDN/DMR2NXDN" "$PKG_DIR/usr/bin/"
         chmod 755 "$PKG_DIR/usr/bin/DMR2NXDN"
     fi
     if [ -f "MMDVM_CM/DMR2NXDN/DMR2NXDN.ini" ]; then
         cp "MMDVM_CM/DMR2NXDN/DMR2NXDN.ini" "$PKG_DIR/etc/dmrclients/DMR2NXDN.ini"
+        cp "MMDVM_CM/DMR2NXDN/DMR2NXDN.ini" "$PKG_DIR/etc/dmrclients/DMR2NXDN.ini.example"
     fi
-    
+
     # Copy ID files
     for id_file in DMRIds.dat TGList_BM.txt TGList_FCS.txt; do
         for dir in DMRGateway DMR2YSF DMR2NXDN; do
@@ -218,17 +221,11 @@ EOF
     
     # Set dependencies based on Debian version
     case "$DEBIAN_VERSION" in
-        bullseye)
-            DEPENDS="libc6 (>= 2.31), libgcc-s1 (>= 3.0), libstdc++6 (>= 5.2)"
-            ;;
-        bookworm)
-            DEPENDS="libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11)"
-            ;;
         trixie)
-            DEPENDS="libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11)"
+            DEPENDS="libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11), libmosquitto1t64"
             ;;
         *)
-            DEPENDS="libc6 (>= 2.31), libgcc-s1 (>= 3.0), libstdc++6 (>= 5.2)"
+            DEPENDS="libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11), libmosquitto1"
             ;;
     esac
     
