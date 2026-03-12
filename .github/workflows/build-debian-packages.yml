@@ -85,6 +85,9 @@ jobs:
         arch: [amd64, arm64, armhf]
         debian_version: ${{ fromJson(needs.prepare.outputs.debian_versions) }}
         package: ${{ fromJson(needs.prepare.outputs.packages) }}
+        exclude:
+          - arch: amd64
+            package: wiringpi
         include:
           - arch: amd64
             platform: linux/amd64
@@ -596,13 +599,7 @@ jobs:
                 ls -la /workspace/$POOL_DIR/*.deb
               else
                 echo 'No packages found'
-                # For wiringpi on non-ARM architectures, this is expected (dummy package)
-                if [ '$PACKAGE' = 'wiringpi' ] && [ '$ARCH' = 'amd64' ]; then
-                  echo 'Expected: WiringPi creates dummy package for amd64'
-                  exit 0
-                else
-                  exit 1
-                fi
+                exit 1
               fi
             "
           
