@@ -3,7 +3,7 @@ set -e
 
 # D-Star Clients package build script for Debian
 # For GitHub Actions ONLY
-# Version: 2.1.0 - DStarGateway package
+# Version: 2.2.0 - DStarGateway package
 
 # Color codes
 RED='\033[0;31m'
@@ -105,16 +105,36 @@ create_package() {
         print_info "Installed: $bin"
     done
 
-    # Copy config file and patch paths for Debian package layout
-    cp "DStarGateway/DStarGateway.ini" "$PKG_DIR/etc/dstarclients/DStarGateway.ini"
-    sed -i 's|/usr/local/share/dstargateway\.d/|/usr/share/dstarclients/|g' "$PKG_DIR/etc/dstarclients/DStarGateway.ini"
-    cp "$PKG_DIR/etc/dstarclients/DStarGateway.ini" "$PKG_DIR/etc/dstarclients/DStarGateway.ini.example"
-
-    # Copy data files
+    # Copy voice/audio data files (.ambe, .indx, .dat) to /usr/share/dstarclients/
     if [ -d "DStarGateway/Data" ]; then
-        print_info "Copying data files..."
-        cp -r DStarGateway/Data/* "$PKG_DIR/usr/share/dstarclients/" 2>/dev/null || true
+        print_info "Copying voice/audio data files..."
+        for ext in ambe indx dat tts.txt; do
+            cp DStarGateway/Data/*.$ext "$PKG_DIR/usr/share/dstarclients/" 2>/dev/null || true
+        done
+        # Copy the Data Makefile if present
+        [ -f "DStarGateway/Data/Makefile" ] && cp "DStarGateway/Data/Makefile" "$PKG_DIR/usr/share/dstarclients/"
     fi
+
+    # Download host files from pistar.uk, fall back to upstream copies
+    HOST_FILES="CCS_Hosts.txt DCS_Hosts.txt DExtra_Hosts.txt DPlus_Hosts.txt"
+    for hostfile in $HOST_FILES; do
+        if wget -q -O "$PKG_DIR/etc/dstarclients/$hostfile" "http://www.pistar.uk/downloads/$hostfile" 2>/dev/null; then
+            print_info "Downloaded: $hostfile from pistar.uk"
+        elif [ -f "DStarGateway/Data/$hostfile" ]; then
+            cp "DStarGateway/Data/$hostfile" "$PKG_DIR/etc/dstarclients/$hostfile"
+            print_warning "Using upstream copy: $hostfile"
+        else
+            print_warning "Host file not available: $hostfile"
+        fi
+    done
+
+    # Copy and patch config file for Debian package layout
+    cp "DStarGateway/DStarGateway.ini" "$PKG_DIR/etc/dstarclients/DStarGateway.ini"
+    sed -i 's|^Data=.*|Data=/usr/share/dstarclients/|' "$PKG_DIR/etc/dstarclients/DStarGateway.ini"
+    sed -i 's|^HostsFiles=.*|HostsFiles=/etc/dstarclients/|' "$PKG_DIR/etc/dstarclients/DStarGateway.ini"
+    sed -i 's|^CustomHostsfiles=.*|CustomHostsfiles=/etc/dstarclients/hostfiles.d/|' "$PKG_DIR/etc/dstarclients/DStarGateway.ini"
+    sed -i 's|^User=.*|User=mmdvm|' "$PKG_DIR/etc/dstarclients/DStarGateway.ini"
+    cp "$PKG_DIR/etc/dstarclients/DStarGateway.ini" "$PKG_DIR/etc/dstarclients/DStarGateway.ini.example"
 
     # Copy docs
     for doc in README.md README LICENSE COPYING; do
@@ -135,8 +155,8 @@ Type=simple
 ExecStart=/usr/bin/dstargateway /etc/dstarclients/DStarGateway.ini
 Restart=on-failure
 RestartSec=5
-User=nobody
-Group=nogroup
+User=mmdvm
+Group=mmdvm
 WorkingDirectory=/var/lib/dstarclients
 
 [Install]
@@ -155,8 +175,8 @@ Type=simple
 ExecStart=/usr/bin/dgwtimeserver /etc/dstarclients/DStarGateway.ini
 Restart=on-failure
 RestartSec=5
-User=nobody
-Group=nogroup
+User=mmdvm
+Group=mmdvm
 WorkingDirectory=/var/lib/dstarclients
 
 [Install]
@@ -225,15 +245,29 @@ set -e
 
 case "$1" in
     configure)
-        # Reload systemd to pick up the new services
-        if [ -d /run/systemd/system ]; then
-            systemctl daemon-reload >/dev/null || true
+        # Create mmdvm system user/group if not present
+        if ! getent group mmdvm >/dev/null 2>&1; then
+            addgroup --quiet --system mmdvm
+        fi
+        if ! getent passwd mmdvm >/dev/null 2>&1; then
+            adduser --quiet --system --ingroup mmdvm --no-create-home --home /var/lib/dstarclients mmdvm
+        fi
+
+        # Create working directory
+        if [ ! -d /var/lib/dstarclients ]; then
+            mkdir -p /var/lib/dstarclients
+            chown mmdvm:mmdvm /var/lib/dstarclients
         fi
 
         # Create log directory with correct permissions
         if [ ! -d /var/log/dstargateway ]; then
             mkdir -p /var/log/dstargateway
-            chown nobody:nogroup /var/log/dstargateway || true
+        fi
+        chown mmdvm:mmdvm /var/log/dstargateway
+
+        # Reload systemd to pick up the new services
+        if [ -d /run/systemd/system ]; then
+            systemctl daemon-reload >/dev/null || true
         fi
         ;;
     abort-upgrade|abort-remove|abort-deconfigure)
