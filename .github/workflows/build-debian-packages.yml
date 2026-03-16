@@ -326,8 +326,8 @@ jobs:
               # Install package-specific dependencies
               case '$PACKAGE' in
                 dstarclients)
-                  # DStarGateway: no wxWidgets needed, just libcurl and boost headers
-                  apt-get install -y --no-install-recommends libcurl4-openssl-dev libboost-dev || true
+                  # DStarGateway: boost headers for compile, mosquitto already in base deps
+                  apt-get install -y --no-install-recommends libboost-dev || true
                   ;;
                 dstarrepeater)
                   # USB, ALSA, wxWidgets, and MQTT support

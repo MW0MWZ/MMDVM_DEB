@@ -115,18 +115,12 @@ create_package() {
         [ -f "DStarGateway/Data/Makefile" ] && cp "DStarGateway/Data/Makefile" "$PKG_DIR/usr/share/dstarclients/"
     fi
 
-    # Download host files from pistar.uk, fall back to upstream copies
-    HOST_FILES="CCS_Hosts.txt DCS_Hosts.txt DExtra_Hosts.txt DPlus_Hosts.txt"
-    for hostfile in $HOST_FILES; do
-        if wget -q -O "$PKG_DIR/etc/dstarclients/$hostfile" "http://www.pistar.uk/downloads/$hostfile" 2>/dev/null; then
-            print_info "Downloaded: $hostfile from pistar.uk"
-        elif [ -f "DStarGateway/Data/$hostfile" ]; then
-            cp "DStarGateway/Data/$hostfile" "$PKG_DIR/etc/dstarclients/$hostfile"
-            print_warning "Using upstream copy: $hostfile"
-        else
-            print_warning "Host file not available: $hostfile"
-        fi
-    done
+    # Download DStar_Hosts.json from pistar.uk
+    if wget -q -O "$PKG_DIR/etc/dstarclients/DStar_Hosts.json" "https://www.pistar.uk/downloads/DStar_Hosts.json" 2>/dev/null; then
+        print_info "Downloaded: DStar_Hosts.json from pistar.uk"
+    else
+        print_warning "DStar_Hosts.json not available from pistar.uk"
+    fi
 
     # Copy and patch config file for Debian package layout
     cp "DStarGateway/DStarGateway.ini" "$PKG_DIR/etc/dstarclients/DStarGateway.ini"
@@ -210,10 +204,10 @@ EOF
     # Set dependencies based on Debian version
     case "$DEBIAN_VERSION" in
         trixie)
-            DEPENDS="libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11), libcurl4t64, libmosquitto1t64"
+            DEPENDS="libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11), libmosquitto1t64"
             ;;
         *)
-            DEPENDS="libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11), libcurl4, libmosquitto1"
+            DEPENDS="libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11), libmosquitto1"
             ;;
     esac
 
