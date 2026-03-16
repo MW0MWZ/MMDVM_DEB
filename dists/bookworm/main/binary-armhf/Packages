@@ -37,16 +37,16 @@ Description: DMR Clients for Amateur Radio
  Git commits: DMRGateway 4786d77, MMDVM_CM 1dd5383
 
 Package: dstarclients
-Version: 2026.03.08-5~deb12u1
+Version: 2026.03.08-6~deb12u1
 Architecture: armhf
 Maintainer: MW0MWZ <andy@mw0mwz.co.uk>
 Depends: libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11), libcurl4, libmosquitto1
 Recommends: mosquitto
-Filename: pool/main/d/dstarclients/dstarclients_2026.03.08-5~deb12u1_armhf.deb
-Size: 754912
-MD5sum: 0e452ed15897d9ccffc11d7ce6227893
-SHA1: a8e02b77eef4ad465a93bd5838150164d0122db2
-SHA256: 20607eb3f3673c0d1300b5e51bc47503ed67550194cf2ac93d2043225d1352f0
+Filename: pool/main/d/dstarclients/dstarclients_2026.03.08-6~deb12u1_armhf.deb
+Size: 755176
+MD5sum: ba68f762631ed1aaa238c0e69ee27d89
+SHA1: d18aa8ceeb3ecd6fd62c08bde2296a4afa0a6b33
+SHA256: cb22beb1764fc732c0041a0c8a00c31cf1b3ec831c7d7f7f58c5aa9b917b5a99
 Section: hamradio
 Priority: optional
 Homepage: https://github.com/g4klx/DStarGateway
