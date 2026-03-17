@@ -66,9 +66,9 @@ Description: Pi-Star MCP — web dashboard and process supervisor
  Built for Debian bookworm
 Homepage: https://pistar.uk
 Filename: pool/main/p/pi-star/pi-star_2026.03.17-1~deb12u1_arm64.deb
-Size: 3152324
-MD5sum: 3c29b47a037abf5cb122d2b7f35653c8
-SHA256: 78a5fbaad3e2f88f8926d5b5056dc625fa7015596314c143facccb1cbc36620c
+Size: 3151188
+MD5sum: 397aae42a372e4b1d31e0d800fb4bc7e
+SHA256: dc8f4eb00c64dbab31b33968e7db30c2ce97527468bda4595ca91f037b15da02
 
 Package: pi-star
 Version: 2026.03.10-2~deb12u1
