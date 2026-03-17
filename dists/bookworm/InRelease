@@ -9,34 +9,34 @@ Version: 1.0
 Architectures: amd64 armhf arm64
 Components: main
 Description: Amateur Radio Digital Voice packages for Debian bookworm
-Date: Tue, 17 Mar 2026 17:44:25 +0000
+Date: Tue, 17 Mar 2026 19:14:52 +0000
 MD5Sum:
- dfc2bdd89513d1299914315329001e82 7053 main/binary-armhf/Packages.gz
- 78470dc3725be89cba8a62d40a1d1b21 44318 main/binary-armhf/Packages
- 0f6b8382d1f9be1523a95db8687be046 7061 main/binary-arm64/Packages.gz
- 4dc2dad9d15e384271394276ffcfa7a2 44318 main/binary-arm64/Packages
- 9ddc3e6fe7eba93a0dba5720e6419aa2 6809 main/binary-amd64/Packages.gz
- 3bfef38d71fa16abb618bbcf42723d74 42808 main/binary-amd64/Packages
+ e9925cee81288fae4d986ea91a534fd7 7137 main/binary-armhf/Packages.gz
+ 2e7e8f62c0e367d55423ccf564724ed7 45072 main/binary-armhf/Packages
+ 3cdd7fd38af8c23a4eec47aa32e030d2 7143 main/binary-arm64/Packages.gz
+ e5d11f938761bfaa62f756698b0eb672 45072 main/binary-arm64/Packages
+ 6082f89b092b1d9e9343b60708d4dfd5 6888 main/binary-amd64/Packages.gz
+ 69512cba8c2b9af858d58876ea0cf4c8 43562 main/binary-amd64/Packages
 SHA256:
- 0e355344f96176fb66d93f206499d35acef874fe7f7aa9a3a76b98df62fbb5d8 7053 main/binary-armhf/Packages.gz
- 14e907f5a14285bdc7bbece3cc8b5ae77118abb0d1b86b760650f2c278ec8ee7 44318 main/binary-armhf/Packages
- fa7cb9c956cd177b73a2af4434d9a9fcc7557ef56285e781514473cec155ac26 7061 main/binary-arm64/Packages.gz
- 5b1ae5e5dbc1f5658b4927637630a1d6e36ffa94388f6dabdcb9013718371bce 44318 main/binary-arm64/Packages
- 950120c77d25538d3ab38de54f103fabdd1aecdc6eb34abbd89c8eb2f649056d 6809 main/binary-amd64/Packages.gz
- 3f172cd7b95a496fdfecbae209ab0e87ffa8404279846188ced6f94430533c7f 42808 main/binary-amd64/Packages
+ af7e769733fc8e0733266c751364c12c2918b454d2053ed650ef3be0b6ce03c9 7137 main/binary-armhf/Packages.gz
+ 286c3cb886a0bb78a85fe8461147889f1b772f48bd1d5d904e6f3892f8e3aa99 45072 main/binary-armhf/Packages
+ 5728f45ffb2ebbfaf663f50db41b3561fb264d25b8046b1a0a73671601e2dc20 7143 main/binary-arm64/Packages.gz
+ 9b96559d9bf76a99fed999a3552d85b778728638f14eea776b28b33ce3c4dfc6 45072 main/binary-arm64/Packages
+ a79c11e93403c9200907f86f6c3628deedb1317932e75ba6a4a8444a75a115b2 6888 main/binary-amd64/Packages.gz
+ 3fc20d68fcfbe3d941705b21c08c824ed3a563a8e649f3d2be0c2b2689568015 43562 main/binary-amd64/Packages
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCgAdFiEEwSrrXjspA+i6MsGAzeIzmBVRrGEFAmm5kvkACgkQzeIzmBVR
-rGFINg//cInrza/sbdr/8mDzoYQltC8OEOLbPMMp4FTz7Gk97rgGNVYCg8QkDPwR
-umpcHjpU8IVNZJnDg4mrbawJfo8sPQ+P27F2zjZgCW30jRiVW1LIVRf7oiS07xbe
-7pzUg/y+dsEn9vjzVZvfFKUcr8h8o3b9Mw7HdWPYMM41NYZM+Ndb99j/kyQ730Y7
-1O7M8gPXqCJ2d1wMBh0UOC3GVrICYri95I9bgr5ASyKAWd8BOhl7PqZkwJC2cMDO
-vE9ddk9Tpa1BNr1nCLptfTUB82Y1EpTkCM3jTDuTcc3ZNVJahhzPNGxgdk7i/c41
-tTJuH8B8YeI3YDWNYMiGLP4OVKWFVnzMJN7s3e4EFQ+pgS/dssruYDNPjeenvnWc
-t1X31yKewdLHNW5Thkh5gZiauyeSlSIpYhemaUg3WtMCABRBUeU7rSo1PHQKU2Cz
-6SB1Lca5YfgzuFNdKUD5++iI+8YHyMeYR4KWJf81/a2lCbQSE0GfxLNuJ5rxUpUC
-9cfDW4mqUxVV1c4eszL4OJQWsucvtK43KkpCWBZ7/Dbac8JJzR8UzjlmLe5YDFLe
-ByzoLrWZ1pAXRIQazF/PB6q5xCqr/CXDj06N14SoZKrkKMalmW0RNUM9fo9+k50/
-orlJUqotS0M4fDN0fvKTAQ7Xqfey3ga10q3z8dA2New2PMkl/OI=
-=p6+u
+iQIzBAEBCgAdFiEEwSrrXjspA+i6MsGAzeIzmBVRrGEFAmm5qCwACgkQzeIzmBVR
+rGEa2A//SHAvsPDFl2UPxdFM4svKFz84XMCQXKAAv/OzZLYMSWo9UZHGbPKvVdPK
+R+BHJPhPbLLCv/9hgERrKrAnGMWOy5JsByL8n6oTvBwZcOBA/XRtb1fb3drCWyJT
+er9e8SoF0zG2WWuG/mjL1TE3DyBAUCIFZcvWdPB1VOiSN5RsIJl2LDcImpkJ7gPa
+tsCIIUdPTiJ3vP7yJjWWbFgrNsaS3BzHalSSUQxQ4xrB6rttzZ3TrjWiJtAXRXuv
+oQn3sgYkFk4Mrc+hBGtlPoE+6ddaLkQ+c5JBk8TG1M/5tGFWyz77HyxjQO8xeJ2A
+wU6RQdq1B8/nRiStSXwjRbJK6whoTa04gyFwrpnQ+mekpaTDi5WZ+gIKZufMDqMe
+nVaqvP7uS9tCc+MhO3rEnL7/FZlXJbQa1o7J1d/5laZ3oy8aRj2Y5Uixq32YdQ4u
+CAQKPHbcitudVUIgZTuHVMSagi8BKcoCPpL61Dn/GdauuNFQLdYz0itLSxAPcMTW
+mjBGQ1YE2jZvxcLWlOhQSI8WenpicduhFsZNuOscSzgZpLyBBJHNYGXQqasmhfNo
+sXiOyl88ovlccy6OvYsauyM7v0ng9TnIyub19e4PM5sjwkeaNHpDDV4kUhJaZ6Dy
+NOcZhizYzmoz0HO0WTnGPelQwyjk8cV+KRDOs74hPRLqW9eDWW8=
+=aXnj
 -----END PGP SIGNATURE-----
