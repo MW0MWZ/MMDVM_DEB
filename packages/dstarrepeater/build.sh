@@ -3,7 +3,7 @@ set -e
 
 # D-Star Repeater package build script for Debian
 # For GitHub Actions ONLY
-# Version: 1.5.0
+# Version: 2.0.0 - wxWidgets removed, single binary, INI config
 
 # Color codes
 RED='\033[0;31m'
@@ -43,53 +43,21 @@ prepare_source() {
     print_info "Git commit: $GIT_COMMIT"
 }
 
-patch_makefiles() {
-    print_message "Patching Makefiles for Debian build..."
-    cd DStarRepeater
-
-    # Patch main Makefile
-    if [ -f "Makefile" ]; then
-        sed -i '/^export CFLAGS.*=/a export CXXFLAGS := $(CFLAGS)' Makefile
-    fi
-
-    # Patch ARM Makefile
-    if [ -f "MakefilePi" ]; then
-        sed -i 's/export CFLAGS.*:=.*/& -DNDEBUG -DwxDEBUG_LEVEL=0/' MakefilePi
-        sed -i '/^export CFLAGS.*=/a export CXXFLAGS := $(CFLAGS)' MakefilePi
-        # Add MQTT support (MakefilePi doesn't have the MQTT conditional from the main Makefile)
-        sed -i 's/export CFLAGS  :=.*/& -DMQTT/' MakefilePi
-        sed -i 's/export LIBS    :=.*/& -lmosquitto/' MakefilePi
-    fi
-
-    cd ..
-}
-
 build_software() {
     print_message "Building DStarRepeater..."
-    patch_makefiles
-    
     cd DStarRepeater
-    
-    # Clean and build
+
     make clean || true
-    
-    # Build with appropriate Makefile
-    ARCH="${ARCH:-$(dpkg --print-architecture)}"
-    case "$ARCH" in
-        armhf|arm64|aarch64)
-            if [ -f "MakefilePi" ]; then
-                print_info "Building for ARM with GPIO support"
-                make -f MakefilePi -j$(nproc) all
-            else
-                make BUILD=release -j$(nproc) all
-            fi
-            ;;
-        *)
-            print_info "Building for x86 with MQTT support"
-            make BUILD=release MQTT=1 -j$(nproc) all
-            ;;
-    esac
-    
+
+    # Upstream Makefile auto-detects GPIO on ARM, MQTT on by default
+    print_info "Building with MQTT=1 (GPIO auto-detected on ARM)"
+    make -j$(nproc) all
+
+    if [ ! -f "DStarRepeater/dstarrepeaterd" ]; then
+        print_error "Build failed - dstarrepeaterd not created"
+        exit 1
+    fi
+
     cd ..
     print_message "Build completed"
 }
@@ -114,46 +82,32 @@ create_package() {
     mkdir -p "$PKG_DIR"/{DEBIAN,usr/bin,usr/share/{doc/dstarrepeater,dstarrepeater}}
     mkdir -p "$PKG_DIR"/{etc/dstarrepeater,lib/systemd/system,var/{lib,log}/dstarrepeater}
     
-    # Copy binaries
     cd DStarRepeater
-    
-    # List of binaries to install
-    BINARIES="DStarRepeater/dstarrepeaterd DStarRepeaterConfig/dstarrepeaterconfig \
-              AnalogueRepeater/analoguerepeaterd DVAPNode/dvapnoded \
-              DVRPTRRepeater/dvrptrrepeaterd GMSKRepeater/gmskrepeaterd \
-              SoundCardRepeater/soundcardrepeaterd SplitRepeater/splitrepeaterd"
-    
-    for binary_path in $BINARIES; do
-        if [ -f "$binary_path" ]; then
-            cp "$binary_path" "$PKG_DIR/usr/bin/"
-            chmod 755 "$PKG_DIR/usr/bin/$(basename $binary_path)"
-            print_info "Installed: $(basename $binary_path)"
-        fi
-    done
-    
-    # Copy data files
-    if [ -d "Data" ]; then
-        cp -r Data/* "$PKG_DIR/usr/share/dstarrepeater/" 2>/dev/null || true
-    fi
-    
-    # Copy config examples
-    for conf in DStarRepeater/*.conf AnalogueRepeater/*.conf DVAPNode/*.conf \
-                DVRPTRRepeater/*.conf GMSKRepeater/*.conf SoundCardRepeater/*.conf \
-                SplitRepeater/*.conf; do
-        [ -f "$conf" ] && cp "$conf" "$PKG_DIR/etc/dstarrepeater/$(basename $conf).example"
-    done
 
-    # Install the Linux example config (includes MQTT settings)
-    if [ -f "linux/dstarrepeater.example" ]; then
-        cp "linux/dstarrepeater.example" "$PKG_DIR/etc/dstarrepeater/dstarrepeater.conf.example"
-        print_info "Installed: linux/dstarrepeater.example as dstarrepeater.conf.example"
+    # Install single binary
+    cp "DStarRepeater/dstarrepeaterd" "$PKG_DIR/usr/bin/"
+    chmod 755 "$PKG_DIR/usr/bin/dstarrepeaterd"
+    print_info "Installed: dstarrepeaterd"
+
+    # Copy AMBE voice data files
+    if [ -d "Data" ]; then
+        for ext in ambe indx; do
+            cp Data/*.$ext "$PKG_DIR/usr/share/dstarrepeater/" 2>/dev/null || true
+        done
     fi
-    
+
+    # Install config: example and active copy
+    if [ -f "Data/dstarrepeater.ini.example" ]; then
+        cp "Data/dstarrepeater.ini.example" "$PKG_DIR/etc/dstarrepeater/dstarrepeater.ini.example"
+        cp "Data/dstarrepeater.ini.example" "$PKG_DIR/etc/dstarrepeater/dstarrepeater.ini"
+        print_info "Installed: dstarrepeater.ini"
+    fi
+
     # Copy docs
-    for doc in README* CHANGES* AUTHORS *.md LICENSE COPYING; do
+    for doc in README.md CHANGELOG.md CONFIGURATION.md MQTT.md BUILD.md COPYING.txt; do
         [ -f "$doc" ] && cp "$doc" "$PKG_DIR/usr/share/doc/dstarrepeater/"
     done
-    
+
     cd ..
     
     # Create systemd service
@@ -164,11 +118,12 @@ After=network.target
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/dstarrepeaterd -config /etc/dstarrepeater/dstarrepeater.conf -logdir /var/log/dstarrepeater
+ExecStart=/usr/bin/dstarrepeaterd /etc/dstarrepeater/dstarrepeater.ini
 Restart=on-failure
 RestartSec=5
 User=dstar
 Group=dstar
+WorkingDirectory=/var/lib/dstarrepeater
 
 [Install]
 WantedBy=multi-user.target
@@ -199,13 +154,13 @@ EOF
     # Set dependencies based on Debian version
     case "$DEBIAN_VERSION" in
         trixie)
-            WX_DEPS="libwxgtk3.2-1t64, libwxbase3.2-1t64"
+            DEPENDS="libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11), libusb-1.0-0, libasound2t64, libmosquitto1t64"
             ;;
         *)
-            WX_DEPS="libwxgtk3.2-1, libwxbase3.2-1"
+            DEPENDS="libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11), libusb-1.0-0, libasound2, libmosquitto1"
             ;;
     esac
-    
+
     # Create control file
     cat > "$PKG_DIR/DEBIAN/control" << EOF
 Package: ${PACKAGE_NAME}
@@ -213,10 +168,10 @@ Version: ${FULL_VERSION}
 Section: hamradio
 Priority: optional
 Architecture: ${PKG_ARCH}
-Depends: libc6, libgcc-s1, libstdc++6, ${WX_DEPS}, libusb-1.0-0, libasound2, libmosquitto1
+Depends: ${DEPENDS}
 Maintainer: MW0MWZ <andy@mw0mwz.co.uk>
 Description: D-Star Repeater Controller for Amateur Radio
- Complete D-Star repeater system with multiple hardware support
+ D-Star repeater controller daemon with MQTT telemetry support
  Built for Debian ${DEBIAN_VERSION}
  Git commit: ${GIT_COMMIT}
 Homepage: https://github.com/g4klx/DStarRepeater
@@ -299,10 +254,7 @@ EOF
     cd - > /dev/null
     
     # Create conffiles
-    > "$PKG_DIR/DEBIAN/conffiles"
-    find "$PKG_DIR/etc/dstarrepeater" -type f 2>/dev/null | while read conf; do
-        echo "${conf#$PKG_DIR}" >> "$PKG_DIR/DEBIAN/conffiles"
-    done
+    echo "/etc/dstarrepeater/dstarrepeater.ini" > "$PKG_DIR/DEBIAN/conffiles"
     
     # Build the package
     print_message "Building .deb package..."
