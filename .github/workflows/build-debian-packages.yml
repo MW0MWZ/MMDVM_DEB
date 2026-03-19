@@ -330,116 +330,30 @@ jobs:
                   apt-get install -y --no-install-recommends libboost-dev || true
                   ;;
                 dstarrepeater)
-                  # USB, ALSA, wxWidgets, and MQTT support
-                  apt-get install -y --no-install-recommends libusb-1.0-0-dev libasound2-dev libmosquitto-dev || true
-                  apt-get install -y --no-install-recommends libwxgtk3.2-dev wx3.2-headers || true
-                  
-                  # For ARM, try to get wiringPi for GPIO support (same logic as mmdvmhost)
+                  # USB, ALSA deps (mosquitto already in base deps, wiringPi for ARM GPIO)
+                  apt-get install -y --no-install-recommends libusb-1.0-0-dev libasound2-dev || true
+
+                  # For ARM, try to get wiringPi for GPIO support
                   if [ '$ARCH' = 'armhf' ] || [ '$ARCH' = 'arm64' ]; then
                     echo 'Looking for wiringPi package for GPIO support...'
                     WIRINGPI_DEB=\"\"
-                    
+
                     # Check if wiringPi was built earlier and is in the pool
                     if [ -d /workspace/pool/main/w/wiringpi ]; then
                       WIRINGPI_DEB=\$(find /workspace/pool/main/w/wiringpi -name \"wiringpi*${DEB_VERSION_SUFFIX}_${ARCH}.deb\" -type f | head -1)
                     fi
-                    
+
                     if [ -n \"\$WIRINGPI_DEB\" ] && [ -f \"\$WIRINGPI_DEB\" ]; then
                       echo \"Installing local wiringPi package: \$WIRINGPI_DEB\"
                       dpkg -i \"\$WIRINGPI_DEB\" || apt-get install -f -y
                       echo 'wiringPi installed successfully from local build'
                     else
-                      # If no local package, query repository properly for wiringPi
-                      echo 'Local wiringPi not found, querying repository metadata...'
-                      
+                      echo 'Local wiringPi not found, querying repository...'
                       REPO_URL=\"https://deb.pistar.uk\"
-                      WIRINGPI_DOWNLOADED=false
-                      
-                      # Download and parse the Packages file to find the exact package
-                      echo 'Downloading repository Packages file...'
-                      PACKAGES_URL=\"\${REPO_URL}/dists/\${DEBIAN_VERSION}/main/binary-\${ARCH}/Packages.gz\"
-                      TEMP_PACKAGES=\$(mktemp)
-                      
-                      if wget -q -O - \"\$PACKAGES_URL\" 2>/dev/null | gunzip > \"\$TEMP_PACKAGES\" 2>/dev/null; then
-                        echo 'Successfully downloaded Packages.gz'
-                        
-                        # Parse the Packages file to find wiringPi with correct version suffix
-                        WIRINGPI_PATH=\$(awk -v deb_suffix=\"\${DEB_VERSION_SUFFIX}\" '/^Package: wiringpi\$/ { found=1 } found && /^Version:/ { if (index(\$2, deb_suffix)) { version_match=1 } } found && version_match && /^Filename:/ { print \$2; exit }' \"\$TEMP_PACKAGES\")
-                        
-                        if [ -n \"\$WIRINGPI_PATH\" ]; then
-                          echo \"Found wiringPi in repository: \$WIRINGPI_PATH\"
-                          PACKAGE_URL=\"\${REPO_URL}/\${WIRINGPI_PATH}\"
-                          echo \"Downloading from: \$PACKAGE_URL\"
-                          
-                          if wget -q -O /tmp/wiringpi.deb \"\$PACKAGE_URL\" 2>/dev/null; then
-                            if file /tmp/wiringpi.deb | grep -q 'Debian binary package'; then
-                              WIRINGPI_DOWNLOADED=true
-                              echo 'Successfully downloaded wiringPi package'
-                            else
-                              echo 'Downloaded file is not a valid Debian package'
-                              rm -f /tmp/wiringpi.deb
-                            fi
-                          else
-                            echo \"Failed to download from: \$PACKAGE_URL\"
-                          fi
-                        else
-                          echo 'wiringPi package not found in repository metadata'
-                        fi
-                      else
-                        # Try uncompressed Packages file
-                        echo 'Failed to get Packages.gz, trying uncompressed...'
-                        PACKAGES_URL=\"\${REPO_URL}/dists/\${DEBIAN_VERSION}/main/binary-\${ARCH}/Packages\"
-                        
-                        if wget -q -O \"\$TEMP_PACKAGES\" \"\$PACKAGES_URL\" 2>/dev/null; then
-                          WIRINGPI_PATH=\$(awk -v deb_suffix=\"\${DEB_VERSION_SUFFIX}\" '/^Package: wiringpi\$/ { found=1 } found && /^Version:/ { if (index(\$2, deb_suffix)) { version_match=1 } } found && version_match && /^Filename:/ { print \$2; exit }' \"\$TEMP_PACKAGES\")
-                          
-                          if [ -n \"\$WIRINGPI_PATH\" ]; then
-                            echo \"Found wiringPi: \$WIRINGPI_PATH\"
-                            PACKAGE_URL=\"\${REPO_URL}/\${WIRINGPI_PATH}\"
-                            
-                            if wget -q -O /tmp/wiringpi.deb \"\$PACKAGE_URL\" 2>/dev/null; then
-                              if file /tmp/wiringpi.deb | grep -q 'Debian binary package'; then
-                                WIRINGPI_DOWNLOADED=true
-                                echo 'Successfully downloaded wiringPi package'
-                              else
-                                rm -f /tmp/wiringpi.deb
-                              fi
-                            fi
-                          fi
-                        fi
-                      fi
-                      rm -f \"\$TEMP_PACKAGES\"
-                      
-                      # Last resort: use apt with trusted=yes
-                      if [ \"\$WIRINGPI_DOWNLOADED\" = false ]; then
-                        echo 'Repository metadata query failed, trying apt with trusted=yes...'
-                        echo \"deb [trusted=yes] \${REPO_URL}/ \$DEBIAN_VERSION main\" > /etc/apt/sources.list.d/hamradio-temp.list
-                        apt-get update 2>/dev/null || true
-                        if apt-get download wiringpi 2>/dev/null; then
-                          if ls wiringpi*.deb 1> /dev/null 2>&1; then
-                            mv wiringpi*.deb /tmp/wiringpi.deb
-                            WIRINGPI_DOWNLOADED=true
-                          fi
-                        fi
-                        rm -f /etc/apt/sources.list.d/hamradio-temp.list
-                        apt-get update 2>/dev/null || true
-                      fi
-                      
-                      # Install if downloaded
-                      if [ \"\$WIRINGPI_DOWNLOADED\" = true ] && [ -f /tmp/wiringpi.deb ]; then
-                        echo 'Installing wiringPi package...'
-                        dpkg -i /tmp/wiringpi.deb 2>/dev/null || apt-get install -f -y
-                        
-                        if dpkg -l | grep -q '^ii  wiringpi'; then
-                          echo 'wiringPi installed successfully'
-                        else
-                          echo 'Warning: wiringPi installation may have failed'
-                        fi
-                        rm -f /tmp/wiringpi.deb
-                      else
-                        echo 'Warning: Could not download wiringPi package'
-                        echo 'GPIO support will be limited'
-                      fi
+                      echo \"deb [trusted=yes] \${REPO_URL}/ \$DEBIAN_VERSION main\" > /etc/apt/sources.list.d/hamradio-temp.list
+                      apt-get update 2>/dev/null || true
+                      apt-get install -y wiringpi 2>/dev/null || echo 'Warning: wiringPi not available, GPIO=0'
+                      rm -f /etc/apt/sources.list.d/hamradio-temp.list
                     fi
                   fi
                   ;;
