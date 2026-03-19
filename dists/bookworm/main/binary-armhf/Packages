@@ -58,22 +58,22 @@ Description: D-Star Gateway and Tools
  Git commit: 55cb967
 
 Package: dstarrepeater
-Version: 2026.03.08-4~deb12u1
+Version: 2026.03.19-0~deb12u1
 Architecture: armhf
 Maintainer: MW0MWZ <andy@mw0mwz.co.uk>
-Depends: libc6, libgcc-s1, libstdc++6, libwxgtk3.2-1, libwxbase3.2-1, libusb-1.0-0, libasound2, libmosquitto1
-Filename: pool/main/d/dstarrepeater/dstarrepeater_2026.03.08-4~deb12u1_armhf.deb
-Size: 644852
-MD5sum: b258e488c58520609198f49c88fed62c
-SHA1: 0fa7fc475d744ffc9668ff5b7ba45b73343b04d6
-SHA256: 1a0ef689f48e86193e1f40bcbbd428e28797d1b6df7630ce1b0416adb268f3e9
+Depends: libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11), libusb-1.0-0, libasound2, libmosquitto1
+Filename: pool/main/d/dstarrepeater/dstarrepeater_2026.03.19-0~deb12u1_armhf.deb
+Size: 441916
+MD5sum: 8812edb3913721447f8334f329948470
+SHA1: cc0ebc7e0d61af50a90eaac3273128a747a9e1b5
+SHA256: 8e2df36b55dce743eb992093d6fd2da139d78c4eb365fc46417b372c6d516689
 Section: hamradio
 Priority: optional
 Homepage: https://github.com/g4klx/DStarRepeater
 Description: D-Star Repeater Controller for Amateur Radio
- Complete D-Star repeater system with multiple hardware support
+ D-Star repeater controller daemon with MQTT telemetry support
  Built for Debian bookworm
- Git commit: 630ff49
+ Git commit: 84a3344
 
 Package: fmclients
 Version: 2026.03.11-0~deb12u1
