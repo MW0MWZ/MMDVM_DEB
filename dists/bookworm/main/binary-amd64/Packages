@@ -1,13 +1,13 @@
 Package: aprsclients
-Version: 2026.03.23-0~deb12u1
+Version: 2026.03.23-1~deb12u1
 Architecture: amd64
 Maintainer: MW0MWZ <andy@mw0mwz.co.uk>
 Depends: libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11), libmosquitto1
-Filename: pool/main/a/aprsclients/aprsclients_2026.03.23-0~deb12u1_amd64.deb
-Size: 546560
-MD5sum: 051f5223436517cbef24e2c47fd8b23b
-SHA1: e8cbee0d1bc6304e2ea0015d4d63432df9ebbb30
-SHA256: c00497ee0e4af0234a9206e8b0e3e290b54739f0ef6f4144a8ef79e73c621c43
+Filename: pool/main/a/aprsclients/aprsclients_2026.03.23-1~deb12u1_amd64.deb
+Size: 546440
+MD5sum: c96b7da14f360eb34551f4f38122362d
+SHA1: efb28190a196bccf3a154d105fa585bb57d736fe
+SHA256: 6a43a7778d8eaa5fba841c9ec0ef38e580434f0bc27cee9fe71e91ef430bb008
 Section: hamradio
 Priority: optional
 Homepage: https://github.com/g4klx/APRSGateway
@@ -18,15 +18,15 @@ Description: APRS Gateway for Amateur Radio
  Git commit: daddd8e
 
 Package: dmrclients
-Version: 2026.03.23-0~deb12u1
+Version: 2026.03.23-1~deb12u1
 Architecture: amd64
 Maintainer: MW0MWZ <andy@mw0mwz.co.uk>
 Depends: libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11), libmosquitto1
-Filename: pool/main/d/dmrclients/dmrclients_2026.03.23-0~deb12u1_amd64.deb
-Size: 2725492
-MD5sum: f8fa3a5772a29d9a64cac22184149aa8
-SHA1: 248a8e867d369df6ed6007ad4a7ead86771a0909
-SHA256: f414dae4b105ccccf2068506f11689573abf938e2e776f4931f32a454e2e5a8c
+Filename: pool/main/d/dmrclients/dmrclients_2026.03.23-1~deb12u1_amd64.deb
+Size: 2722276
+MD5sum: def5461a1821dfe23937ea84880365d6
+SHA1: 8d5f34685489e9241cf13d82213790fb0c3c204a
+SHA256: 373e357c6c65354cf5d3850994c13a53823a89462e2cef58ce5d21ea996e0f9e
 Section: hamradio
 Priority: optional
 Homepage: https://github.com/g4klx/DMRGateway
@@ -34,19 +34,19 @@ Description: DMR Clients for Amateur Radio
  DMR Gateway and Cross-Mode converters for digital communications
  Includes DMRGateway, DMR2YSF, and DMR2NXDN
  Built for Debian bookworm
- Git commits: DMRGateway 7bbd64c, MMDVM_CM 1dd5383
+ Git commits: DMRGateway 0e04eba, MMDVM_CM 1dd5383
 
 Package: dstarclients
-Version: 2026.03.23-0~deb12u1
+Version: 2026.03.23-1~deb12u1
 Architecture: amd64
 Maintainer: MW0MWZ <andy@mw0mwz.co.uk>
 Depends: libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11), libmosquitto1
 Recommends: mosquitto
-Filename: pool/main/d/dstarclients/dstarclients_2026.03.23-0~deb12u1_amd64.deb
-Size: 846548
-MD5sum: ce0c0debf641fa15a5621aa633cdfb1d
-SHA1: a718f9a67abe69917759edead2429e827245edb5
-SHA256: 3f62498c3503d10895bcf18b131ec850db4e5ea787248429d18cd25b0c68f1df
+Filename: pool/main/d/dstarclients/dstarclients_2026.03.23-1~deb12u1_amd64.deb
+Size: 848176
+MD5sum: bb00d2762ac4df2bdd738d10753bddac
+SHA1: a51bca22089ec445476608ea55d1a36f7be74028
+SHA256: 0943d6528618d07b7c7bf269dd9d7e30033d4f0ae1af4213b128bcce0403ad3d
 Section: hamradio
 Priority: optional
 Homepage: https://github.com/g4klx/DStarGateway
@@ -55,18 +55,18 @@ Description: D-Star Gateway and Tools
  Includes gateway, time server, remote control, and transmit tools
  .
  Built for Debian bookworm
- Git commit: 3846360
+ Git commit: 3100bc9
 
 Package: dstarrepeater
-Version: 2026.03.19-2~deb12u1
+Version: 2026.03.19-3~deb12u1
 Architecture: amd64
 Maintainer: MW0MWZ <andy@mw0mwz.co.uk>
 Depends: libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11), libusb-1.0-0, libasound2, libmosquitto1
-Filename: pool/main/d/dstarrepeater/dstarrepeater_2026.03.19-2~deb12u1_amd64.deb
-Size: 471332
-MD5sum: 1c325dada313f8324806775c305a9269
-SHA1: b85f4d18ee3635211fe735f31579ac5e609b4c0b
-SHA256: 912dce59e0352bb72d906b1868ecb7f1dc7340741c45e416607055c19d82a6e8
+Filename: pool/main/d/dstarrepeater/dstarrepeater_2026.03.19-3~deb12u1_amd64.deb
+Size: 471680
+MD5sum: 963b83d57ce4dae4cb8299f9170ab6e1
+SHA1: 01dfb319a3732a7c05955c741496c8f46be1ba4b
+SHA256: 302f06ab60a32ba01aa514fce468c30210cf762b94b601c8ea808ad44500470c
 Section: hamradio
 Priority: optional
 Homepage: https://github.com/g4klx/DStarRepeater
@@ -76,15 +76,15 @@ Description: D-Star Repeater Controller for Amateur Radio
  Git commit: 84a3344
 
 Package: fmclients
-Version: 2026.03.11-1~deb12u1
+Version: 2026.03.11-2~deb12u1
 Architecture: amd64
 Maintainer: MW0MWZ <andy@mw0mwz.co.uk>
 Depends: libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11), libmd0 (>= 1.0.3), libmosquitto1
-Filename: pool/main/f/fmclients/fmclients_2026.03.11-1~deb12u1_amd64.deb
-Size: 657624
-MD5sum: c06bf82d8ee0b76b13e19f8af3f8209c
-SHA1: ea6e25cfc3ac3a7a6bffe438197eefa23eab4054
-SHA256: bdba7d36b40398a2cc0889ed36d4ea1ed69b0203ef9223a244fd839a4ab789a3
+Filename: pool/main/f/fmclients/fmclients_2026.03.11-2~deb12u1_amd64.deb
+Size: 657708
+MD5sum: 6b3025f5dfc70d6913fc7e43df0437ff
+SHA1: f4a677ed65a956a6f6d5b334001576bb53f9c4c1
+SHA256: c237f0dd51477ca5de55cbccfe7791636f441afa3d36567a7cef07d1b208c7f4
 Section: hamradio
 Priority: optional
 Homepage: https://github.com/g4klx/FMGateway
@@ -94,16 +94,16 @@ Description: FM Clients for Amateur Radio
  Git commit: e0abad3
 
 Package: mmdvmhost
-Version: 2026.03.23-0~deb12u1
+Version: 2026.03.23-1~deb12u1
 Architecture: amd64
 Maintainer: MW0MWZ <andy@mw0mwz.co.uk>
 Depends: libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11), libmosquitto1, libsamplerate0
 Recommends: mosquitto
-Filename: pool/main/m/mmdvmhost/mmdvmhost_2026.03.23-0~deb12u1_amd64.deb
-Size: 6253300
-MD5sum: eee0c2cc3b1ac42cb319d565d4152d63
-SHA1: 17313c695523d10c35e7980e3289684e607b9e93
-SHA256: 2337ec70a14d544c7c00b5c6789abd1ab9b6bcdb92b8964467cb12625e8a6760
+Filename: pool/main/m/mmdvmhost/mmdvmhost_2026.03.23-1~deb12u1_amd64.deb
+Size: 6250172
+MD5sum: 85f77ab6fc032ee78348bd2334f7653b
+SHA1: 6f8abf21000ae04148eee3c0d2db64d4f1007834
+SHA256: dbcf7007bdd5f2e3ecade03f80cce277c92bb7a22d024c12989a147b4bbaef2c
 Section: hamradio
 Priority: optional
 Homepage: https://github.com/g4klx/MMDVMHost
@@ -113,18 +113,18 @@ Description: MMDVM Host Software, Calibration and Display Driver
  Includes MMDVMCal calibration tool and DisplayDriver display server
  .
  Built for Debian bookworm
- Git commits: MMDVMHost c8625f7, MMDVMCal cf37046, Display-Driver 77e303a
+ Git commits: MMDVMHost c8625f7, MMDVMCal cf37046, Display-Driver eadc91a
 
 Package: nxdnclients
-Version: 2026.03.23-0~deb12u1
+Version: 2026.03.23-1~deb12u1
 Architecture: amd64
 Maintainer: MW0MWZ <andy@mw0mwz.co.uk>
 Depends: libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11), libmosquitto1
-Filename: pool/main/n/nxdnclients/nxdnclients_2026.03.23-0~deb12u1_amd64.deb
-Size: 2362932
-MD5sum: 90179996f425fa01765a191f680ac21e
-SHA1: b9a1bccaa96fd6ceb6dc064535222355d17c5b6f
-SHA256: 99cad1ecf7ff0eeb8acf0524886999191d0f491c3ebd9af16b775cdd7b193a9f
+Filename: pool/main/n/nxdnclients/nxdnclients_2026.03.23-1~deb12u1_amd64.deb
+Size: 2363992
+MD5sum: 6b5064fd5181eb3574abaa8d47f16576
+SHA1: 746faccbc120852db5d1a377ec8768b407a18b23
+SHA256: e88470709b234819c61583cce8643f8feba614da9e08d22d0b1ba25067ad20ad
 Section: hamradio
 Priority: optional
 Homepage: https://github.com/g4klx/NXDNClients
@@ -132,18 +132,18 @@ Description: NXDN Clients for Amateur Radio
  NXDN Gateway, Parrot and Cross-Mode converters
  Includes NXDNGateway, NXDNParrot, and NXDN2DMR
  Built for Debian bookworm
- Git commits: NXDNClients 5f97588, MMDVM_CM 1dd5383
+ Git commits: NXDNClients c05dbb9, MMDVM_CM 1dd5383
 
 Package: p25clients
-Version: 2026.03.23-0~deb12u1
+Version: 2026.03.23-1~deb12u1
 Architecture: amd64
 Maintainer: MW0MWZ <andy@mw0mwz.co.uk>
 Depends: libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11), libmosquitto1
-Filename: pool/main/p/p25clients/p25clients_2026.03.23-0~deb12u1_amd64.deb
-Size: 1187608
-MD5sum: 83a28a6d3656dd6b418dc05f1ba025d7
-SHA1: 44a321c0cb42cdb9b0c12769ddb715c69e545367
-SHA256: 28b55fa921e1a431912087ad4ff4b6b8d16ab510822405c86ca36b73a05d9296
+Filename: pool/main/p/p25clients/p25clients_2026.03.23-1~deb12u1_amd64.deb
+Size: 1188984
+MD5sum: 1696e0f9a1e605dcee136566757018ea
+SHA1: 8d991d26709122b52181463305b0261919ca3e97
+SHA256: 3c9a0638e7071fa320a12d73756f5805eabc5acc77e76c2236577613ac50a3de
 Section: hamradio
 Priority: optional
 Homepage: https://github.com/g4klx/P25Clients
@@ -151,7 +151,7 @@ Description: P25 Clients for Amateur Radio
  P25 Gateway and Parrot for digital communications
  Includes P25Gateway and P25Parrot
  Built for Debian bookworm
- Git commit: fea2a1c
+ Git commit: b579c32
 
 Package: pi-star
 Version: 2026.03.20-1~deb12u1
@@ -173,15 +173,15 @@ Description: Pi-Star MCP — web dashboard and process supervisor
  Built for Debian bookworm
 
 Package: pocsagclients
-Version: 2026.03.23-0~deb12u1
+Version: 2026.03.23-1~deb12u1
 Architecture: amd64
 Maintainer: MW0MWZ <andy@mw0mwz.co.uk>
 Depends: libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11), libmosquitto1
-Filename: pool/main/p/pocsagclients/pocsagclients_2026.03.23-0~deb12u1_amd64.deb
-Size: 1142088
-MD5sum: 78b6e90a52ddb7869dbe9271c7a793bb
-SHA1: f4133f96b2a2fcc337a52636ff0e79aee828c79e
-SHA256: efdbedc0361729b3b1164e1ed25e7642e2abee46b1c85cac5673d9ae68075ba5
+Filename: pool/main/p/pocsagclients/pocsagclients_2026.03.23-1~deb12u1_amd64.deb
+Size: 1142424
+MD5sum: 8d4f9a7f6e0371426bd73558dd155226
+SHA1: 351c86e1eb8843bd0e20dc1ddadae6c775d87970
+SHA256: da2edcb5b0815014ce0aa280d172e609a8cf22ec8cf8425991da6d3452d50c7a
 Section: hamradio
 Priority: optional
 Homepage: https://github.com/g4klx/DAPNETGateway
@@ -211,16 +211,16 @@ Description: GPIO Interface library for Raspberry Pi (dummy package)
  but provides no actual functionality.
 
 Package: ysfclients
-Version: 2026.03.23-0~deb12u1
+Version: 2026.03.23-1~deb12u1
 Architecture: amd64
 Maintainer: MW0MWZ <andy@mw0mwz.co.uk>
 Depends: libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11), libmosquitto1
 Recommends: ntp | chrony
-Filename: pool/main/y/ysfclients/ysfclients_2026.03.23-0~deb12u1_amd64.deb
-Size: 4670076
-MD5sum: 5af90857ce84d73932cd28ef0006abc0
-SHA1: 06b4a6b509b8e00f8b3bc34837e852b49cf39dd9
-SHA256: 08ae0565ce5634326faacb2b5833a9432d7c6773a15cd90faccef8a6631f4b88
+Filename: pool/main/y/ysfclients/ysfclients_2026.03.23-1~deb12u1_amd64.deb
+Size: 4671156
+MD5sum: b3b3fc5729b515a4069278a2b28b84ac
+SHA1: 14fb64b84e4a3d7636443910c4f689e781ab84cb
+SHA256: d270aee9dede8b195d27d45018558bba93e30ce2cc92dd565af5773b47167ab9
 Section: hamradio
 Priority: optional
 Homepage: https://github.com/g4klx/YSFClients
@@ -237,5 +237,5 @@ Description: YSF Clients for Amateur Radio
   - YSF2P25: Cross-mode converter from YSF to P25
  .
  Built for Debian bookworm
- YSFClients commit: 7bc5691
+ YSFClients commit: 7980245
  MMDVM_CM commit: 1dd5383
