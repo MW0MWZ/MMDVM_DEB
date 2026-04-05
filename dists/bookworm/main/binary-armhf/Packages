@@ -37,16 +37,16 @@ Description: DMR Clients for Amateur Radio
  Git commits: DMRGateway 0e04eba, MMDVM_CM 1dd5383
 
 Package: dstarclients
-Version: 2026.03.23-1~deb12u1
+Version: 2026.04.04-0~deb12u1
 Architecture: armhf
 Maintainer: MW0MWZ <andy@mw0mwz.co.uk>
 Depends: libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11), libmosquitto1
 Recommends: mosquitto
-Filename: pool/main/d/dstarclients/dstarclients_2026.03.23-1~deb12u1_armhf.deb
-Size: 759760
-MD5sum: bd5bc448a93ccb196fd766433211aa77
-SHA1: 29605836ef666cdc831ff444fffc107b5585fef9
-SHA256: 7b2426ecc625bcf64f5821f54d6bff024a7a36c1ba95fcc150a0b2002bf87987
+Filename: pool/main/d/dstarclients/dstarclients_2026.04.04-0~deb12u1_armhf.deb
+Size: 760376
+MD5sum: ed794b8b53c91dfc01f912ddec66f584
+SHA1: f093bc143c8515c6375fb021e94909ae441055f4
+SHA256: 23c9cc76624277d553884bcc800f6d5ae7233e48a4821d6711d69284976006bc
 Section: hamradio
 Priority: optional
 Homepage: https://github.com/g4klx/DStarGateway
@@ -55,7 +55,7 @@ Description: D-Star Gateway and Tools
  Includes gateway, time server, remote control, and transmit tools
  .
  Built for Debian bookworm
- Git commit: 3100bc9
+ Git commit: 612f388
 
 Package: dstarrepeater
 Version: 2026.03.19-3~deb12u1
