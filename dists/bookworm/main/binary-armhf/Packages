@@ -94,16 +94,16 @@ Description: FM Clients for Amateur Radio
  Git commit: e0abad3
 
 Package: mmdvmhost
-Version: 2026.04.17-0~deb12u1
+Version: 2026.05.18-0~deb12u1
 Architecture: armhf
 Maintainer: MW0MWZ <andy@mw0mwz.co.uk>
 Depends: libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11), libmosquitto1, libsamplerate0, wiringpi (>= 3.0), libi2c0, i2c-tools
 Recommends: mosquitto
-Filename: pool/main/m/mmdvmhost/mmdvmhost_2026.04.17-0~deb12u1_armhf.deb
-Size: 6421204
-MD5sum: aca41f0bc9b47ddff8b2bcaef6c7a23b
-SHA1: c0f0338b8362766257733a7379a2c08d11861d23
-SHA256: 148b8cc4088b51854f67b0710a46d1f51d9aa3c8d3de6751cc018265890533fb
+Filename: pool/main/m/mmdvmhost/mmdvmhost_2026.05.18-0~deb12u1_armhf.deb
+Size: 6424844
+MD5sum: 139444ef442c7ce60c58ec12d3d46091
+SHA1: 588acc76039085a2a46c9fbeaa9581434550bbe9
+SHA256: e4872d3d25cf63f040dc1a2a735bcef69ab12a9c97675ccb427df5e6c295a2f4
 Section: hamradio
 Priority: optional
 Homepage: https://github.com/g4klx/MMDVMHost
@@ -118,7 +118,7 @@ Description: MMDVM Host Software, Calibration and Display Driver
  - Uses wiringPi package from deb.pistar.uk
  .
  Built for Debian bookworm
- Git commits: MMDVMHost b5b119f, MMDVMCal cf37046, Display-Driver eadc91a, ArduiPi_OLED 50fa499
+ Git commits: MMDVMHost 652e229, MMDVMCal cf37046, Display-Driver 3f88190, ArduiPi_OLED 50fa499
 
 Package: nxdnclients
 Version: 2026.03.23-1~deb12u1
