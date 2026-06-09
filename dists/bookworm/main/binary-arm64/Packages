@@ -140,15 +140,15 @@ Description: NXDN Clients for Amateur Radio
  Git commits: NXDNClients c05dbb9, MMDVM_CM 1dd5383
 
 Package: p25clients
-Version: 2026.03.23-1~deb12u1
+Version: 2026.06.08-0~deb12u1
 Architecture: arm64
 Maintainer: MW0MWZ <andy@mw0mwz.co.uk>
 Depends: libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11), libmosquitto1
-Filename: pool/main/p/p25clients/p25clients_2026.03.23-1~deb12u1_arm64.deb
-Size: 1150780
-MD5sum: 49795023e7b0ed12ec2204a352cb662b
-SHA1: 54095cca8b9dd8aef72517a7b2effdae99c7de80
-SHA256: 566514655a61d6077ad89409337e9b8dd58e829ade65a0cd9ff88a5ece691fac
+Filename: pool/main/p/p25clients/p25clients_2026.06.08-0~deb12u1_arm64.deb
+Size: 1150336
+MD5sum: 03c943178e7e907db2b07c64ec711cb3
+SHA1: 5e348f0a5ce009b0e06ea3eef00a13ffaff0a65e
+SHA256: de2e4205b98bccb6259079fb179292b9f645c6f16b9d1cbced7703ed62f0df92
 Section: hamradio
 Priority: optional
 Homepage: https://github.com/g4klx/P25Clients
@@ -156,7 +156,7 @@ Description: P25 Clients for Amateur Radio
  P25 Gateway and Parrot for digital communications
  Includes P25Gateway and P25Parrot
  Built for Debian bookworm
- Git commit: b579c32
+ Git commit: 9751c6e
 
 Package: pi-star
 Version: 2026.03.20-1~deb12u1
