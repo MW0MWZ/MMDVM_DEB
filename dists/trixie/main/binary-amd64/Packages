@@ -76,22 +76,22 @@ Description: D-Star Repeater Controller for Amateur Radio
  Git commit: 84a3344
 
 Package: fmclients
-Version: 2026.03.11-2~deb13u1
+Version: 2026.08.05-0~deb13u1
 Architecture: amd64
 Maintainer: MW0MWZ <andy@mw0mwz.co.uk>
 Depends: libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11), libmd0 (>= 1.0.3), libmosquitto1t64
-Filename: pool/main/f/fmclients/fmclients_2026.03.11-2~deb13u1_amd64.deb
-Size: 645468
-MD5sum: 4723a55dd095746bcf4a960b18301e4b
-SHA1: ce2e6733a9113188a5fe86db3e8151ff19a62e56
-SHA256: 6bda0c77fb8d04f14f14717e70db39995b6a957bbdc2918ae5a2ab13c0e6d9bb
+Filename: pool/main/f/fmclients/fmclients_2026.08.05-0~deb13u1_amd64.deb
+Size: 648204
+MD5sum: c12be67ebc84d16cfec58c974fb9d3fe
+SHA1: 8600070ff565f4140113e0ee98115047751d22bb
+SHA256: 55654e41a96cc77df6a81abd8244acfd197ca27df35a44c22c24d4256f598514
 Section: hamradio
 Priority: optional
 Homepage: https://github.com/g4klx/FMGateway
 Description: FM Clients for Amateur Radio
  FM repeater gateway for digital modes
  Built for Debian trixie
- Git commit: e0abad3
+ Git commit: 2ed271a
 
 Package: mmdvmhost
 Version: 2026.05.18-0~deb13u1
