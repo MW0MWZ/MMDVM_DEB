@@ -121,15 +121,15 @@ Description: MMDVM Host Software, Calibration and Display Driver
  Git commits: MMDVMHost 652e229, MMDVMCal cf37046, Display-Driver 3f88190, ArduiPi_OLED 50fa499
 
 Package: nxdnclients
-Version: 2026.03.23-1~deb12u1
+Version: 2026.08.11-0~deb12u1
 Architecture: armhf
 Maintainer: MW0MWZ <andy@mw0mwz.co.uk>
 Depends: libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11), libmosquitto1
-Filename: pool/main/n/nxdnclients/nxdnclients_2026.03.23-1~deb12u1_armhf.deb
-Size: 2295208
-MD5sum: 2515d962fa9eb43d08a13050855691de
-SHA1: 3b840a3ce4326684ce5d91993cfc9179b5fd3d10
-SHA256: 27f134177b6cb8240ffd8130ac8547f68db7dfe9d608f58e490d380ee7de4289
+Filename: pool/main/n/nxdnclients/nxdnclients_2026.08.11-0~deb12u1_armhf.deb
+Size: 2355576
+MD5sum: 84d02bcc3641863241b2e29fd836ae22
+SHA1: 2b871f3caaa664dc9d02452d2be114f1e27eace7
+SHA256: cf52dfcf03614551ce2a182123e3c25e53df5e9a020b9e4e67ad644d41b32325
 Section: hamradio
 Priority: optional
 Homepage: https://github.com/g4klx/NXDNClients
@@ -137,7 +137,7 @@ Description: NXDN Clients for Amateur Radio
  NXDN Gateway, Parrot and Cross-Mode converters
  Includes NXDNGateway, NXDNParrot, and NXDN2DMR
  Built for Debian bookworm
- Git commits: NXDNClients c05dbb9, MMDVM_CM 1dd5383
+ Git commits: NXDNClients 8950677, MMDVM_CM 1dd5383
 
 Package: p25clients
 Version: 2026.06.08-0~deb12u1
