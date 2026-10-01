@@ -133,7 +133,6 @@ jobs:
           
           # Map Debian version to suffix
           case "$DEBIAN_VERSION" in
-            bullseye) DEB_VERSION_SUFFIX="~deb11u1" ;;
             bookworm) DEB_VERSION_SUFFIX="~deb12u1" ;;
             trixie)   DEB_VERSION_SUFFIX="~deb13u1" ;;
             *) DEB_VERSION_SUFFIX="" ;;
@@ -287,7 +286,6 @@ jobs:
           
           # Map Debian version to Docker image tag
           case "$DEBIAN_VERSION" in
-            bullseye) DEBIAN_TAG="11" ;;
             bookworm) DEBIAN_TAG="12" ;;
             trixie)   DEBIAN_TAG="trixie" ;;
             *) DEBIAN_TAG="latest" ;;
@@ -795,13 +793,12 @@ jobs:
           cd deploy
           
           # Create dists structure for each Debian version
-          for DIST in bullseye bookworm trixie; do
+          for DIST in bookworm trixie; do
             echo "Generating metadata for $DIST..."
             mkdir -p dists/$DIST/main/source
             
             # Map distribution to expected suffix for filtering
             case "$DIST" in
-              bullseye) EXPECTED_SUFFIX="~deb11u1" ;;
               bookworm) EXPECTED_SUFFIX="~deb12u1" ;;
               trixie)   EXPECTED_SUFFIX="~deb13u1" ;;
               *) EXPECTED_SUFFIX="" ;;
@@ -865,7 +862,7 @@ jobs:
           
           echo ""
           echo "Repository Summary:"
-          for DIST in bullseye bookworm trixie; do
+          for DIST in bookworm trixie; do
             echo "  Distribution: $DIST"
             for ARCH in amd64 arm64 armhf; do
               if [ -f "dists/$DIST/main/binary-$ARCH/Packages" ]; then
@@ -895,7 +892,7 @@ jobs:
             echo "$GPG_PRIVATE_KEY" | gpg --batch --import
             
             # Sign Release files for each distribution
-            for DIST in bullseye bookworm trixie; do
+            for DIST in bookworm trixie; do
               if [ -f "dists/$DIST/Release" ]; then
                 # Create detached signature
                 gpg --batch --yes --default-key "$GPG_KEY_ID" \
@@ -946,24 +943,21 @@ jobs:
               
               <h2>📦 Quick Setup</h2>
               
-              <h3>For Modern Debian/Ubuntu (11+)</h3>
+              <h3>For Debian 12+ / Ubuntu</h3>
               <pre>
           # Add GPG key
           wget -qO - https://deb.pistar.uk/hamradio.gpg | sudo gpg --dearmor -o /usr/share/keyrings/hamradio.gpg
           
           # Add repository (choose your Debian version)
-          # For Debian 11 (Bullseye) / Raspberry Pi OS (Legacy)
-          echo "deb [signed-by=/usr/share/keyrings/hamradio.gpg] https://deb.pistar.uk/ bullseye main" | sudo tee /etc/apt/sources.list.d/hamradio.list
-          
-          # For Debian 12 (Bookworm) / Raspberry Pi OS (Current)  
-          echo "deb [signed-by=/usr/share/keyrings/hamradio.gpg] https://deb.pistar.uk/ bookworm main" | sudo tee /etc/apt/sources.list.d/hamradio.list
-          
-          # For Debian 13 (Trixie) / Testing
+          # For Debian 13 (Trixie) / Raspberry Pi OS (Current)
           echo "deb [signed-by=/usr/share/keyrings/hamradio.gpg] https://deb.pistar.uk/ trixie main" | sudo tee /etc/apt/sources.list.d/hamradio.list
+          
+          # For Debian 12 (Bookworm) / Raspberry Pi OS (Legacy)
+          echo "deb [signed-by=/usr/share/keyrings/hamradio.gpg] https://deb.pistar.uk/ bookworm main" | sudo tee /etc/apt/sources.list.d/hamradio.list
           
           # Update and install
           sudo apt update
-          sudo apt install mmdvmhost dmrclients ysfclients
+          sudo apt install mmdvmhost mmdvminfo dmrclients ysfclients
               </pre>
               
               <h3>For Older Systems</h3>
@@ -972,7 +966,7 @@ jobs:
           wget -qO - https://deb.pistar.uk/hamradio.gpg | sudo apt-key add -
           
           # Add repository
-          echo "deb https://deb.pistar.uk/ bullseye main" | sudo tee /etc/apt/sources.list.d/hamradio.list
+          echo "deb https://deb.pistar.uk/ bookworm main" | sudo tee /etc/apt/sources.list.d/hamradio.list
           
           # Update and install
           sudo apt update
@@ -1052,7 +1046,7 @@ jobs:
             FIRST=true
             
             # Add Release, InRelease, and Packages files for each distribution
-            for DIST in bullseye bookworm trixie; do
+            for DIST in bookworm trixie; do
               for FILE in Release Release.gpg InRelease; do
                 if [ "$FIRST" = true ]; then
                   FIRST=false
