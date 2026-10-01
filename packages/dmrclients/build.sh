@@ -125,8 +125,7 @@ create_package() {
     chmod 755 "$PKG_DIR/usr/bin/DMRGateway"
     
     if [ -f "DMRGateway/DMRGateway.ini" ]; then
-        cp "DMRGateway/DMRGateway.ini" "$PKG_DIR/etc/dmrclients/DMRGateway.ini"
-        cp "DMRGateway/DMRGateway.ini" "$PKG_DIR/etc/dmrclients/DMRGateway.ini.example"
+        cp "DMRGateway/DMRGateway.ini" "$PKG_DIR/usr/share/dmrclients/DMRGateway.ini.example"
     fi
 
     # Copy data files
@@ -142,8 +141,7 @@ create_package() {
         chmod 755 "$PKG_DIR/usr/bin/DMR2YSF"
     fi
     if [ -f "MMDVM_CM/DMR2YSF/DMR2YSF.ini" ]; then
-        cp "MMDVM_CM/DMR2YSF/DMR2YSF.ini" "$PKG_DIR/etc/dmrclients/DMR2YSF.ini"
-        cp "MMDVM_CM/DMR2YSF/DMR2YSF.ini" "$PKG_DIR/etc/dmrclients/DMR2YSF.ini.example"
+        cp "MMDVM_CM/DMR2YSF/DMR2YSF.ini" "$PKG_DIR/usr/share/dmrclients/DMR2YSF.ini.example"
     fi
 
     if [ -f "MMDVM_CM/DMR2NXDN/DMR2NXDN" ]; then
@@ -151,8 +149,7 @@ create_package() {
         chmod 755 "$PKG_DIR/usr/bin/DMR2NXDN"
     fi
     if [ -f "MMDVM_CM/DMR2NXDN/DMR2NXDN.ini" ]; then
-        cp "MMDVM_CM/DMR2NXDN/DMR2NXDN.ini" "$PKG_DIR/etc/dmrclients/DMR2NXDN.ini"
-        cp "MMDVM_CM/DMR2NXDN/DMR2NXDN.ini" "$PKG_DIR/etc/dmrclients/DMR2NXDN.ini.example"
+        cp "MMDVM_CM/DMR2NXDN/DMR2NXDN.ini" "$PKG_DIR/usr/share/dmrclients/DMR2NXDN.ini.example"
     fi
 
     # Copy ID files
@@ -253,6 +250,15 @@ set -e
 
 case "$1" in
     configure)
+        # Create configuration from the package templates if missing;
+        # /etc/dmrclients/ holds only user configuration.
+        mkdir -p /etc/dmrclients
+        for template in /usr/share/dmrclients/*.ini.example; do
+            [ -f "$template" ] || continue
+            conf="/etc/dmrclients/$(basename "$template" .example)"
+            [ -e "$conf" ] || cp "$template" "$conf"
+        done
+
         # Reload systemd to pick up the new service
         if [ -d /run/systemd/system ]; then
             systemctl daemon-reload >/dev/null || true
@@ -303,13 +309,8 @@ EOF
     find . -type f ! -path './DEBIAN/*' -exec md5sum {} \; | sed 's|\./||' > DEBIAN/md5sums
     cd - > /dev/null
     
-    # Create conffiles
-    > "$PKG_DIR/DEBIAN/conffiles"
-    for conf in DMRGateway DMR2YSF DMR2NXDN; do
-        if [ -f "$PKG_DIR/etc/dmrclients/${conf}.ini" ]; then
-            echo "/etc/dmrclients/${conf}.ini" >> "$PKG_DIR/DEBIAN/conffiles"
-        fi
-    done
+    # No conffiles: /etc/dmrclients/ holds only user configuration created by
+    # the postinst from the templates in /usr/share/dmrclients.
     
     # Build the package
     print_message "Building .deb package..."

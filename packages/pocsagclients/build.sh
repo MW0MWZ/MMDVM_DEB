@@ -84,6 +84,7 @@ create_package() {
     mkdir -p "$PKG_DIR/DEBIAN"
     mkdir -p "$PKG_DIR/usr/bin"
     mkdir -p "$PKG_DIR/usr/share/doc/pocsagclients"
+    mkdir -p "$PKG_DIR/usr/share/pocsagclients"
     mkdir -p "$PKG_DIR/etc/pocsagclients"
     mkdir -p "$PKG_DIR/lib/systemd/system"
     
@@ -93,8 +94,7 @@ create_package() {
     
     # Copy config if exists
     if [ -f "DAPNETGateway/DAPNETGateway.ini" ]; then
-        cp "DAPNETGateway/DAPNETGateway.ini" "$PKG_DIR/etc/pocsagclients/DAPNETGateway.ini"
-        cp "DAPNETGateway/DAPNETGateway.ini" "$PKG_DIR/etc/pocsagclients/DAPNETGateway.ini.example"
+        cp "DAPNETGateway/DAPNETGateway.ini" "$PKG_DIR/usr/share/pocsagclients/DAPNETGateway.ini.example"
     fi
 
     # Create systemd service file
@@ -192,6 +192,15 @@ set -e
 
 case "$1" in
     configure)
+        # Create configuration from the package templates if missing;
+        # /etc/pocsagclients/ holds only user configuration.
+        mkdir -p /etc/pocsagclients
+        for template in /usr/share/pocsagclients/*.ini.example; do
+            [ -f "$template" ] || continue
+            conf="/etc/pocsagclients/$(basename "$template" .example)"
+            [ -e "$conf" ] || cp "$template" "$conf"
+        done
+
         # Reload systemd to pick up the new service
         if [ -d /run/systemd/system ]; then
             systemctl daemon-reload >/dev/null || true
@@ -242,10 +251,8 @@ EOF
     find . -type f ! -path './DEBIAN/*' -exec md5sum {} \; | sed 's|\./||' > DEBIAN/md5sums
     cd - > /dev/null
     
-    # Create conffiles if config exists
-    if [ -f "$PKG_DIR/etc/pocsagclients/DAPNETGateway.ini" ]; then
-        echo "/etc/pocsagclients/DAPNETGateway.ini" > "$PKG_DIR/DEBIAN/conffiles"
-    fi
+    # No conffiles: /etc/pocsagclients/ holds only user configuration created by
+    # the postinst from the templates in /usr/share/pocsagclients.
     
     # Build the package
     print_message "Building .deb package..."

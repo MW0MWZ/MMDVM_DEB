@@ -94,8 +94,7 @@ create_package() {
     
     # Copy config if exists
     if [ -f "APRSGateway/APRSGateway.ini" ]; then
-        cp "APRSGateway/APRSGateway.ini" "$PKG_DIR/etc/aprsclients/APRSGateway.ini"
-        cp "APRSGateway/APRSGateway.ini" "$PKG_DIR/etc/aprsclients/APRSGateway.ini.example"
+        cp "APRSGateway/APRSGateway.ini" "$PKG_DIR/usr/share/aprsclients/APRSGateway.ini.example"
     fi
 
     # Copy data files
@@ -206,6 +205,15 @@ set -e
 
 case "$1" in
     configure)
+        # Create configuration from the package templates if missing;
+        # /etc/aprsclients/ holds only user configuration.
+        mkdir -p /etc/aprsclients
+        for template in /usr/share/aprsclients/*.ini.example; do
+            [ -f "$template" ] || continue
+            conf="/etc/aprsclients/$(basename "$template" .example)"
+            [ -e "$conf" ] || cp "$template" "$conf"
+        done
+
         # Reload systemd to pick up the new service
         if [ -d /run/systemd/system ]; then
             systemctl daemon-reload >/dev/null || true
@@ -256,10 +264,8 @@ EOF
     find . -type f ! -path './DEBIAN/*' -exec md5sum {} \; | sed 's|\./||' > DEBIAN/md5sums
     cd - > /dev/null
     
-    # Create conffiles
-    if [ -f "$PKG_DIR/etc/aprsclients/APRSGateway.ini" ]; then
-        echo "/etc/aprsclients/APRSGateway.ini" > "$PKG_DIR/DEBIAN/conffiles"
-    fi
+    # No conffiles: /etc/aprsclients/ holds only user configuration created by
+    # the postinst from the templates in /usr/share/aprsclients.
     
     # Build the package
     print_message "Building .deb package..."

@@ -129,8 +129,7 @@ create_package() {
         chmod 755 "$PKG_DIR/usr/bin/NXDNGateway"
     fi
     if [ -f "NXDNGateway/NXDNGateway.ini" ]; then
-        cp "NXDNGateway/NXDNGateway.ini" "$PKG_DIR/etc/nxdnclients/NXDNGateway.ini"
-        cp "NXDNGateway/NXDNGateway.ini" "$PKG_DIR/etc/nxdnclients/NXDNGateway.ini.example"
+        cp "NXDNGateway/NXDNGateway.ini" "$PKG_DIR/usr/share/nxdnclients/NXDNGateway.ini.example"
     fi
 
     # NXDNParrot
@@ -139,8 +138,7 @@ create_package() {
         chmod 755 "$PKG_DIR/usr/bin/NXDNParrot"
     fi
     if [ -f "NXDNParrot/NXDNParrot.ini" ]; then
-        cp "NXDNParrot/NXDNParrot.ini" "$PKG_DIR/etc/nxdnclients/NXDNParrot.ini"
-        cp "NXDNParrot/NXDNParrot.ini" "$PKG_DIR/etc/nxdnclients/NXDNParrot.ini.example"
+        cp "NXDNParrot/NXDNParrot.ini" "$PKG_DIR/usr/share/nxdnclients/NXDNParrot.ini.example"
     fi
 
     # Copy data files
@@ -164,8 +162,7 @@ create_package() {
         chmod 755 "$PKG_DIR/usr/bin/NXDN2DMR"
     fi
     if [ -f "NXDN2DMR/NXDN2DMR.ini" ]; then
-        cp "NXDN2DMR/NXDN2DMR.ini" "$PKG_DIR/etc/nxdnclients/NXDN2DMR.ini"
-        cp "NXDN2DMR/NXDN2DMR.ini" "$PKG_DIR/etc/nxdnclients/NXDN2DMR.ini.example"
+        cp "NXDN2DMR/NXDN2DMR.ini" "$PKG_DIR/usr/share/nxdnclients/NXDN2DMR.ini.example"
     fi
 
     # Copy ID files
@@ -281,6 +278,15 @@ set -e
 
 case "$1" in
     configure)
+        # Create configuration from the package templates if missing;
+        # /etc/nxdnclients/ holds only user configuration.
+        mkdir -p /etc/nxdnclients
+        for template in /usr/share/nxdnclients/*.ini.example; do
+            [ -f "$template" ] || continue
+            conf="/etc/nxdnclients/$(basename "$template" .example)"
+            [ -e "$conf" ] || cp "$template" "$conf"
+        done
+
         # Reload systemd to pick up the new services
         if [ -d /run/systemd/system ]; then
             systemctl daemon-reload >/dev/null || true
@@ -331,13 +337,8 @@ EOF
     find . -type f ! -path './DEBIAN/*' -exec md5sum {} \; | sed 's|\./||' > DEBIAN/md5sums
     cd - > /dev/null
     
-    # Create conffiles
-    > "$PKG_DIR/DEBIAN/conffiles"
-    for conf in NXDNGateway NXDNParrot NXDN2DMR; do
-        if [ -f "$PKG_DIR/etc/nxdnclients/${conf}.ini" ]; then
-            echo "/etc/nxdnclients/${conf}.ini" >> "$PKG_DIR/DEBIAN/conffiles"
-        fi
-    done
+    # No conffiles: /etc/nxdnclients/ holds only user configuration created by
+    # the postinst from the templates in /usr/share/nxdnclients.
     
     # Build the package
     print_message "Building .deb package..."

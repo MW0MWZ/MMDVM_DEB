@@ -3,7 +3,7 @@ set -e
 
 # MMDVM Host package build script for Debian
 # For GitHub Actions ONLY
-# Version: 3.0.0 - Display-Driver integration
+# Version: 4.0.0 - MMDVM-Host / MMDVM-Display rename, templates in /usr/share
 
 # Color codes
 RED='\033[0;31m'
@@ -14,9 +14,9 @@ NC='\033[0m'
 
 # Configuration
 PACKAGE_NAME="mmdvmhost"
-GITURL="https://github.com/g4klx/MMDVMHost.git"
+GITURL="https://github.com/g4klx/MMDVM-Host.git"
 GITURL_CAL="https://github.com/g4klx/MMDVMCal.git"
-GITURL_DISPLAYDRIVER="https://github.com/g4klx/Display-Driver.git"
+GITURL_DISPLAY="https://github.com/g4klx/MMDVM-Display.git"
 GITURL_OLED="https://github.com/MW0MWZ/ArduiPi_OLED.git"
 BUILD_DIR="build"
 OUTPUT_DIR="${OUTPUT_DIR:-./output}"
@@ -29,14 +29,14 @@ print_warning() { echo -e "${YELLOW}[WARNING]${NC} $1"; }
 
 clean_build() {
     print_message "Cleaning build environment..."
-    rm -rf "$BUILD_DIR" MMDVMHost MMDVMCal Display-Driver ArduiPi_OLED oled-install
+    rm -rf "$BUILD_DIR" MMDVM-Host MMDVMCal MMDVM-Display ArduiPi_OLED oled-install
     mkdir -p "$BUILD_DIR" "$OUTPUT_DIR"
 }
 
 prepare_source() {
-    print_message "Cloning MMDVMHost from $GITURL..."
-    git clone "$GITURL" MMDVMHost
-    cd MMDVMHost
+    print_message "Cloning MMDVM-Host from $GITURL..."
+    git clone "$GITURL" MMDVM-Host
+    cd MMDVM-Host
     GIT_COMMIT=$(git rev-parse --short HEAD)
     GIT_COMMIT_FULL=$(git rev-parse HEAD)
     VERSION=$(git show -s --format=%cd --date=format:'%Y.%m.%d' HEAD)
@@ -49,9 +49,9 @@ prepare_source() {
     CAL_COMMIT_FULL=$(git rev-parse HEAD)
     cd ..
 
-    print_message "Cloning Display-Driver from $GITURL_DISPLAYDRIVER..."
-    git clone "$GITURL_DISPLAYDRIVER" Display-Driver
-    cd Display-Driver
+    print_message "Cloning MMDVM-Display from $GITURL_DISPLAY..."
+    git clone "$GITURL_DISPLAY" MMDVM-Display
+    cd MMDVM-Display
     DISPLAY_COMMIT=$(git rev-parse --short HEAD)
     DISPLAY_COMMIT_FULL=$(git rev-parse HEAD)
     cd ..
@@ -68,9 +68,9 @@ prepare_source() {
     fi
 
     print_info "Source version: $VERSION"
-    print_info "MMDVMHost commit: $GIT_COMMIT"
+    print_info "MMDVM-Host commit: $GIT_COMMIT"
     print_info "MMDVMCal commit: $CAL_COMMIT"
-    print_info "Display-Driver commit: $DISPLAY_COMMIT"
+    print_info "MMDVM-Display commit: $DISPLAY_COMMIT"
 }
 
 check_build_dependencies() {
@@ -155,20 +155,15 @@ build_oled_library() {
 }
 
 build_software() {
-    # Build MMDVMHost
-    print_message "Building MMDVMHost..."
-    cd MMDVMHost
+    # Build MMDVM-Host
+    print_message "Building MMDVM-Host..."
+    cd MMDVM-Host
     make clean || true
     make -j$(nproc) all
 
-    if [ ! -f "MMDVMHost" ]; then
-        print_error "Build failed - MMDVMHost binary not created"
+    if [ ! -f "MMDVM-Host" ]; then
+        print_error "Build failed - MMDVM-Host binary not created"
         exit 1
-    fi
-
-    # Build RemoteCommand if it exists
-    if [ -f "RemoteCommand.cpp" ]; then
-        make RemoteCommand || true
     fi
     cd ..
 
@@ -189,9 +184,9 @@ build_software() {
         build_oled_library
     fi
 
-    # Build Display-Driver
-    print_message "Building Display-Driver..."
-    cd Display-Driver
+    # Build MMDVM-Display
+    print_message "Building MMDVM-Display..."
+    cd MMDVM-Display
     make clean || true
 
     # Enable display hardware support on ARM platforms
@@ -206,8 +201,8 @@ build_software() {
 
     make -j$(nproc) all
 
-    if [ ! -f "DisplayDriver" ]; then
-        print_error "Build failed - DisplayDriver binary not created"
+    if [ ! -f "MMDVM-Display" ]; then
+        print_error "Build failed - MMDVM-Display binary not created"
         exit 1
     fi
     if [ ! -f "NextionUpdater" ]; then
@@ -246,22 +241,17 @@ create_package() {
     mkdir -p "$PKG_DIR/var/lib/mmdvmhost"
     mkdir -p "$PKG_DIR/var/log/mmdvmhost"
 
-    # Copy MMDVMHost binaries
-    cp "MMDVMHost/MMDVMHost" "$PKG_DIR/usr/bin/"
-    chmod 755 "$PKG_DIR/usr/bin/MMDVMHost"
+    # Copy MMDVM-Host binary
+    cp "MMDVM-Host/MMDVM-Host" "$PKG_DIR/usr/bin/"
+    chmod 755 "$PKG_DIR/usr/bin/MMDVM-Host"
 
     cp "MMDVMCal/MMDVMCal" "$PKG_DIR/usr/bin/"
     chmod 755 "$PKG_DIR/usr/bin/MMDVMCal"
 
-    if [ -f "MMDVMHost/RemoteCommand" ]; then
-        cp "MMDVMHost/RemoteCommand" "$PKG_DIR/usr/bin/"
-        chmod 755 "$PKG_DIR/usr/bin/RemoteCommand"
-    fi
-
-    # Copy Display-Driver binaries
-    cp "Display-Driver/DisplayDriver" "$PKG_DIR/usr/bin/"
-    cp "Display-Driver/NextionUpdater" "$PKG_DIR/usr/bin/"
-    chmod 755 "$PKG_DIR/usr/bin/DisplayDriver" "$PKG_DIR/usr/bin/NextionUpdater"
+    # Copy MMDVM-Display binaries
+    cp "MMDVM-Display/MMDVM-Display" "$PKG_DIR/usr/bin/"
+    cp "MMDVM-Display/NextionUpdater" "$PKG_DIR/usr/bin/"
+    chmod 755 "$PKG_DIR/usr/bin/MMDVM-Display" "$PKG_DIR/usr/bin/NextionUpdater"
 
     # Copy OLED library for ARM platforms
     if [ "$PKG_ARCH" = "armhf" ] || [ "$PKG_ARCH" = "arm64" ]; then
@@ -285,28 +275,25 @@ create_package() {
         fi
     fi
 
-    # Copy config files
-    if [ -f "MMDVMHost/MMDVMHost.ini" ]; then
-        cp "MMDVMHost/MMDVMHost.ini" "$PKG_DIR/etc/mmdvmhost/MMDVMHost.ini"
-        cp "MMDVMHost/MMDVMHost.ini" "$PKG_DIR/etc/mmdvmhost/MMDVMHost.ini.example"
-    fi
-
-    cp "Display-Driver/DisplayDriver.ini" "$PKG_DIR/etc/mmdvmhost/DisplayDriver.ini"
-    cp "Display-Driver/DisplayDriver.ini" "$PKG_DIR/etc/mmdvmhost/DisplayDriver.ini.example"
+    # Configuration templates are package-owned and live in /usr/share.
+    # /etc/mmdvmhost/ ships empty and holds only user configuration; the
+    # postinst creates missing configs from these templates.
+    cp "MMDVM-Host/MMDVM-Host.ini" "$PKG_DIR/usr/share/mmdvmhost/MMDVM-Host.ini.example"
+    cp "MMDVM-Display/MMDVM-Display.ini" "$PKG_DIR/usr/share/mmdvmhost/MMDVM-Display.ini.example"
 
     # Copy data files
     for datafile in DMRIds.dat DMRIds.csv NXDN.csv P25Hosts.txt DMR_Hosts.txt XLXHosts.txt; do
-        if [ -f "MMDVMHost/$datafile" ]; then
-            cp "MMDVMHost/$datafile" "$PKG_DIR/var/lib/mmdvmhost/$datafile"
+        if [ -f "MMDVM-Host/$datafile" ]; then
+            cp "MMDVM-Host/$datafile" "$PKG_DIR/var/lib/mmdvmhost/$datafile"
         fi
     done
 
     # Copy RSSI reference files to /usr/share/mmdvmhost/
-    if [ -f "MMDVMHost/RSSI.dat" ]; then
-        cp "MMDVMHost/RSSI.dat" "$PKG_DIR/usr/share/mmdvmhost/"
+    if [ -f "MMDVM-Host/RSSI.dat" ]; then
+        cp "MMDVM-Host/RSSI.dat" "$PKG_DIR/usr/share/mmdvmhost/"
     fi
-    if [ -d "MMDVMHost/RSSI" ]; then
-        cp MMDVMHost/RSSI/*.dat "$PKG_DIR/usr/share/mmdvmhost/" 2>/dev/null || true
+    if [ -d "MMDVM-Host/RSSI" ]; then
+        cp MMDVM-Host/RSSI/*.dat "$PKG_DIR/usr/share/mmdvmhost/" 2>/dev/null || true
     fi
 
     # Create RSSI_MMDVM_HS.dat reference file
@@ -341,14 +328,14 @@ RSSIEOF
 
     # Copy docs
     for doc in README.md README LICENSE COPYING; do
-        if [ -f "MMDVMHost/$doc" ]; then
-            cp "MMDVMHost/$doc" "$PKG_DIR/usr/share/doc/mmdvmhost/"
+        if [ -f "MMDVM-Host/$doc" ]; then
+            cp "MMDVM-Host/$doc" "$PKG_DIR/usr/share/doc/mmdvmhost/"
         fi
         if [ -f "MMDVMCal/$doc" ]; then
             cp "MMDVMCal/$doc" "$PKG_DIR/usr/share/doc/mmdvmhost/MMDVMCal-$doc"
         fi
-        if [ -f "Display-Driver/$doc" ]; then
-            cp "Display-Driver/$doc" "$PKG_DIR/usr/share/doc/mmdvmhost/DisplayDriver-$doc"
+        if [ -f "MMDVM-Display/$doc" ]; then
+            cp "MMDVM-Display/$doc" "$PKG_DIR/usr/share/doc/mmdvmhost/MMDVM-Display-$doc"
         fi
     done
 
@@ -362,12 +349,12 @@ RSSIEOF
     # Create mmdvmhost systemd service
     cat > "$PKG_DIR/lib/systemd/system/mmdvmhost.service" << 'EOF'
 [Unit]
-Description=MMDVM Host Service
+Description=MMDVM-Host Service
 After=network.target
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/MMDVMHost /etc/mmdvmhost/MMDVMHost.ini
+ExecStart=/usr/bin/MMDVM-Host /etc/mmdvmhost/MMDVM-Host.ini
 Restart=on-failure
 RestartSec=5
 User=nobody
@@ -381,12 +368,13 @@ EOF
     # Create displaydriver systemd service
     cat > "$PKG_DIR/lib/systemd/system/displaydriver.service" << 'EOF'
 [Unit]
-Description=MMDVM Display Driver Service
-After=network.target mosquitto.service mmdvmhost.service
+Description=MMDVM-Display Service
+After=network.target mosquitto.service mmdvmhost.service mmdvminfo.service
+Wants=mmdvminfo.service
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/DisplayDriver /etc/mmdvmhost/DisplayDriver.ini
+ExecStart=/usr/bin/MMDVM-Display /etc/mmdvmhost/MMDVM-Display.ini
 Environment="LD_LIBRARY_PATH=/usr/lib/mmdvmhost"
 Restart=on-failure
 RestartSec=5
@@ -400,9 +388,9 @@ EOF
 
     # Create changelog
     CHANGELOG_CONTENT="  * Package built from git commits:
-    - MMDVMHost: ${GIT_COMMIT_FULL}
+    - MMDVM-Host: ${GIT_COMMIT_FULL}
     - MMDVMCal: ${CAL_COMMIT_FULL}
-    - Display-Driver: ${DISPLAY_COMMIT_FULL}"
+    - MMDVM-Display: ${DISPLAY_COMMIT_FULL}"
 
     if [ "$PKG_ARCH" = "armhf" ] || [ "$PKG_ARCH" = "arm64" ]; then
         if [ -n "$OLED_COMMIT_FULL" ]; then
@@ -433,14 +421,14 @@ EOF
     # Create copyright
     cat > "$PKG_DIR/usr/share/doc/mmdvmhost/copyright" << 'EOF'
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
-Upstream-Name: MMDVMHost
-Source: https://github.com/g4klx/MMDVMHost
+Upstream-Name: MMDVM-Host
+Source: https://github.com/g4klx/MMDVM-Host
 
 Files: *
 Copyright: Jonathan Naylor G4KLX and contributors
 License: GPL-2+
 
-Files: Display-Driver/*
+Files: MMDVM-Display/*
 Copyright: Jonathan Naylor G4KLX and contributors
 License: GPL-2+
 
@@ -467,10 +455,10 @@ EOF
     RECOMMENDS="mosquitto"
 
     # Create description
-    DESCRIPTION="MMDVM Host Software, Calibration and Display Driver
+    DESCRIPTION="MMDVM-Host, MMDVM-Display and MMDVMCal
  Multi-Mode Digital Voice Modem Host Software
- Supports D-Star, DMR, YSF, P25, NXDN, M17 and POCSAG
- Includes MMDVMCal calibration tool and DisplayDriver display server"
+ Supports D-Star, DMR, YSF, P25, NXDN, POCSAG and FM
+ Includes the MMDVMCal calibration tool and the MMDVM-Display display driver"
 
     if [ "$PKG_ARCH" = "armhf" ] || [ "$PKG_ARCH" = "arm64" ]; then
         DESCRIPTION="$DESCRIPTION
@@ -484,7 +472,7 @@ EOF
     DESCRIPTION="$DESCRIPTION
  .
  Built for Debian ${DEBIAN_VERSION}
- Git commits: MMDVMHost ${GIT_COMMIT}, MMDVMCal ${CAL_COMMIT}, Display-Driver ${DISPLAY_COMMIT}"
+ Git commits: MMDVM-Host ${GIT_COMMIT}, MMDVMCal ${CAL_COMMIT}, MMDVM-Display ${DISPLAY_COMMIT}"
 
     if [ -n "$OLED_COMMIT" ]; then
         DESCRIPTION="$DESCRIPTION, ArduiPi_OLED ${OLED_COMMIT}"
@@ -500,7 +488,7 @@ Depends: ${DEPENDS}
 Recommends: ${RECOMMENDS}
 Maintainer: MW0MWZ <andy@mw0mwz.co.uk>
 Description: ${DESCRIPTION}
-Homepage: https://github.com/g4klx/MMDVMHost
+Homepage: https://github.com/g4klx/MMDVM-Host
 EOF
 
     # Create postinst script
@@ -526,6 +514,30 @@ case "$1" in
             mkdir -p /var/log/mmdvmhost
             chown nobody:nogroup /var/log/mmdvmhost || true
         fi
+
+        # Upstream renamed MMDVMHost to MMDVM-Host and DisplayDriver to
+        # MMDVM-Display. Carry existing configuration over to the new names.
+        mkdir -p /etc/mmdvmhost
+        if [ ! -e /etc/mmdvmhost/MMDVM-Host.ini ] && [ -f /etc/mmdvmhost/MMDVMHost.ini ]; then
+            mv /etc/mmdvmhost/MMDVMHost.ini /etc/mmdvmhost/MMDVM-Host.ini
+            echo "Renamed /etc/mmdvmhost/MMDVMHost.ini to MMDVM-Host.ini"
+        fi
+        if [ ! -e /etc/mmdvmhost/MMDVM-Display.ini ] && [ -f /etc/mmdvmhost/DisplayDriver.ini ]; then
+            mv /etc/mmdvmhost/DisplayDriver.ini /etc/mmdvmhost/MMDVM-Display.ini
+            echo "Renamed /etc/mmdvmhost/DisplayDriver.ini to MMDVM-Display.ini"
+        fi
+
+        # Templates now live in /usr/share/mmdvmhost; remove stale copies
+        # that older versions of this package installed into /etc.
+        rm -f /etc/mmdvmhost/MMDVMHost.ini.example /etc/mmdvmhost/DisplayDriver.ini.example
+
+        # Create configuration from the package templates if missing
+        for name in MMDVM-Host MMDVM-Display; do
+            if [ ! -f /etc/mmdvmhost/$name.ini ] && [ -f /usr/share/mmdvmhost/$name.ini.example ]; then
+                cp /usr/share/mmdvmhost/$name.ini.example /etc/mmdvmhost/$name.ini
+                echo "Created /etc/mmdvmhost/$name.ini from template - edit it to match your setup"
+            fi
+        done
         ;;
     abort-upgrade|abort-remove|abort-deconfigure)
         ;;
@@ -618,11 +630,8 @@ EOF
     find . -type f ! -path './DEBIAN/*' -exec md5sum {} \; | sed 's|\./||' > DEBIAN/md5sums
     cd - > /dev/null
 
-    # Create conffiles
-    cat > "$PKG_DIR/DEBIAN/conffiles" << 'EOF'
-/etc/mmdvmhost/MMDVMHost.ini
-/etc/mmdvmhost/DisplayDriver.ini
-EOF
+    # No conffiles: /etc/mmdvmhost/ holds only user configuration created
+    # by the postinst from the templates in /usr/share/mmdvmhost.
 
     # Add shlibs for OLED library if present
     if [ "$PKG_ARCH" = "armhf" ] || [ "$PKG_ARCH" = "arm64" ]; then
@@ -657,11 +666,11 @@ verify_package() {
         print_info "Package size:"
         ls -lh "$DEB_FILE"
 
-        # Check for DisplayDriver binary
-        if dpkg-deb -c "$DEB_FILE" | grep -q "usr/bin/DisplayDriver"; then
-            print_info "DisplayDriver binary found in package"
+        # Check for MMDVM-Display binary
+        if dpkg-deb -c "$DEB_FILE" | grep -q "usr/bin/MMDVM-Display"; then
+            print_info "MMDVM-Display binary found in package"
         else
-            print_warning "DisplayDriver binary not found in package"
+            print_warning "MMDVM-Display binary not found in package"
         fi
 
         # Check for display support files on ARM

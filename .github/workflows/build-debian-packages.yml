@@ -16,6 +16,7 @@ on:
           - dstarrepeater
           - fmclients
           - mmdvmhost
+          - mmdvminfo
           - nxdnclients
           - p25clients
           - pocsagclients
@@ -71,7 +72,7 @@ jobs:
         id: packages
         run: |
           if [ "${{ github.event.inputs.package }}" = "all" ] || [ -z "${{ github.event.inputs.package }}" ]; then
-            echo 'packages=["wiringpi","mmdvmhost","dmrclients","dstarclients","dstarrepeater","ysfclients","nxdnclients","p25clients","aprsclients","pocsagclients","fmclients"]' >> $GITHUB_OUTPUT
+            echo 'packages=["wiringpi","mmdvmhost","mmdvminfo","dmrclients","dstarclients","dstarrepeater","ysfclients","nxdnclients","p25clients","aprsclients","pocsagclients","fmclients"]' >> $GITHUB_OUTPUT
           else
             echo 'packages=["${{ github.event.inputs.package }}"]' >> $GITHUB_OUTPUT
           fi
@@ -154,7 +155,10 @@ jobs:
               SOURCE_REPO="https://github.com/g4klx/DStarGateway.git"
               ;;
             mmdvmhost)
-              SOURCE_REPO="https://github.com/g4klx/MMDVMHost.git"
+              SOURCE_REPO="https://github.com/g4klx/MMDVM-Host.git"
+              ;;
+            mmdvminfo)
+              SOURCE_REPO="https://github.com/g4klx/MMDVM-Info.git"
               ;;
             dmrclients)
               SOURCE_REPO="https://github.com/g4klx/DMRGateway.git"
@@ -358,11 +362,11 @@ jobs:
                   fi
                   ;;
                 mmdvmhost)
-                  # ARM: display hardware dependencies for Display-Driver (OLED + HD44780)
+                  # ARM: display hardware dependencies for MMDVM-Display (OLED + HD44780)
                   if [ '$ARCH' = 'armhf' ] || [ '$ARCH' = 'arm64' ]; then
                     apt-get install -y --no-install-recommends libi2c-dev i2c-tools || true
 
-                    # Install wiringPi for Display-Driver HD44780 support
+                    # Install wiringPi for MMDVM-Display HD44780 support
                     echo 'Looking for locally built wiringPi package...'
                     WIRINGPI_DEB=\"\"
                     
@@ -977,7 +981,8 @@ jobs:
               
               <h2>📋 Available Packages</h2>
               <ul>
-                  <li><strong>mmdvmhost</strong> - MMDVM Host Software and Calibration Tool (ARM builds include display support)</li>
+                  <li><strong>mmdvmhost</strong> - MMDVM-Host, MMDVM-Display and MMDVMCal (ARM builds include display hardware support)</li>
+                  <li><strong>mmdvminfo</strong> - MMDVM-Info configuration, network and system information over MQTT</li>
                   <li><strong>dmrclients</strong> - DMR Gateway and Cross-Mode Tools</li>
                   <li><strong>ysfclients</strong> - YSF Gateway, Parrot and Cross-Mode Tools</li>
                   <li><strong>dstarclients</strong> - D-Star ircDDB Gateway and Tools</li>
