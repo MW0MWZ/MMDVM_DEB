@@ -17,7 +17,7 @@ Debian/Ubuntu package repository for Ham Radio software, hosted on GitHub Pages.
 |---------|-------------|------------|----------|
 | **mmdvmhost** | MMDVM host, display driver & calibration tool | MMDVM-Host, MMDVM-Display, NextionUpdater, MMDVMCal | [MMDVM-Host](https://github.com/g4klx/MMDVM-Host), [MMDVM-Display](https://github.com/g4klx/MMDVM-Display) & [MMDVMCal](https://github.com/g4klx/MMDVMCal) |
 | **mmdvminfo** | Configuration, network and system information over MQTT (used by MMDVM-Display) | MMDVM-Info | [MMDVM-Info](https://github.com/g4klx/MMDVM-Info) |
-| **dstarrepeater** | D-Star Repeater Controller | dstarrepeaterd, dstarrepeaterconfig | [DStarRepeater](https://github.com/g4klx/DStarRepeater) |
+| **dstarrepeater** | D-Star Repeater Controller | dstarrepeaterd | [DStarRepeater](https://github.com/g4klx/DStarRepeater) |
 
 ### Gateway & Client Packages
 

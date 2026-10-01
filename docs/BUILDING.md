@@ -168,7 +168,7 @@ cd packages/mmdvmhost
 # Set environment variables
 export OUTPUT_DIR=./output
 export ARCH=amd64              # or arm64, armhf
-export DEBIAN_VERSION=bookworm # or bullseye, trixie
+export DEBIAN_VERSION=bookworm # or trixie
 
 # Run build script
 ./build.sh

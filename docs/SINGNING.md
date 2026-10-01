@@ -199,7 +199,7 @@ jobs:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         run: |
           # Sign Release files for all distributions
-          for dist in bullseye bookworm trixie; do
+          for dist in bookworm trixie; do
             if [ -f "dists/$dist/Release" ]; then
               echo "Signing $dist distribution..."
               
@@ -246,7 +246,7 @@ jobs:
       - name: Verify signatures
         run: |
           # Verify repository signatures
-          for dist in bullseye bookworm trixie; do
+          for dist in bookworm trixie; do
             if [ -f "dists/$dist/InRelease" ]; then
               echo "Verifying $dist InRelease..."
               gpg --verify "dists/$dist/InRelease"
@@ -475,7 +475,7 @@ sudo apt update
 wget -qO - https://deb.pistar.uk/hamradio.gpg | sudo apt-key add -
 
 # Add repository without keyring specification
-echo "deb https://deb.pistar.uk/ bullseye main" | \
+echo "deb https://deb.pistar.uk/ bookworm main" | \
     sudo tee /etc/apt/sources.list.d/hamradio.list
 
 # Update package lists
@@ -587,7 +587,7 @@ deploy/
 ├── hamradio.gpg                 # GPG public key for users
 ├── CNAME                        # GitHub Pages domain configuration
 ├── dists/                       # Distribution metadata
-│   ├── bullseye/
+│   ├── bookworm/
 │   │   ├── Release              # Repository metadata
 │   │   ├── Release.gpg          # Detached signature (legacy compatibility)
 │   │   ├── InRelease           # Inline signature (modern preferred)
@@ -598,7 +598,7 @@ deploy/
 │   │       │   └── Packages.bz2 # Alternative compression
 │   │       ├── binary-arm64/
 │   │       └── binary-armhf/
-│   ├── bookworm/
+│   ├── trixie/
 │   │   ├── Release
 │   │   ├── Release.gpg
 │   │   ├── InRelease
@@ -716,7 +716,7 @@ verify_signatures() {
     
     local errors=0
     
-    for dist in bullseye bookworm trixie; do
+    for dist in bookworm trixie; do
         local dist_dir="$REPO_ROOT/dists/$dist"
         
         if [ -f "$dist_dir/InRelease" ]; then
@@ -810,7 +810,7 @@ cd "$REPO_ROOT"
 
 echo "Signing repository metadata..."
 
-for dist in bullseye bookworm trixie; do
+for dist in bookworm trixie; do
     dist_dir="dists/$dist"
     
     if [ ! -f "$dist_dir/Release" ]; then
@@ -841,7 +841,7 @@ echo "Repository signing completed!"
 echo "Verifying signatures..."
 
 # Verify all signatures
-for dist in bullseye bookworm trixie; do
+for dist in bookworm trixie; do
     dist_dir="dists/$dist"
     
     if [ -f "$dist_dir/InRelease" ]; then

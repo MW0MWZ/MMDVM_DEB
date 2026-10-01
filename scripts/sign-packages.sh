@@ -33,7 +33,7 @@ fi
 
 # Sign Release files
 print_message "Signing Release files..."
-for dist in bullseye bookworm; do
+for dist in bookworm trixie; do
     RELEASE_FILE="$REPO_DIR/dists/$dist/Release"
     
     if [ -f "$RELEASE_FILE" ]; then

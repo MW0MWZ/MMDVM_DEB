@@ -600,7 +600,7 @@ git commit -m "feat: add packagename for Amateur Radio
 - Includes components: X, Y, Z
 - Builds from upstream git repository using latest standards
 - Supports amd64, arm64, armhf architectures
-- Compatible with Debian 11, 12, 13
+- Compatible with Debian 12 and 13
 - Uses C++17 standard and modern build practices
 - Includes systemd service files and user management
 - Follows Debian packaging standards"
