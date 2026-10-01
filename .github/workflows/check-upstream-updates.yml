@@ -64,14 +64,14 @@ jobs:
             local repo=$(echo "$url" | sed 's|.*github.com/||' | sed 's|\.git$||')
             
             # Get latest release tag
-            local release_tag=$(curl -s -H "Accept: application/vnd.github.v3+json" \
+            local release_tag=$(curl -sL -H "Accept: application/vnd.github.v3+json" \
               -H "Authorization: token ${GITHUB_TOKEN}" \
               "https://api.github.com/repos/${repo}/releases/latest" 2>/dev/null | \
               python3 -c "import sys, json; data=json.load(sys.stdin); print(data.get('tag_name', '') if 'tag_name' in data else '')" 2>/dev/null)
             
             # If no releases, try to get latest tag
             if [ -z "$release_tag" ] || [ "$release_tag" = "null" ]; then
-              release_tag=$(curl -s -H "Accept: application/vnd.github.v3+json" \
+              release_tag=$(curl -sL -H "Accept: application/vnd.github.v3+json" \
                 -H "Authorization: token ${GITHUB_TOKEN}" \
                 "https://api.github.com/repos/${repo}/tags" 2>/dev/null | \
                 python3 -c "import sys, json; tags=json.load(sys.stdin); print(tags[0]['name'] if tags and len(tags) > 0 else '')" 2>/dev/null)
@@ -87,7 +87,7 @@ jobs:
             
             # Try to get latest commit from default branch with auth token
             for branch in main master develop; do
-              commit=$(curl -s -H "Accept: application/vnd.github.v3+json" \
+              commit=$(curl -sL -H "Accept: application/vnd.github.v3+json" \
                 -H "Authorization: token ${GITHUB_TOKEN}" \
                 "https://api.github.com/repos/${repo}/commits/${branch}" 2>/dev/null | \
                 python3 -c "import sys, json; data=json.load(sys.stdin); print(data.get('sha', '')[:7] if 'sha' in data else '')" 2>/dev/null)
@@ -99,13 +99,13 @@ jobs:
             done
             
             # If all branches fail, try to get the default branch
-            default_branch=$(curl -s -H "Accept: application/vnd.github.v3+json" \
+            default_branch=$(curl -sL -H "Accept: application/vnd.github.v3+json" \
               -H "Authorization: token ${GITHUB_TOKEN}" \
               "https://api.github.com/repos/${repo}" 2>/dev/null | \
               python3 -c "import sys, json; data=json.load(sys.stdin); print(data.get('default_branch', ''))" 2>/dev/null)
             
             if [ -n "$default_branch" ]; then
-              commit=$(curl -s -H "Accept: application/vnd.github.v3+json" \
+              commit=$(curl -sL -H "Accept: application/vnd.github.v3+json" \
                 -H "Authorization: token ${GITHUB_TOKEN}" \
                 "https://api.github.com/repos/${repo}/commits/${default_branch}" 2>/dev/null | \
                 python3 -c "import sys, json; data=json.load(sys.stdin); print(data.get('sha', '')[:7] if 'sha' in data else '')" 2>/dev/null)
@@ -447,7 +447,7 @@ jobs:
                               repo = repo_url.replace('https://github.com/', '').replace('.git', '')
                               # Fetch the commit SHA for this tag
                               result = subprocess.run(
-                                  ['curl', '-s', '-H', 'Accept: application/vnd.github.v3+json',
+                                  ['curl', '-sL', '-H', 'Accept: application/vnd.github.v3+json',
                                    '-H', f'Authorization: token {os.environ.get("GITHUB_TOKEN", "")}',
                                    f'https://api.github.com/repos/{repo}/git/refs/tags/{latest}'],
                                   capture_output=True, text=True

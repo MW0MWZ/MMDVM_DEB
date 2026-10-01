@@ -115,20 +115,23 @@ create_package() {
         [ -f "DStarGateway/Data/Makefile" ] && cp "DStarGateway/Data/Makefile" "$PKG_DIR/usr/share/dstarclients/"
     fi
 
-    # Download DStar_Hosts.json from pistar.uk
-    if wget -q -O "$PKG_DIR/etc/dstarclients/DStar_Hosts.json" "https://www.pistar.uk/downloads/DStar_Hosts.json" 2>/dev/null; then
+    # Ship a snapshot of DStar_Hosts.json as a package default; the postinst
+    # (and Pi-Star MCP) copy it into /etc/dstarclients/ if missing.
+    if wget -q -O "$PKG_DIR/usr/share/dstarclients/DStar_Hosts.json" "https://www.pistar.uk/downloads/DStar_Hosts.json" 2>/dev/null; then
         print_info "Downloaded: DStar_Hosts.json from pistar.uk"
     else
         print_warning "DStar_Hosts.json not available from pistar.uk"
     fi
 
-    # Copy and patch config file for Debian package layout
-    cp "DStarGateway/DStarGateway.ini" "$PKG_DIR/etc/dstarclients/DStarGateway.ini"
-    sed -i 's|^Data=.*|Data=/usr/share/dstarclients/|' "$PKG_DIR/etc/dstarclients/DStarGateway.ini"
-    sed -i 's|^HostsFiles=.*|HostsFiles=/etc/dstarclients/|' "$PKG_DIR/etc/dstarclients/DStarGateway.ini"
-    sed -i 's|^CustomHostsfiles=.*|CustomHostsfiles=/etc/dstarclients/hostfiles.d/|' "$PKG_DIR/etc/dstarclients/DStarGateway.ini"
-    sed -i 's|^User=.*|User=mmdvm|' "$PKG_DIR/etc/dstarclients/DStarGateway.ini"
-    cp "$PKG_DIR/etc/dstarclients/DStarGateway.ini" "$PKG_DIR/etc/dstarclients/DStarGateway.ini.example"
+    # Copy the config template and patch it for the Debian package layout.
+    # Templates are package-owned and live in /usr/share; /etc/dstarclients/
+    # holds only user configuration, created by the postinst if missing.
+    TEMPLATE="$PKG_DIR/usr/share/dstarclients/DStarGateway.ini.example"
+    cp "DStarGateway/DStarGateway.ini" "$TEMPLATE"
+    sed -i 's|^Data=.*|Data=/usr/share/dstarclients/|' "$TEMPLATE"
+    sed -i 's|^HostsFiles=.*|HostsFiles=/etc/dstarclients/|' "$TEMPLATE"
+    sed -i 's|^CustomHostsfiles=.*|CustomHostsfiles=/etc/dstarclients/hostfiles.d/|' "$TEMPLATE"
+    sed -i 's|^User=.*|User=mmdvm|' "$TEMPLATE"
 
     # Copy docs
     for doc in README.md README LICENSE COPYING; do
@@ -259,6 +262,16 @@ case "$1" in
         fi
         chown mmdvm:mmdvm /var/log/dstargateway
 
+        # Create configuration and host list from the package defaults if
+        # missing; /etc/dstarclients/ holds only user state.
+        mkdir -p /etc/dstarclients
+        if [ ! -e /etc/dstarclients/DStarGateway.ini ] && [ -f /usr/share/dstarclients/DStarGateway.ini.example ]; then
+            cp /usr/share/dstarclients/DStarGateway.ini.example /etc/dstarclients/DStarGateway.ini
+        fi
+        if [ ! -e /etc/dstarclients/DStar_Hosts.json ] && [ -f /usr/share/dstarclients/DStar_Hosts.json ]; then
+            cp /usr/share/dstarclients/DStar_Hosts.json /etc/dstarclients/DStar_Hosts.json
+        fi
+
         # Reload systemd to pick up the new services
         if [ -d /run/systemd/system ]; then
             systemctl daemon-reload >/dev/null || true
@@ -341,8 +354,8 @@ EOF
     find . -type f ! -path './DEBIAN/*' -exec md5sum {} \; | sed 's|\./||' > DEBIAN/md5sums
     cd - > /dev/null
 
-    # Create conffiles
-    echo "/etc/dstarclients/DStarGateway.ini" > "$PKG_DIR/DEBIAN/conffiles"
+    # No conffiles: /etc/dstarclients/ holds only user configuration created
+    # by the postinst from the templates in /usr/share/dstarclients.
 
     # Build the package
     print_message "Building .deb package..."

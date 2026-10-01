@@ -15,7 +15,8 @@ Debian/Ubuntu package repository for Ham Radio software, hosted on GitHub Pages.
 
 | Package | Description | Components | Upstream |
 |---------|-------------|------------|----------|
-| **mmdvmhost** | MMDVM Host Software & Calibration Tool | MMDVMHost, MMDVMCal, RemoteCommand | [MMDVMHost](https://github.com/g4klx/MMDVMHost) & [MMDVMCal](https://github.com/g4klx/MMDVMCal) |
+| **mmdvmhost** | MMDVM host, display driver & calibration tool | MMDVM-Host, MMDVM-Display, NextionUpdater, MMDVMCal | [MMDVM-Host](https://github.com/g4klx/MMDVM-Host), [MMDVM-Display](https://github.com/g4klx/MMDVM-Display) & [MMDVMCal](https://github.com/g4klx/MMDVMCal) |
+| **mmdvminfo** | Configuration, network and system information over MQTT (used by MMDVM-Display) | MMDVM-Info | [MMDVM-Info](https://github.com/g4klx/MMDVM-Info) |
 | **dstarrepeater** | D-Star Repeater Controller | dstarrepeaterd, dstarrepeaterconfig | [DStarRepeater](https://github.com/g4klx/DStarRepeater) |
 
 ### Gateway & Client Packages
@@ -72,16 +73,19 @@ echo "deb [signed-by=/usr/share/keyrings/hamradio.gpg] https://deb.pistar.uk/ bo
 
 # Update and install
 sudo apt update
-sudo apt install mmdvmhost dmrclients ysfclients
+sudo apt install mmdvmhost mmdvminfo dmrclients ysfclients
 ```
 
 ### Configuration
 
-All packages store configuration in package-specific directories:
+Live configuration lives in `/etc/<package>/`. Packages never ship files there: templates are installed to `/usr/share/<package>/*.ini.example` (replaced on every upgrade), and each package's postinst creates any missing configuration from them. Your configuration is never overwritten by an upgrade.
+
+Upstream renamed MMDVMHost to MMDVM-Host and Display-Driver to MMDVM-Display in May 2026. Upgrading `mmdvmhost` renames `/etc/mmdvmhost/MMDVMHost.ini` to `MMDVM-Host.ini` and `DisplayDriver.ini` to `MMDVM-Display.ini`; the systemd unit names (`mmdvmhost`, `displaydriver`) are unchanged.
 
 ```bash
 # Configuration files location
-/etc/mmdvmhost/       # MMDVM Host configuration
+/etc/mmdvmhost/       # MMDVM-Host and MMDVM-Display configuration
+/etc/mmdvminfo/       # MMDVM-Info configuration
 /etc/dmrclients/      # DMR Gateway and cross-mode configs
 /etc/ysfclients/      # YSF Gateway, DGId, and cross-mode configs
 /etc/dstarclients/    # D-Star gateway configs
@@ -92,17 +96,14 @@ All packages store configuration in package-specific directories:
 /etc/pocsagclients/   # DAPNET gateway config
 /etc/fmclients/       # FM gateway config
 
-# Example: Configure MMDVM Host
-sudo cp /etc/mmdvmhost/MMDVMHost.ini.example /etc/mmdvmhost/MMDVMHost.ini
-sudo nano /etc/mmdvmhost/MMDVMHost.ini
+# Example: Configure MMDVM-Host
+sudo nano /etc/mmdvmhost/MMDVM-Host.ini
 
 # Example: Configure DMR Gateway
-sudo cp /etc/dmrclients/DMRGateway.ini.example /etc/dmrclients/DMRGateway.ini
 sudo nano /etc/dmrclients/DMRGateway.ini
 
-# Example: Configure D-Star Repeater
-sudo cp /etc/dstarrepeater/dstarrepeater.conf.example /etc/dstarrepeater/dstarrepeater.conf
-sudo nano /etc/dstarrepeater/dstarrepeater.conf
+# Start again from the packaged template
+sudo cp /usr/share/dmrclients/DMRGateway.ini.example /etc/dmrclients/DMRGateway.ini
 ```
 
 ### Starting Services
@@ -180,7 +181,8 @@ MMDVM_DEB/
 │   ├── check-upstream-updates.yml
 │   └── cleanup-old-packages.yml
 ├── packages/                # Package definitions
-│   ├── mmdvmhost/
+│   ├── mmdvmhost/          # MMDVM-Host, MMDVM-Display, MMDVMCal
+│   ├── mmdvminfo/          # MMDVM-Info
 │   ├── dmrclients/         # DMRGateway, DMR2YSF, DMR2NXDN
 │   ├── dstarclients/       # DStarGateway and tools
 │   ├── dstarrepeater/      # D-Star Repeater Controller
@@ -210,7 +212,7 @@ The repository follows Debian packaging conventions:
 
 - **Protocol-specific clients**: `dmrclients`, `dstarclients`, `ysfclients`, `nxdnclients`, `p25clients`
   - Each contains the main gateway, parrot/test tools, and cross-mode converters where applicable
-- **Core software**: `mmdvmhost` - The main MMDVM host software with calibration tools
+- **Core software**: `mmdvmhost` - MMDVM-Host, MMDVM-Display and MMDVMCal; `mmdvminfo` - MMDVM-Info
 - **Repeater controller**: `dstarrepeater` - D-Star repeater system
 - **Single-purpose clients**: `aprsclients`, `pocsagclients`, `fmclients`
 

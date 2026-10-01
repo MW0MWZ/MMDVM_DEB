@@ -1,0 +1,15 @@
+Include <unistd.h> for setuid(), close() and STDIN_FILENO.
+glibc pulls it in indirectly; musl does not, so the build fails on Alpine.
+
+diff --git a/MMDVM-Info.cpp b/MMDVM-Info.cpp
+index 0ee2225..aedbd22 100644
+--- a/MMDVM-Info.cpp
++++ b/MMDVM-Info.cpp
+@@ -37,6 +37,7 @@
+ #if !defined(_WIN32) && !defined(_WIN64)
+ #include <sys/types.h>
+ #include <signal.h>
++#include <unistd.h>
+ #include <pwd.h>
+ #endif
+ 

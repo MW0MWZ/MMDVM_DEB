@@ -106,8 +106,7 @@ create_package() {
         chmod 755 "$PKG_DIR/usr/bin/P25Gateway"
     fi
     if [ -f "P25Gateway/P25Gateway.ini" ]; then
-        cp "P25Gateway/P25Gateway.ini" "$PKG_DIR/etc/p25clients/P25Gateway.ini"
-        cp "P25Gateway/P25Gateway.ini" "$PKG_DIR/etc/p25clients/P25Gateway.ini.example"
+        cp "P25Gateway/P25Gateway.ini" "$PKG_DIR/usr/share/p25clients/P25Gateway.ini.example"
     fi
 
     # P25Parrot
@@ -116,8 +115,7 @@ create_package() {
         chmod 755 "$PKG_DIR/usr/bin/P25Parrot"
     fi
     if [ -f "P25Parrot/P25Parrot.ini" ]; then
-        cp "P25Parrot/P25Parrot.ini" "$PKG_DIR/etc/p25clients/P25Parrot.ini"
-        cp "P25Parrot/P25Parrot.ini" "$PKG_DIR/etc/p25clients/P25Parrot.ini.example"
+        cp "P25Parrot/P25Parrot.ini" "$PKG_DIR/usr/share/p25clients/P25Parrot.ini.example"
     fi
 
     # Copy data files
@@ -231,6 +229,15 @@ set -e
 
 case "$1" in
     configure)
+        # Create configuration from the package templates if missing;
+        # /etc/p25clients/ holds only user configuration.
+        mkdir -p /etc/p25clients
+        for template in /usr/share/p25clients/*.ini.example; do
+            [ -f "$template" ] || continue
+            conf="/etc/p25clients/$(basename "$template" .example)"
+            [ -e "$conf" ] || cp "$template" "$conf"
+        done
+
         # Reload systemd to pick up the new services
         if [ -d /run/systemd/system ]; then
             systemctl daemon-reload >/dev/null || true
@@ -281,13 +288,8 @@ EOF
     find . -type f ! -path './DEBIAN/*' -exec md5sum {} \; | sed 's|\./||' > DEBIAN/md5sums
     cd - > /dev/null
     
-    # Create conffiles
-    > "$PKG_DIR/DEBIAN/conffiles"
-    for conf in P25Gateway P25Parrot; do
-        if [ -f "$PKG_DIR/etc/p25clients/${conf}.ini" ]; then
-            echo "/etc/p25clients/${conf}.ini" >> "$PKG_DIR/DEBIAN/conffiles"
-        fi
-    done
+    # No conffiles: /etc/p25clients/ holds only user configuration created by
+    # the postinst from the templates in /usr/share/p25clients.
     
     # Build the package
     print_message "Building .deb package..."

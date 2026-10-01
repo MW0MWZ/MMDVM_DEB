@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-# APRS Clients package build script for Debian
+# MMDVM-Info package build script for Debian
 # For GitHub Actions ONLY
 
 # Color codes
@@ -12,10 +12,11 @@ BLUE='\033[0;34m'
 NC='\033[0m'
 
 # Configuration
-PACKAGE_NAME="aprsclients"
-GITURL="https://github.com/g4klx/APRSGateway.git"
+PACKAGE_NAME="mmdvminfo"
+GITURL="https://github.com/g4klx/MMDVM-Info.git"
 BUILD_DIR="build"
 OUTPUT_DIR="${OUTPUT_DIR:-./output}"
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 # Functions
 print_message() { echo -e "${GREEN}[BUILD]${NC} $1"; }
@@ -25,40 +26,41 @@ print_warning() { echo -e "${YELLOW}[WARNING]${NC} $1"; }
 
 clean_build() {
     print_message "Cleaning build environment..."
-    rm -rf "$BUILD_DIR" APRSGateway
+    rm -rf "$BUILD_DIR" MMDVM-Info
     mkdir -p "$BUILD_DIR" "$OUTPUT_DIR"
 }
 
 prepare_source() {
-    print_message "Cloning APRSGateway from $GITURL..."
-    git clone "$GITURL" APRSGateway
-    cd APRSGateway
+    print_message "Cloning MMDVM-Info from $GITURL..."
+    git clone "$GITURL" MMDVM-Info
+    cd MMDVM-Info
     GIT_COMMIT=$(git rev-parse --short HEAD)
     GIT_COMMIT_FULL=$(git rev-parse HEAD)
     VERSION=$(git show -s --format=%cd --date=format:'%Y.%m.%d' HEAD)
+
+    # Upstream relies on <unistd.h> being pulled in indirectly; include it
+    # explicitly so the build doesn't depend on libc header internals.
+    if patch -p1 -N --dry-run < "$SCRIPT_DIR/unistd.patch" >/dev/null 2>&1; then
+        patch -p1 -N < "$SCRIPT_DIR/unistd.patch"
+    fi
     cd ..
-    
+
     print_info "Source version: $VERSION"
     print_info "Git commit: $GIT_COMMIT"
 }
 
 build_software() {
-    print_message "Building APRSGateway..."
-    cd APRSGateway
-    
+    print_message "Building MMDVM-Info..."
+    cd MMDVM-Info
+
     make clean || true
-    
-    # Standard build flags
-    export CFLAGS="-O2 -Wall -g"
-    export CXXFLAGS="-O2 -Wall -g"
-    
     make -j$(nproc) all
-    
-    if [ ! -f "APRSGateway" ]; then
-        print_error "Build failed - APRSGateway binary not created"
+
+    if [ ! -f "MMDVM-Info" ]; then
+        print_error "Build failed - MMDVM-Info binary not created"
         exit 1
     fi
-    
+
     cd ..
     print_message "Build completed"
 }
@@ -68,64 +70,63 @@ create_package() {
     DEB_VERSION_SUFFIX="${DEB_VERSION_SUFFIX:-}"
     BUILD_NUMBER="${BUILD_NUMBER:-1}"
     print_message "Creating Debian package..."
-    
-    # Use build number for revision to handle multiple builds
+
     REVISION="${BUILD_NUMBER}${DEB_VERSION_SUFFIX}"
     FULL_VERSION="${VERSION}-${REVISION}"
     PKG_ARCH="${ARCH:-$(dpkg --print-architecture)}"
-    
+
     print_info "Package version: $FULL_VERSION"
     print_info "Architecture: $PKG_ARCH"
     print_info "Debian version: $DEBIAN_VERSION"
     print_info "Build number: $BUILD_NUMBER"
-    
-    # Create package directory structure
+
     PKG_DIR="$BUILD_DIR/${PACKAGE_NAME}_${FULL_VERSION}_${PKG_ARCH}"
     mkdir -p "$PKG_DIR/DEBIAN"
     mkdir -p "$PKG_DIR/usr/bin"
-    mkdir -p "$PKG_DIR/usr/share/doc/aprsclients"
-    mkdir -p "$PKG_DIR/usr/share/aprsclients"
-    mkdir -p "$PKG_DIR/etc/aprsclients"
+    mkdir -p "$PKG_DIR/usr/share/doc/mmdvminfo"
+    mkdir -p "$PKG_DIR/usr/share/mmdvminfo"
+    mkdir -p "$PKG_DIR/etc/mmdvminfo"
     mkdir -p "$PKG_DIR/lib/systemd/system"
-    
-    # Copy binary
-    cp "APRSGateway/APRSGateway" "$PKG_DIR/usr/bin/"
-    chmod 755 "$PKG_DIR/usr/bin/APRSGateway"
-    
-    # Copy config if exists
-    if [ -f "APRSGateway/APRSGateway.ini" ]; then
-        cp "APRSGateway/APRSGateway.ini" "$PKG_DIR/usr/share/aprsclients/APRSGateway.ini.example"
-    fi
 
-    # Copy data files
-    for datafile in APRSHosts.txt; do
-        if [ -f "APRSGateway/$datafile" ]; then
-            cp "APRSGateway/$datafile" "$PKG_DIR/usr/share/aprsclients/$datafile"
-        fi
-    done
-    
-    # Copy audio files if they exist
-    if [ -d "APRSGateway/Audio" ] || [ -d "APRSGateway/audio" ]; then
-        mkdir -p "$PKG_DIR/usr/share/aprsclients/audio"
-        cp -r "APRSGateway"/[Aa]udio/* "$PKG_DIR/usr/share/aprsclients/audio/" 2>/dev/null || true
-    fi
-    
-    # Copy docs
+    cp "MMDVM-Info/MMDVM-Info" "$PKG_DIR/usr/bin/"
+    chmod 755 "$PKG_DIR/usr/bin/MMDVM-Info"
+
+    # The configuration template is package-owned and lives in /usr/share;
+    # /etc/mmdvminfo/ ships empty and holds only user configuration. The
+    # upstream template points [Configs] at a source-tree layout and lists
+    # programs this repository doesn't ship, so point it at our paths.
+    TEMPLATE="$PKG_DIR/usr/share/mmdvminfo/MMDVM-Info.ini.example"
+    cp "MMDVM-Info/MMDVM-Info.ini" "$TEMPLATE"
+    sed -i \
+        -e 's|^APRSGateway=.*|APRSGateway=/etc/aprsclients/APRSGateway.ini|' \
+        -e 's|^DAPNETGateway=.*|DAPNETGateway=/etc/pocsagclients/DAPNETGateway.ini|' \
+        -e 's|^DGIdGateway=.*|DGIdGateway=/etc/ysfclients/DGIdGateway.ini|' \
+        -e 's|^DMRGateway=.*|DMRGateway=/etc/dmrclients/DMRGateway.ini|' \
+        -e 's|^DStarGateway=.*|DStarGateway=/etc/dstarclients/DStarGateway.ini|' \
+        -e 's|^FMGateway=.*|FMGateway=/etc/fmclients/FMGateway.ini|' \
+        -e 's|^MMDVM-Host=.*|MMDVM-Host=/etc/mmdvmhost/MMDVM-Host.ini|' \
+        -e 's|^NXDNGateway=.*|NXDNGateway=/etc/nxdnclients/NXDNGateway.ini|' \
+        -e 's|^P25Gateway=.*|P25Gateway=/etc/p25clients/P25Gateway.ini|' \
+        -e 's|^YSFGateway=.*|YSFGateway=/etc/ysfclients/YSFGateway.ini|' \
+        -e '/^MMDVM-CrossMode=/d' -e '/^MMDVM-IQ=/d' \
+        -e '/^Program=MMDVM-CrossMode$/d' -e '/^Program=MMDVM-IQ$/d' \
+        -e 's|^Program=MMDVMHost$|Program=MMDVM-Host\nProgram=MMDVM-Display|' \
+        "$TEMPLATE"
+
     for doc in README.md README LICENSE COPYING; do
-        if [ -f "APRSGateway/$doc" ]; then
-            cp "APRSGateway/$doc" "$PKG_DIR/usr/share/doc/aprsclients/"
+        if [ -f "MMDVM-Info/$doc" ]; then
+            cp "MMDVM-Info/$doc" "$PKG_DIR/usr/share/doc/mmdvminfo/"
         fi
     done
-    
-    # Create systemd service
-    cat > "$PKG_DIR/lib/systemd/system/aprsgateway.service" << 'EOF'
+
+    cat > "$PKG_DIR/lib/systemd/system/mmdvminfo.service" << 'EOF'
 [Unit]
-Description=APRS Gateway Service
-After=network.target
+Description=MMDVM-Info Service
+After=network.target mosquitto.service
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/APRSGateway /etc/aprsclients/APRSGateway.ini
+ExecStart=/usr/bin/MMDVM-Info /etc/mmdvminfo/MMDVM-Info.ini
 Restart=on-failure
 RestartSec=5
 User=nobody
@@ -134,9 +135,8 @@ Group=nogroup
 [Install]
 WantedBy=multi-user.target
 EOF
-    
-    # Create changelog
-    cat > "$PKG_DIR/usr/share/doc/aprsclients/changelog.Debian" << EOF
+
+    cat > "$PKG_DIR/usr/share/doc/mmdvminfo/changelog.Debian" << EOF
 ${PACKAGE_NAME} (${FULL_VERSION}) ${DEBIAN_VERSION}; urgency=medium
 
   * Package built from git commit ${GIT_COMMIT_FULL}
@@ -145,13 +145,12 @@ ${PACKAGE_NAME} (${FULL_VERSION}) ${DEBIAN_VERSION}; urgency=medium
 
  -- MW0MWZ <andy@mw0mwz.co.uk>  $(date -R)
 EOF
-    gzip -9n "$PKG_DIR/usr/share/doc/aprsclients/changelog.Debian"
-    
-    # Create copyright
-    cat > "$PKG_DIR/usr/share/doc/aprsclients/copyright" << 'EOF'
+    gzip -9n "$PKG_DIR/usr/share/doc/mmdvminfo/changelog.Debian"
+
+    cat > "$PKG_DIR/usr/share/doc/mmdvminfo/copyright" << 'EOF'
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
-Upstream-Name: APRSGateway
-Source: https://github.com/g4klx/APRSGateway
+Upstream-Name: MMDVM-Info
+Source: https://github.com/g4klx/MMDVM-Info
 
 Files: *
 Copyright: Jonathan Naylor G4KLX and contributors
@@ -170,8 +169,7 @@ License: GPL-2+
  along with this program; if not, write to the Free Software
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 EOF
-    
-    # Set dependencies based on Debian version
+
     case "$DEBIAN_VERSION" in
         trixie)
             DEPENDS="libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11), libmosquitto1t64"
@@ -180,8 +178,7 @@ EOF
             DEPENDS="libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11), libmosquitto1"
             ;;
     esac
-    
-    # Create control file
+
     cat > "$PKG_DIR/DEBIAN/control" << EOF
 Package: ${PACKAGE_NAME}
 Version: ${FULL_VERSION}
@@ -189,34 +186,32 @@ Section: hamradio
 Priority: optional
 Architecture: ${PKG_ARCH}
 Depends: ${DEPENDS}
+Recommends: mosquitto
 Maintainer: MW0MWZ <andy@mw0mwz.co.uk>
-Description: APRS Gateway for Amateur Radio
- APRS Gateway for digital voice networks
- Bridges APRS data between digital voice networks and APRS-IS
+Description: Configuration, network and system information for MMDVM via MQTT
+ MMDVM-Info answers requests over MQTT for the configuration of other MMDVM
+ programs (with sensitive keys excluded), network addresses, running
+ programs and CPU status. MMDVM-Display uses it to show host details.
  Built for Debian ${DEBIAN_VERSION}
  Git commit: ${GIT_COMMIT}
-Homepage: https://github.com/g4klx/APRSGateway
+Homepage: https://github.com/g4klx/MMDVM-Info
 EOF
-    
-    # Create postinst script
+
     cat > "$PKG_DIR/DEBIAN/postinst" << 'EOF'
 #!/bin/sh
 set -e
 
 case "$1" in
     configure)
-        # Create configuration from the package templates if missing;
-        # /etc/aprsclients/ holds only user configuration.
-        mkdir -p /etc/aprsclients
-        for template in /usr/share/aprsclients/*.ini.example; do
-            [ -f "$template" ] || continue
-            conf="/etc/aprsclients/$(basename "$template" .example)"
-            [ -e "$conf" ] || cp "$template" "$conf"
-        done
-
-        # Reload systemd to pick up the new service
         if [ -d /run/systemd/system ]; then
             systemctl daemon-reload >/dev/null || true
+        fi
+
+        # Create configuration from the package template if missing
+        mkdir -p /etc/mmdvminfo
+        if [ ! -f /etc/mmdvminfo/MMDVM-Info.ini ] && [ -f /usr/share/mmdvminfo/MMDVM-Info.ini.example ]; then
+            cp /usr/share/mmdvminfo/MMDVM-Info.ini.example /etc/mmdvminfo/MMDVM-Info.ini
+            echo "Created /etc/mmdvminfo/MMDVM-Info.ini from template"
         fi
         ;;
     abort-upgrade|abort-remove|abort-deconfigure)
@@ -232,17 +227,15 @@ esac
 exit 0
 EOF
     chmod 755 "$PKG_DIR/DEBIAN/postinst"
-    
-    # Create postrm script
+
     cat > "$PKG_DIR/DEBIAN/postrm" << 'EOF'
 #!/bin/sh
 set -e
 
 case "$1" in
     purge)
-        # Remove config directory if empty
-        if [ -d /etc/aprsclients ]; then
-            rmdir --ignore-fail-on-non-empty /etc/aprsclients || true
+        if [ -d /etc/mmdvminfo ]; then
+            rmdir --ignore-fail-on-non-empty /etc/mmdvminfo || true
         fi
         ;;
     remove|upgrade|failed-upgrade|abort-install|abort-upgrade|disappear)
@@ -258,36 +251,31 @@ esac
 exit 0
 EOF
     chmod 755 "$PKG_DIR/DEBIAN/postrm"
-    
-    # Create md5sums
+
     cd "$PKG_DIR"
     find . -type f ! -path './DEBIAN/*' -exec md5sum {} \; | sed 's|\./||' > DEBIAN/md5sums
     cd - > /dev/null
-    
-    # No conffiles: /etc/aprsclients/ holds only user configuration created by
-    # the postinst from the templates in /usr/share/aprsclients.
-    
-    # Build the package
+
     print_message "Building .deb package..."
     fakeroot dpkg-deb --build "$PKG_DIR"
-    
+
     mv "$BUILD_DIR"/*.deb "$OUTPUT_DIR/"
-    
+
     DEB_FILE="${PACKAGE_NAME}_${FULL_VERSION}_${PKG_ARCH}.deb"
     print_message "Package created: ${DEB_FILE}"
 }
 
 verify_package() {
     print_message "Verifying package..."
-    
+
     PKG_ARCH="${ARCH:-$(dpkg --print-architecture)}"
     DEB_FILE="$OUTPUT_DIR/${PACKAGE_NAME}_${FULL_VERSION}_${PKG_ARCH}.deb"
-    
+
     if [ -f "$DEB_FILE" ]; then
         print_info "Package info:"
         dpkg-deb -I "$DEB_FILE"
-        print_info "Package contents (first 30 files):"
-        dpkg-deb -c "$DEB_FILE" | head -30
+        print_info "Package contents:"
+        dpkg-deb -c "$DEB_FILE"
         print_info "Package size:"
         ls -lh "$DEB_FILE"
     else
@@ -299,13 +287,11 @@ verify_package() {
 # MAIN EXECUTION
 print_message "Starting build for $PACKAGE_NAME"
 
-# Show environment
 [ -n "$ARCH" ] && print_info "Architecture: $ARCH"
 [ -n "$DEBIAN_VERSION" ] && print_info "Debian version: $DEBIAN_VERSION"
 [ -n "$OUTPUT_DIR" ] && print_info "Output directory: $OUTPUT_DIR"
 [ -n "$BUILD_NUMBER" ] && print_info "Build number: $BUILD_NUMBER"
 
-# Build the package
 clean_build
 prepare_source
 build_software

@@ -96,11 +96,12 @@ create_package() {
         done
     fi
 
-    # Install config: example and active copy
+    # Install the config template; it is package-owned and lives in
+    # /usr/share. /etc/dstarrepeater/ holds only user configuration,
+    # created by the postinst if missing.
     if [ -f "Data/dstarrepeater.ini.example" ]; then
-        cp "Data/dstarrepeater.ini.example" "$PKG_DIR/etc/dstarrepeater/dstarrepeater.ini.example"
-        cp "Data/dstarrepeater.ini.example" "$PKG_DIR/etc/dstarrepeater/dstarrepeater.ini"
-        print_info "Installed: dstarrepeater.ini"
+        cp "Data/dstarrepeater.ini.example" "$PKG_DIR/usr/share/dstarrepeater/dstarrepeater.ini.example"
+        print_info "Installed: dstarrepeater.ini.example"
     fi
 
     # Copy docs
@@ -200,6 +201,12 @@ case "$1" in
         
         # Set ownership
         chown -R dstar:dstar /var/lib/dstarrepeater /var/log/dstarrepeater || true
+
+        # Create configuration from the package template if missing
+        mkdir -p /etc/dstarrepeater
+        if [ ! -e /etc/dstarrepeater/dstarrepeater.ini ] && [ -f /usr/share/dstarrepeater/dstarrepeater.ini.example ]; then
+            cp /usr/share/dstarrepeater/dstarrepeater.ini.example /etc/dstarrepeater/dstarrepeater.ini
+        fi
         
         # Reload systemd
         if [ -d /run/systemd/system ]; then
@@ -253,8 +260,8 @@ EOF
     find . -type f ! -path './DEBIAN/*' -exec md5sum {} \; | sed 's|\./||' > DEBIAN/md5sums
     cd - > /dev/null
     
-    # Create conffiles
-    echo "/etc/dstarrepeater/dstarrepeater.ini" > "$PKG_DIR/DEBIAN/conffiles"
+    # No conffiles: /etc/dstarrepeater/ holds only user configuration created
+    # by the postinst from the template in /usr/share/dstarrepeater.
     
     # Build the package
     print_message "Building .deb package..."

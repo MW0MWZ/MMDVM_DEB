@@ -38,7 +38,7 @@ There is no test suite or linter. Validation is done by the build succeeding and
 
 ### Package Structure
 
-Each package lives in `packages/<name>/` with exactly two files:
+Each package lives in `packages/<name>/` with two files (plus any `*.patch` the build applies):
 - **`build.sh`** - Self-contained build script (~300-800 lines) that clones source, compiles, and creates the `.deb`
 - **`source.conf`** - Metadata: upstream git URL(s), package name, components, dependencies, and tracked `GIT_COMMIT`
 
@@ -93,7 +93,8 @@ Format: `YYYY.MM.DD-<revision>` (e.g., `2025.01.02-1`). Version date comes from 
 
 All packages follow:
 - `/usr/bin/` - Binaries
-- `/etc/<package>/` - Configuration files (with `.example` templates)
+- `/usr/share/<package>/*.ini.example` - Configuration templates (package-owned, replaced on upgrade)
+- `/etc/<package>/` - Live configuration only; packages ship the directory empty and the postinst creates missing configs from the templates (no conffiles)
 - `/var/log/<package>/` - Log directory
 - `/usr/lib/systemd/system/` - Systemd service files
 

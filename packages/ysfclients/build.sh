@@ -162,8 +162,7 @@ create_package() {
         chmod 755 "$PKG_DIR/usr/bin/YSFGateway"
     fi
     if [ -f "YSFGateway/YSFGateway.ini" ]; then
-        cp "YSFGateway/YSFGateway.ini" "$PKG_DIR/etc/ysfclients/YSFGateway.ini"
-        cp "YSFGateway/YSFGateway.ini" "$PKG_DIR/etc/ysfclients/YSFGateway.ini.example"
+        cp "YSFGateway/YSFGateway.ini" "$PKG_DIR/usr/share/ysfclients/YSFGateway.ini.example"
     fi
 
     # YSFParrot
@@ -172,8 +171,7 @@ create_package() {
         chmod 755 "$PKG_DIR/usr/bin/YSFParrot"
     fi
     if [ -f "YSFParrot/YSFParrot.ini" ]; then
-        cp "YSFParrot/YSFParrot.ini" "$PKG_DIR/etc/ysfclients/YSFParrot.ini"
-        cp "YSFParrot/YSFParrot.ini" "$PKG_DIR/etc/ysfclients/YSFParrot.ini.example"
+        cp "YSFParrot/YSFParrot.ini" "$PKG_DIR/usr/share/ysfclients/YSFParrot.ini.example"
     fi
 
     # DGIdGateway
@@ -182,8 +180,7 @@ create_package() {
         chmod 755 "$PKG_DIR/usr/bin/DGIdGateway"
     fi
     if [ -f "DGIdGateway/DGIdGateway.ini" ]; then
-        cp "DGIdGateway/DGIdGateway.ini" "$PKG_DIR/etc/ysfclients/DGIdGateway.ini"
-        cp "DGIdGateway/DGIdGateway.ini" "$PKG_DIR/etc/ysfclients/DGIdGateway.ini.example"
+        cp "DGIdGateway/DGIdGateway.ini" "$PKG_DIR/usr/share/ysfclients/DGIdGateway.ini.example"
     fi
 
     # Copy data files
@@ -207,8 +204,7 @@ create_package() {
         chmod 755 "$PKG_DIR/usr/bin/YSF2DMR"
     fi
     if [ -f "YSF2DMR/YSF2DMR.ini" ]; then
-        cp "YSF2DMR/YSF2DMR.ini" "$PKG_DIR/etc/ysfclients/YSF2DMR.ini"
-        cp "YSF2DMR/YSF2DMR.ini" "$PKG_DIR/etc/ysfclients/YSF2DMR.ini.example"
+        cp "YSF2DMR/YSF2DMR.ini" "$PKG_DIR/usr/share/ysfclients/YSF2DMR.ini.example"
     fi
 
     # YSF2NXDN
@@ -217,8 +213,7 @@ create_package() {
         chmod 755 "$PKG_DIR/usr/bin/YSF2NXDN"
     fi
     if [ -f "YSF2NXDN/YSF2NXDN.ini" ]; then
-        cp "YSF2NXDN/YSF2NXDN.ini" "$PKG_DIR/etc/ysfclients/YSF2NXDN.ini"
-        cp "YSF2NXDN/YSF2NXDN.ini" "$PKG_DIR/etc/ysfclients/YSF2NXDN.ini.example"
+        cp "YSF2NXDN/YSF2NXDN.ini" "$PKG_DIR/usr/share/ysfclients/YSF2NXDN.ini.example"
     fi
 
     # YSF2P25
@@ -227,8 +222,7 @@ create_package() {
         chmod 755 "$PKG_DIR/usr/bin/YSF2P25"
     fi
     if [ -f "YSF2P25/YSF2P25.ini" ]; then
-        cp "YSF2P25/YSF2P25.ini" "$PKG_DIR/etc/ysfclients/YSF2P25.ini"
-        cp "YSF2P25/YSF2P25.ini" "$PKG_DIR/etc/ysfclients/YSF2P25.ini.example"
+        cp "YSF2P25/YSF2P25.ini" "$PKG_DIR/usr/share/ysfclients/YSF2P25.ini.example"
     fi
 
     # Copy ID files
@@ -371,6 +365,15 @@ set -e
 
 case "$1" in
     configure)
+        # Create configuration from the package templates if missing;
+        # /etc/ysfclients/ holds only user configuration.
+        mkdir -p /etc/ysfclients
+        for template in /usr/share/ysfclients/*.ini.example; do
+            [ -f "$template" ] || continue
+            conf="/etc/ysfclients/$(basename "$template" .example)"
+            [ -e "$conf" ] || cp "$template" "$conf"
+        done
+
         # Reload systemd to pick up the new services
         if [ -d /run/systemd/system ]; then
             systemctl daemon-reload >/dev/null || true
@@ -421,13 +424,8 @@ EOF
     find . -type f ! -path './DEBIAN/*' -exec md5sum {} \; | sed 's|\./||' > DEBIAN/md5sums
     cd - > /dev/null
     
-    # Create conffiles list
-    > "$PKG_DIR/DEBIAN/conffiles"
-    for conf in YSFGateway YSFParrot DGIdGateway YSF2DMR YSF2NXDN YSF2P25; do
-        if [ -f "$PKG_DIR/etc/ysfclients/${conf}.ini" ]; then
-            echo "/etc/ysfclients/${conf}.ini" >> "$PKG_DIR/DEBIAN/conffiles"
-        fi
-    done
+    # No conffiles: /etc/ysfclients/ holds only user configuration created by
+    # the postinst from the templates in /usr/share/ysfclients.
     
     # Build the package
     print_message "Building .deb package..."

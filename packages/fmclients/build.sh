@@ -84,6 +84,7 @@ create_package() {
     mkdir -p "$PKG_DIR/DEBIAN"
     mkdir -p "$PKG_DIR/usr/bin"
     mkdir -p "$PKG_DIR/usr/share/doc/fmclients"
+    mkdir -p "$PKG_DIR/usr/share/fmclients"
     mkdir -p "$PKG_DIR/etc/fmclients"
     
     # Copy binary
@@ -92,8 +93,7 @@ create_package() {
     
     # Copy config if exists
     if [ -f "FMGateway/FMGateway.ini" ]; then
-        cp "FMGateway/FMGateway.ini" "$PKG_DIR/etc/fmclients/FMGateway.ini"
-        cp "FMGateway/FMGateway.ini" "$PKG_DIR/etc/fmclients/FMGateway.ini.example"
+        cp "FMGateway/FMGateway.ini" "$PKG_DIR/usr/share/fmclients/FMGateway.ini.example"
     fi
 
     # Copy docs
@@ -152,15 +152,42 @@ Description: FM Clients for Amateur Radio
 Homepage: https://github.com/g4klx/FMGateway
 EOF
     
+    # Create postinst script
+    cat > "$PKG_DIR/DEBIAN/postinst" << 'EOF'
+#!/bin/sh
+set -e
+
+case "$1" in
+    configure)
+        # Create configuration from the package templates if missing;
+        # /etc/fmclients/ holds only user configuration.
+        mkdir -p /etc/fmclients
+        for template in /usr/share/fmclients/*.ini.example; do
+            [ -f "$template" ] || continue
+            conf="/etc/fmclients/$(basename "$template" .example)"
+            [ -e "$conf" ] || cp "$template" "$conf"
+        done
+
+        ;;
+    abort-upgrade|abort-remove|abort-deconfigure)
+        ;;
+    *)
+        echo "postinst called with unknown argument \`$1'" >&2
+        exit 1
+        ;;
+esac
+
+exit 0
+EOF
+    chmod 755 "$PKG_DIR/DEBIAN/postinst"
+
     # Create md5sums
     cd "$PKG_DIR"
     find . -type f ! -path './DEBIAN/*' -exec md5sum {} \; | sed 's|\./||' > DEBIAN/md5sums
     cd - > /dev/null
     
-    # Create conffiles if config exists
-    if [ -f "$PKG_DIR/etc/fmclients/FMGateway.ini" ]; then
-        echo "/etc/fmclients/FMGateway.ini" > "$PKG_DIR/DEBIAN/conffiles"
-    fi
+    # No conffiles: /etc/fmclients/ holds only user configuration created by
+    # the postinst from the templates in /usr/share/fmclients.
     
     # Build the package
     print_message "Building .deb package..."
