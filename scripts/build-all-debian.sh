@@ -15,7 +15,7 @@ NC='\033[0m' # No Color
 # Configuration
 DEBIAN_VERSIONS=("bookworm" "trixie")  # Debian 12 and 13
 ARCHITECTURES=("amd64" "arm64" "armhf")
-PACKAGES=("aprsclients" "dmrclients" "dstarclients" "ysfclients" "nxdnclients" "p25clients" "pocsagclients" "fmclients" "mmdvmhost" "mmdvminfo")
+PACKAGES=("aprsclients" "dmrclients" "dstarclients" "ysfclients" "nxdnclients" "p25clients" "pocsagclients" "fmclients" "mmdvmhost")
 REPO_BASE="repo"  # Root of repository structure (no /deb subdirectory)
 GPG_KEY_ID="andy@mw0mwz.co.uk"  # Update with your GPG key
 
