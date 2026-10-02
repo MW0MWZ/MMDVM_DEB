@@ -94,26 +94,26 @@ Description: FM Clients for Amateur Radio
  Git commit: 6542290
 
 Package: mmdvmhost
-Version: 2026.05.18-0~deb13u1
+Version: 2026.09.05-0~deb13u1
 Architecture: amd64
 Maintainer: MW0MWZ <andy@mw0mwz.co.uk>
 Depends: libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11), libmosquitto1t64, libsamplerate0t64
 Recommends: mosquitto
-Filename: pool/main/m/mmdvmhost/mmdvmhost_2026.05.18-0~deb13u1_amd64.deb
-Size: 6351024
-MD5sum: 5b6cae8494278b1fd9e0da4741056daa
-SHA1: ab7d3af7c407b714a7cfc2965f8d71bc6652e448
-SHA256: 99287c84e51fa2ba4a25471ca8a44e0b10d92666f370d82dc27f23a54592cf25
+Filename: pool/main/m/mmdvmhost/mmdvmhost_2026.09.05-0~deb13u1_amd64.deb
+Size: 6438288
+MD5sum: 2a4540e391c36cd261700277397a9561
+SHA1: c9a7b451e6aac519ac64c9d3317c2b6f90b38408
+SHA256: 8d183069ffe180186c16825301afd922371de86f474a297481819baf1fae04a1
 Section: hamradio
 Priority: optional
-Homepage: https://github.com/g4klx/MMDVMHost
-Description: MMDVM Host Software, Calibration and Display Driver
+Homepage: https://github.com/g4klx/MMDVM-Host
+Description: MMDVM-Host, MMDVM-Display and MMDVMCal
  Multi-Mode Digital Voice Modem Host Software
- Supports D-Star, DMR, YSF, P25, NXDN, M17 and POCSAG
- Includes MMDVMCal calibration tool and DisplayDriver display server
+ Supports D-Star, DMR, YSF, P25, NXDN, POCSAG and FM
+ Includes the MMDVMCal calibration tool and the MMDVM-Display display driver
  .
  Built for Debian trixie
- Git commits: MMDVMHost 652e229, MMDVMCal cf37046, Display-Driver 3f88190
+ Git commits: MMDVM-Host 590c531, MMDVMCal cf37046, MMDVM-Display 96a0705
 
 Package: nxdnclients
 Version: 2026.08.11-0~deb13u1
