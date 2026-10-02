@@ -94,23 +94,24 @@ Description: FM Clients for Amateur Radio
  Git commit: 6542290
 
 Package: mmdvmhost
-Version: 2026.09.05-0~deb12u1
+Version: 2026.09.05-1~deb12u1
 Architecture: armhf
 Maintainer: MW0MWZ <andy@mw0mwz.co.uk>
 Depends: libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11), libmosquitto1, libsamplerate0, wiringpi (>= 3.0), libi2c0, i2c-tools
 Recommends: mosquitto
-Filename: pool/main/m/mmdvmhost/mmdvmhost_2026.09.05-0~deb12u1_armhf.deb
-Size: 6478020
-MD5sum: b651edd802b2f3640c186d90b432744d
-SHA1: 690953ae019a96c1c866e79da83acc72fd3fb798
-SHA256: b353b9505687ae7a96d6effc7853f02584f88aea8227dfa02c3b8e9da00817ac
+Filename: pool/main/m/mmdvmhost/mmdvmhost_2026.09.05-1~deb12u1_armhf.deb
+Size: 7251072
+MD5sum: d423d9cb15d457482e7bfe39798fe454
+SHA1: 97c8eec6e3121513de349ab23337dca87b8dd0e8
+SHA256: 0de2d1ccdee85657521ba1b624bc52695eada830a459ab9e3d953b88f49b86e2
 Section: hamradio
 Priority: optional
 Homepage: https://github.com/g4klx/MMDVM-Host
-Description: MMDVM-Host, MMDVM-Display and MMDVMCal
+Description: MMDVM-Host, MMDVM-Display, MMDVM-Info and MMDVMCal
  Multi-Mode Digital Voice Modem Host Software
  Supports D-Star, DMR, YSF, P25, NXDN, POCSAG and FM
- Includes the MMDVMCal calibration tool and the MMDVM-Display display driver
+ Includes the MMDVM-Display display driver, the MMDVM-Info information
+ service it relies on, and the MMDVMCal calibration tool
  .
  This ARM build includes display hardware support for:
  - OLED displays (SSD1306, SH1106) via ArduiPi_OLED
@@ -118,7 +119,7 @@ Description: MMDVM-Host, MMDVM-Display and MMDVMCal
  - Uses wiringPi package from deb.pistar.uk
  .
  Built for Debian bookworm
- Git commits: MMDVM-Host 590c531, MMDVMCal cf37046, MMDVM-Display 96a0705, ArduiPi_OLED 50fa499
+ Git commits: MMDVM-Host 590c531, MMDVMCal cf37046, MMDVM-Display 96a0705, MMDVM-Info a1d884a, ArduiPi_OLED 50fa499
 
 Package: nxdnclients
 Version: 2026.08.11-0~deb12u1
