@@ -605,8 +605,8 @@
                 <div class="step-content">
                     <strong>Update and install packages:</strong>
                     <div class="code-block">
-                        sudo apt update && sudo apt install mmdvmhost mmdvminfo dmrclients dstarclients dstarrepeater ysfclients nxdnclients p25clients pocsagclients fmclients aprsclients
-                        <button class="copy-button" onclick="copyToClipboard(this, 'sudo apt update && sudo apt install mmdvmhost mmdvminfo dmrclients dstarclients dstarrepeater ysfclients nxdnclients p25clients pocsagclients fmclients aprsclients')">Copy</button>
+                        sudo apt update && sudo apt install mmdvmhost dmrclients dstarclients dstarrepeater ysfclients nxdnclients p25clients pocsagclients fmclients aprsclients
+                        <button class="copy-button" onclick="copyToClipboard(this, 'sudo apt update && sudo apt install mmdvmhost dmrclients dstarclients dstarrepeater ysfclients nxdnclients p25clients pocsagclients fmclients aprsclients')">Copy</button>
                     </div>
                 </div>
             </div>
@@ -635,7 +635,7 @@
                 </div>
                 <div class="stats-grid">
                     <div class="stat-item">
-                        <div class="stat-number">11</div>
+                        <div class="stat-number">10</div>
                         <div class="stat-label">Packages</div>
                     </div>
                     <div class="stat-item">
@@ -687,30 +687,17 @@
                     <div class="package-name">mmdvmhost</div>
                 </div>
                 <div class="package-desc">
-                    The MMDVM host software for digital voice modes. Supports DMR, D-Star, YSF, P25, NXDN, POCSAG, and FM. Includes the MMDVM-Display driver for Nextion, OLED, HD44780 and LCDproc displays (OLED and HD44780 on ARM) and the MMDVMCal calibration tool.
+                    The MMDVM host software for digital voice modes. Supports DMR, D-Star, YSF, P25, NXDN, POCSAG, and FM. Includes the MMDVM-Display driver for Nextion, OLED, HD44780 and LCDproc displays (OLED and HD44780 on ARM), the MMDVM-Info service it gets host details from, and the MMDVMCal calibration tool.
                 </div>
                 <div class="package-components">
                     <span class="component-badge">MMDVM-Host</span>
                     <span class="component-badge">MMDVM-Display</span>
                     <span class="component-badge">NextionUpdater</span>
+                    <span class="component-badge">MMDVM-Info</span>
                     <span class="component-badge">MMDVMCal</span>
                 </div>
             </div>
 
-            <div class="package-card core">
-                <div class="package-header">
-                    <svg class="package-icon" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
-                    </svg>
-                    <div class="package-name">mmdvminfo</div>
-                </div>
-                <div class="package-desc">
-                    Publishes host configuration (with passwords excluded), network addresses, running programs and CPU status over MQTT. MMDVM-Display uses it to show the callsign, frequencies and IP address.
-                </div>
-                <div class="package-components">
-                    <span class="component-badge">MMDVM-Info</span>
-                </div>
-            </div>
 
             <div class="package-card dstar">
                 <div class="package-header">

@@ -15,8 +15,7 @@ Debian/Ubuntu package repository for Ham Radio software, hosted on GitHub Pages.
 
 | Package | Description | Components | Upstream |
 |---------|-------------|------------|----------|
-| **mmdvmhost** | MMDVM host, display driver & calibration tool | MMDVM-Host, MMDVM-Display, NextionUpdater, MMDVMCal | [MMDVM-Host](https://github.com/g4klx/MMDVM-Host), [MMDVM-Display](https://github.com/g4klx/MMDVM-Display) & [MMDVMCal](https://github.com/g4klx/MMDVMCal) |
-| **mmdvminfo** | Configuration, network and system information over MQTT (used by MMDVM-Display) | MMDVM-Info | [MMDVM-Info](https://github.com/g4klx/MMDVM-Info) |
+| **mmdvmhost** | MMDVM host, display driver, info service & calibration tool | MMDVM-Host, MMDVM-Display, NextionUpdater, MMDVM-Info, MMDVMCal | [MMDVM-Host](https://github.com/g4klx/MMDVM-Host), [MMDVM-Display](https://github.com/g4klx/MMDVM-Display), [MMDVM-Info](https://github.com/g4klx/MMDVM-Info) & [MMDVMCal](https://github.com/g4klx/MMDVMCal) |
 | **dstarrepeater** | D-Star Repeater Controller | dstarrepeaterd | [DStarRepeater](https://github.com/g4klx/DStarRepeater) |
 
 ### Gateway & Client Packages
@@ -73,7 +72,7 @@ echo "deb [signed-by=/usr/share/keyrings/hamradio.gpg] https://deb.pistar.uk/ bo
 
 # Update and install
 sudo apt update
-sudo apt install mmdvmhost mmdvminfo dmrclients ysfclients
+sudo apt install mmdvmhost dmrclients ysfclients
 ```
 
 ### Configuration
@@ -84,8 +83,7 @@ Upstream renamed MMDVMHost to MMDVM-Host and Display-Driver to MMDVM-Display in 
 
 ```bash
 # Configuration files location
-/etc/mmdvmhost/       # MMDVM-Host and MMDVM-Display configuration
-/etc/mmdvminfo/       # MMDVM-Info configuration
+/etc/mmdvmhost/       # MMDVM-Host, MMDVM-Display and MMDVM-Info configuration
 /etc/dmrclients/      # DMR Gateway and cross-mode configs
 /etc/ysfclients/      # YSF Gateway, DGId, and cross-mode configs
 /etc/dstarclients/    # D-Star gateway configs
@@ -181,8 +179,7 @@ MMDVM_DEB/
 │   ├── check-upstream-updates.yml
 │   └── cleanup-old-packages.yml
 ├── packages/                # Package definitions
-│   ├── mmdvmhost/          # MMDVM-Host, MMDVM-Display, MMDVMCal
-│   ├── mmdvminfo/          # MMDVM-Info
+│   ├── mmdvmhost/          # MMDVM-Host, MMDVM-Display, MMDVM-Info, MMDVMCal
 │   ├── dmrclients/         # DMRGateway, DMR2YSF, DMR2NXDN
 │   ├── dstarclients/       # DStarGateway and tools
 │   ├── dstarrepeater/      # D-Star Repeater Controller
@@ -212,7 +209,7 @@ The repository follows Debian packaging conventions:
 
 - **Protocol-specific clients**: `dmrclients`, `dstarclients`, `ysfclients`, `nxdnclients`, `p25clients`
   - Each contains the main gateway, parrot/test tools, and cross-mode converters where applicable
-- **Core software**: `mmdvmhost` - MMDVM-Host, MMDVM-Display and MMDVMCal; `mmdvminfo` - MMDVM-Info
+- **Core software**: `mmdvmhost` - MMDVM-Host, MMDVM-Display, MMDVM-Info and MMDVMCal
 - **Repeater controller**: `dstarrepeater` - D-Star repeater system
 - **Single-purpose clients**: `aprsclients`, `pocsagclients`, `fmclients`
 

@@ -16,7 +16,6 @@ on:
           - dstarrepeater
           - fmclients
           - mmdvmhost
-          - mmdvminfo
           - nxdnclients
           - p25clients
           - pocsagclients
@@ -72,7 +71,7 @@ jobs:
         id: packages
         run: |
           if [ "${{ github.event.inputs.package }}" = "all" ] || [ -z "${{ github.event.inputs.package }}" ]; then
-            echo 'packages=["wiringpi","mmdvmhost","mmdvminfo","dmrclients","dstarclients","dstarrepeater","ysfclients","nxdnclients","p25clients","aprsclients","pocsagclients","fmclients"]' >> $GITHUB_OUTPUT
+            echo 'packages=["wiringpi","mmdvmhost","dmrclients","dstarclients","dstarrepeater","ysfclients","nxdnclients","p25clients","aprsclients","pocsagclients","fmclients"]' >> $GITHUB_OUTPUT
           else
             echo 'packages=["${{ github.event.inputs.package }}"]' >> $GITHUB_OUTPUT
           fi
@@ -155,9 +154,6 @@ jobs:
               ;;
             mmdvmhost)
               SOURCE_REPO="https://github.com/g4klx/MMDVM-Host.git"
-              ;;
-            mmdvminfo)
-              SOURCE_REPO="https://github.com/g4klx/MMDVM-Info.git"
               ;;
             dmrclients)
               SOURCE_REPO="https://github.com/g4klx/DMRGateway.git"
@@ -957,7 +953,7 @@ jobs:
           
           # Update and install
           sudo apt update
-          sudo apt install mmdvmhost mmdvminfo dmrclients ysfclients
+          sudo apt install mmdvmhost dmrclients ysfclients
               </pre>
               
               <h3>For Older Systems</h3>
@@ -975,8 +971,7 @@ jobs:
               
               <h2>📋 Available Packages</h2>
               <ul>
-                  <li><strong>mmdvmhost</strong> - MMDVM-Host, MMDVM-Display and MMDVMCal (ARM builds include display hardware support)</li>
-                  <li><strong>mmdvminfo</strong> - MMDVM-Info configuration, network and system information over MQTT</li>
+                  <li><strong>mmdvmhost</strong> - MMDVM-Host, MMDVM-Display, MMDVM-Info and MMDVMCal (ARM builds include display hardware support)</li>
                   <li><strong>dmrclients</strong> - DMR Gateway and Cross-Mode Tools</li>
                   <li><strong>ysfclients</strong> - YSF Gateway, Parrot and Cross-Mode Tools</li>
                   <li><strong>dstarclients</strong> - D-Star ircDDB Gateway and Tools</li>

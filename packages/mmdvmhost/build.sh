@@ -3,7 +3,7 @@ set -e
 
 # MMDVM Host package build script for Debian
 # For GitHub Actions ONLY
-# Version: 4.0.0 - MMDVM-Host / MMDVM-Display rename, templates in /usr/share
+# Version: 4.1.0 - MMDVM-Host / MMDVM-Display / MMDVM-Info, templates in /usr/share
 
 # Color codes
 RED='\033[0;31m'
@@ -17,9 +17,11 @@ PACKAGE_NAME="mmdvmhost"
 GITURL="https://github.com/g4klx/MMDVM-Host.git"
 GITURL_CAL="https://github.com/g4klx/MMDVMCal.git"
 GITURL_DISPLAY="https://github.com/g4klx/MMDVM-Display.git"
+GITURL_INFO="https://github.com/g4klx/MMDVM-Info.git"
 GITURL_OLED="https://github.com/MW0MWZ/ArduiPi_OLED.git"
 BUILD_DIR="build"
 OUTPUT_DIR="${OUTPUT_DIR:-./output}"
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 # Functions
 print_message() { echo -e "${GREEN}[BUILD]${NC} $1"; }
@@ -29,7 +31,7 @@ print_warning() { echo -e "${YELLOW}[WARNING]${NC} $1"; }
 
 clean_build() {
     print_message "Cleaning build environment..."
-    rm -rf "$BUILD_DIR" MMDVM-Host MMDVMCal MMDVM-Display ArduiPi_OLED oled-install
+    rm -rf "$BUILD_DIR" MMDVM-Host MMDVMCal MMDVM-Display MMDVM-Info ArduiPi_OLED oled-install
     mkdir -p "$BUILD_DIR" "$OUTPUT_DIR"
 }
 
@@ -56,6 +58,20 @@ prepare_source() {
     DISPLAY_COMMIT_FULL=$(git rev-parse HEAD)
     cd ..
 
+    # MMDVM-Display gets host configuration, network addresses and CPU
+    # status from MMDVM-Info
+    print_message "Cloning MMDVM-Info from $GITURL_INFO..."
+    git clone "$GITURL_INFO" MMDVM-Info
+    cd MMDVM-Info
+    INFO_COMMIT=$(git rev-parse --short HEAD)
+    INFO_COMMIT_FULL=$(git rev-parse HEAD)
+    # Upstream relies on <unistd.h> being pulled in indirectly; include it
+    # explicitly so the build doesn't depend on libc header internals.
+    if patch -p1 -N --dry-run < "$SCRIPT_DIR/mmdvminfo-unistd.patch" >/dev/null 2>&1; then
+        patch -p1 -N < "$SCRIPT_DIR/mmdvminfo-unistd.patch"
+    fi
+    cd ..
+
     # Clone ArduiPi_OLED for ARM platforms
     if [ "$ARCH" = "armhf" ] || [ "$ARCH" = "arm64" ]; then
         print_message "Cloning ArduiPi_OLED from $GITURL_OLED..."
@@ -71,6 +87,7 @@ prepare_source() {
     print_info "MMDVM-Host commit: $GIT_COMMIT"
     print_info "MMDVMCal commit: $CAL_COMMIT"
     print_info "MMDVM-Display commit: $DISPLAY_COMMIT"
+    print_info "MMDVM-Info commit: $INFO_COMMIT"
 }
 
 check_build_dependencies() {
@@ -209,6 +226,18 @@ build_software() {
         print_error "Build failed - NextionUpdater binary not created"
         exit 1
     fi
+    cd ..
+
+    # Build MMDVM-Info
+    print_message "Building MMDVM-Info..."
+    cd MMDVM-Info
+    make clean || true
+    make -j$(nproc) all
+
+    if [ ! -f "MMDVM-Info" ]; then
+        print_error "Build failed - MMDVM-Info binary not created"
+        exit 1
+    fi
 
     cd ..
     print_message "Build completed"
@@ -253,6 +282,10 @@ create_package() {
     cp "MMDVM-Display/NextionUpdater" "$PKG_DIR/usr/bin/"
     chmod 755 "$PKG_DIR/usr/bin/MMDVM-Display" "$PKG_DIR/usr/bin/NextionUpdater"
 
+    # Copy MMDVM-Info binary
+    cp "MMDVM-Info/MMDVM-Info" "$PKG_DIR/usr/bin/"
+    chmod 755 "$PKG_DIR/usr/bin/MMDVM-Info"
+
     # Copy OLED library for ARM platforms
     if [ "$PKG_ARCH" = "armhf" ] || [ "$PKG_ARCH" = "arm64" ]; then
         if [ -d "oled-install" ]; then
@@ -280,6 +313,27 @@ create_package() {
     # postinst creates missing configs from these templates.
     cp "MMDVM-Host/MMDVM-Host.ini" "$PKG_DIR/usr/share/mmdvmhost/MMDVM-Host.ini.example"
     cp "MMDVM-Display/MMDVM-Display.ini" "$PKG_DIR/usr/share/mmdvmhost/MMDVM-Display.ini.example"
+
+    # The upstream MMDVM-Info template points [Configs] at a source-tree
+    # layout and lists programs this repository doesn't ship, so point it
+    # at the paths our packages install to.
+    INFO_TEMPLATE="$PKG_DIR/usr/share/mmdvmhost/MMDVM-Info.ini.example"
+    cp "MMDVM-Info/MMDVM-Info.ini" "$INFO_TEMPLATE"
+    sed -i \
+        -e 's|^APRSGateway=.*|APRSGateway=/etc/aprsclients/APRSGateway.ini|' \
+        -e 's|^DAPNETGateway=.*|DAPNETGateway=/etc/pocsagclients/DAPNETGateway.ini|' \
+        -e 's|^DGIdGateway=.*|DGIdGateway=/etc/ysfclients/DGIdGateway.ini|' \
+        -e 's|^DMRGateway=.*|DMRGateway=/etc/dmrclients/DMRGateway.ini|' \
+        -e 's|^DStarGateway=.*|DStarGateway=/etc/dstarclients/DStarGateway.ini|' \
+        -e 's|^FMGateway=.*|FMGateway=/etc/fmclients/FMGateway.ini|' \
+        -e 's|^MMDVM-Host=.*|MMDVM-Host=/etc/mmdvmhost/MMDVM-Host.ini|' \
+        -e 's|^NXDNGateway=.*|NXDNGateway=/etc/nxdnclients/NXDNGateway.ini|' \
+        -e 's|^P25Gateway=.*|P25Gateway=/etc/p25clients/P25Gateway.ini|' \
+        -e 's|^YSFGateway=.*|YSFGateway=/etc/ysfclients/YSFGateway.ini|' \
+        -e '/^MMDVM-CrossMode=/d' -e '/^MMDVM-IQ=/d' \
+        -e '/^Program=MMDVM-CrossMode$/d' -e '/^Program=MMDVM-IQ$/d' \
+        -e 's|^Program=MMDVMHost$|Program=MMDVM-Host\nProgram=MMDVM-Display|' \
+        "$INFO_TEMPLATE"
 
     # Copy data files
     for datafile in DMRIds.dat DMRIds.csv NXDN.csv P25Hosts.txt DMR_Hosts.txt XLXHosts.txt; do
@@ -337,6 +391,9 @@ RSSIEOF
         if [ -f "MMDVM-Display/$doc" ]; then
             cp "MMDVM-Display/$doc" "$PKG_DIR/usr/share/doc/mmdvmhost/MMDVM-Display-$doc"
         fi
+        if [ -f "MMDVM-Info/$doc" ]; then
+            cp "MMDVM-Info/$doc" "$PKG_DIR/usr/share/doc/mmdvmhost/MMDVM-Info-$doc"
+        fi
     done
 
     # Copy OLED documentation for ARM builds
@@ -386,11 +443,30 @@ WorkingDirectory=/var/lib/mmdvmhost
 WantedBy=multi-user.target
 EOF
 
+    # Create mmdvminfo systemd service
+    cat > "$PKG_DIR/lib/systemd/system/mmdvminfo.service" << 'EOF'
+[Unit]
+Description=MMDVM-Info Service
+After=network.target mosquitto.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/MMDVM-Info /etc/mmdvmhost/MMDVM-Info.ini
+Restart=on-failure
+RestartSec=5
+User=nobody
+Group=nogroup
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
     # Create changelog
     CHANGELOG_CONTENT="  * Package built from git commits:
     - MMDVM-Host: ${GIT_COMMIT_FULL}
     - MMDVMCal: ${CAL_COMMIT_FULL}
-    - MMDVM-Display: ${DISPLAY_COMMIT_FULL}"
+    - MMDVM-Display: ${DISPLAY_COMMIT_FULL}
+    - MMDVM-Info: ${INFO_COMMIT_FULL}"
 
     if [ "$PKG_ARCH" = "armhf" ] || [ "$PKG_ARCH" = "arm64" ]; then
         if [ -n "$OLED_COMMIT_FULL" ]; then
@@ -432,6 +508,10 @@ Files: MMDVM-Display/*
 Copyright: Jonathan Naylor G4KLX and contributors
 License: GPL-2+
 
+Files: MMDVM-Info/*
+Copyright: Jonathan Naylor G4KLX and contributors
+License: GPL-2+
+
 Files: ArduiPi_OLED/*
 Copyright: Charles-Henri Hallard and contributors
 License: MIT
@@ -455,10 +535,11 @@ EOF
     RECOMMENDS="mosquitto"
 
     # Create description
-    DESCRIPTION="MMDVM-Host, MMDVM-Display and MMDVMCal
+    DESCRIPTION="MMDVM-Host, MMDVM-Display, MMDVM-Info and MMDVMCal
  Multi-Mode Digital Voice Modem Host Software
  Supports D-Star, DMR, YSF, P25, NXDN, POCSAG and FM
- Includes the MMDVMCal calibration tool and the MMDVM-Display display driver"
+ Includes the MMDVM-Display display driver, the MMDVM-Info information
+ service it relies on, and the MMDVMCal calibration tool"
 
     if [ "$PKG_ARCH" = "armhf" ] || [ "$PKG_ARCH" = "arm64" ]; then
         DESCRIPTION="$DESCRIPTION
@@ -472,7 +553,7 @@ EOF
     DESCRIPTION="$DESCRIPTION
  .
  Built for Debian ${DEBIAN_VERSION}
- Git commits: MMDVM-Host ${GIT_COMMIT}, MMDVMCal ${CAL_COMMIT}, MMDVM-Display ${DISPLAY_COMMIT}"
+ Git commits: MMDVM-Host ${GIT_COMMIT}, MMDVMCal ${CAL_COMMIT}, MMDVM-Display ${DISPLAY_COMMIT}, MMDVM-Info ${INFO_COMMIT}"
 
     if [ -n "$OLED_COMMIT" ]; then
         DESCRIPTION="$DESCRIPTION, ArduiPi_OLED ${OLED_COMMIT}"
@@ -532,7 +613,7 @@ case "$1" in
         rm -f /etc/mmdvmhost/MMDVMHost.ini.example /etc/mmdvmhost/DisplayDriver.ini.example
 
         # Create configuration from the package templates if missing
-        for name in MMDVM-Host MMDVM-Display; do
+        for name in MMDVM-Host MMDVM-Display MMDVM-Info; do
             if [ ! -f /etc/mmdvmhost/$name.ini ] && [ -f /usr/share/mmdvmhost/$name.ini.example ]; then
                 cp /usr/share/mmdvmhost/$name.ini.example /etc/mmdvmhost/$name.ini
                 echo "Created /etc/mmdvmhost/$name.ini from template - edit it to match your setup"
@@ -603,8 +684,10 @@ set -e
 
 case "$1" in
     remove|upgrade|deconfigure)
-        # Stop both services if running
+        # Stop the services if running
         if [ -d /run/systemd/system ]; then
+            systemctl stop mmdvminfo.service >/dev/null 2>&1 || true
+            systemctl disable mmdvminfo.service >/dev/null 2>&1 || true
             systemctl stop displaydriver.service >/dev/null 2>&1 || true
             systemctl disable displaydriver.service >/dev/null 2>&1 || true
             systemctl stop mmdvmhost.service >/dev/null 2>&1 || true
