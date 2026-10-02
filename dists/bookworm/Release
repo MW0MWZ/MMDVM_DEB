@@ -6,18 +6,18 @@ Version: 1.0
 Architectures: amd64 armhf arm64
 Components: main
 Description: Amateur Radio Digital Voice packages for Debian bookworm
-Date: Fri, 02 Oct 2026 14:40:23 +0000
+Date: Fri, 02 Oct 2026 15:36:22 +0000
 MD5Sum:
- ce98c60d4dbd616328d46909341adf4e 45271 main/binary-armhf/Packages
- f15113cd06dd69aa6fc1fe13dc974a6c 7306 main/binary-armhf/Packages.gz
- 8a595bafc03f868ba04a6e68a4db6d4b 43193 main/binary-amd64/Packages
- ebcb3339abb1b661bdab4d5808d099cb 6985 main/binary-amd64/Packages.gz
- ade3a41f49590e81896c255a57a3554d 45271 main/binary-arm64/Packages
- ed2bb9f8ea17a856b709b4a1dda10c33 7299 main/binary-arm64/Packages.gz
+ 926a5acf4d1f23fcedf12b32e38c3c5f 46026 main/binary-armhf/Packages
+ 1fea6028a46312cf6f3d0087733a9141 7391 main/binary-armhf/Packages.gz
+ 5e14fdb5366ff8d6d07a327ad647f6ea 43948 main/binary-amd64/Packages
+ 3551cd30b66769456fb7c2c944543afa 7066 main/binary-amd64/Packages.gz
+ b0c15394937aa3e26ef7463124810c7e 46026 main/binary-arm64/Packages
+ 94fea45b0cbf8eb4dc500225b61bad9e 7386 main/binary-arm64/Packages.gz
 SHA256:
- 57628cff55cacc92b445db14fda1313e0b9e231ac8015aeaa8a9be1f602171b1 45271 main/binary-armhf/Packages
- c7b5908ae48180a763db9b64875f569fdeea52a2fd5b3c4ebad347f4355a10cc 7306 main/binary-armhf/Packages.gz
- 15640943a0c02e372a44abbc8569c33e5f19fa76354fbcbc075f48c6e061cab0 43193 main/binary-amd64/Packages
- 24115482a68d5442c7ae6a102791698f2af199c23887430c1c02a567a9bedd31 6985 main/binary-amd64/Packages.gz
- 326827b3e43992419c1a1bc701718913b70c188322390350049c0880db9ab8b2 45271 main/binary-arm64/Packages
- 07d6e837d912b5e37db6b614f470b504135b5d80588833b1071bbb90f0593b7a 7299 main/binary-arm64/Packages.gz
+ de7433b749483a634beab299f18f79f6151ad09d839d8a96c16d6b4660ce23b6 46026 main/binary-armhf/Packages
+ e3c4a1b0eb175354588429d4518969dcd237659a81bdd1a10aa84c67ec7dead9 7391 main/binary-armhf/Packages.gz
+ b69f9d55cc252b5864a3d0b0b318f65cd42de9cf5e2b2fe65243cadd35660202 43948 main/binary-amd64/Packages
+ 3bf992c1cf7831556b65580350fd918b77eb9bd5f31213f6015e4b70f77eed5d 7066 main/binary-amd64/Packages.gz
+ ef28bcdc4669b3b5f69ddfc7b26dbbcdc150c3cc48e993508df74ffe234784cf 46026 main/binary-arm64/Packages
+ 6a01f461064b4d006f7e1d8fe10b0df261bfa53383cee645ab356cf0462510a2 7386 main/binary-arm64/Packages.gz
