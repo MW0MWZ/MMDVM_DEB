@@ -18,15 +18,15 @@ Description: APRS Gateway for Amateur Radio
  Git commit: 8f4ee53
 
 Package: dmrclients
-Version: 2026.10.22-0~deb13u1
+Version: 2026.10.31-0~deb13u1
 Architecture: armhf
 Maintainer: MW0MWZ <andy@mw0mwz.co.uk>
 Depends: libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11), libmosquitto1t64
-Filename: pool/main/d/dmrclients/dmrclients_2026.10.22-0~deb13u1_armhf.deb
-Size: 2805200
-MD5sum: beab4906b58256dc5c75c20c2bbd0df6
-SHA1: a56a69ae4b9ef5eb2e192f10cd7c1da2f90dfea9
-SHA256: 3612e0382ba1f097797d66113e3f3e9fd12c869faf2e3ed8df8f5d90438faedf
+Filename: pool/main/d/dmrclients/dmrclients_2026.10.31-0~deb13u1_armhf.deb
+Size: 2806784
+MD5sum: a81ddff20b886e1a7825ca7e39db2475
+SHA1: d96f868d0cc551c315ad255f20516cebeab70556
+SHA256: 6dbf0e77cab55afa9246411e6ec5ced3423ffa7321967475e1dcd33e84eb86ca
 Section: hamradio
 Priority: optional
 Homepage: https://github.com/g4klx/DMRGateway
@@ -34,7 +34,7 @@ Description: DMR Clients for Amateur Radio
  DMR Gateway and Cross-Mode converters for digital communications
  Includes DMRGateway, DMR2YSF, and DMR2NXDN
  Built for Debian trixie
- Git commits: DMRGateway d751e20, MMDVM_CM 1dd5383
+ Git commits: DMRGateway 7591aed, MMDVM_CM 1dd5383
 
 Package: dstarclients
 Version: 2026.10.18-0~deb13u1
