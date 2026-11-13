@@ -94,16 +94,16 @@ Description: FM Clients for Amateur Radio
  Git commit: 02d7bd0
 
 Package: mmdvmhost
-Version: 2026.11.08-0~deb13u1
+Version: 2026.11.13-0~deb13u1
 Architecture: amd64
 Maintainer: MW0MWZ <andy@mw0mwz.co.uk>
 Depends: libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11), libmosquitto1t64, libsamplerate0t64
 Recommends: mosquitto
-Filename: pool/main/m/mmdvmhost/mmdvmhost_2026.11.08-0~deb13u1_amd64.deb
-Size: 7341384
-MD5sum: 31ce6077e0dd9fbd07b3d800628302b8
-SHA1: 35b05c923bd5c1ba5b568d82c928adbb3ea50a11
-SHA256: 8295e96232aa04f7cf671ac18f6af74bde5660595edbb3dd3a2ec2ed5c41d7ac
+Filename: pool/main/m/mmdvmhost/mmdvmhost_2026.11.13-0~deb13u1_amd64.deb
+Size: 7338852
+MD5sum: 5a46a2f226077c20c0a2a25fe7f9520c
+SHA1: 8476df0b540ebfefb1a40cba641df16887f77a7e
+SHA256: 7c4432c429cdd27644c4d589b5e0f6e39389dd9177f7a4bbd8ad1c92a5461d22
 Section: hamradio
 Priority: optional
 Homepage: https://github.com/g4klx/MMDVM-Host
@@ -114,7 +114,7 @@ Description: MMDVM-Host, MMDVM-Display, MMDVM-Info and MMDVMCal
  service it relies on, and the MMDVMCal calibration tool
  .
  Built for Debian trixie
- Git commits: MMDVM-Host 6ffa6d3, MMDVMCal cf37046, MMDVM-Display 76cd3c3, MMDVM-Info a1d884a
+ Git commits: MMDVM-Host 10a6c78, MMDVMCal cf37046, MMDVM-Display 76cd3c3, MMDVM-Info a1d884a
 
 Package: nxdnclients
 Version: 2026.11.08-0~deb13u1

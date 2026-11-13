@@ -94,16 +94,16 @@ Description: FM Clients for Amateur Radio
  Git commit: 02d7bd0
 
 Package: mmdvmhost
-Version: 2026.11.08-0~deb12u1
+Version: 2026.11.13-0~deb12u1
 Architecture: amd64
 Maintainer: MW0MWZ <andy@mw0mwz.co.uk>
 Depends: libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11), libmosquitto1, libsamplerate0
 Recommends: mosquitto
-Filename: pool/main/m/mmdvmhost/mmdvmhost_2026.11.08-0~deb12u1_amd64.deb
-Size: 7479128
-MD5sum: 0c978ba3068f66af344ccb2cad97eba0
-SHA1: ebec1b10596c0db72ec9ea97960c1dd31cdfabdf
-SHA256: 8a81e9fa54db3818d6343f1690047d3539407373d64f7952443194df32b8e821
+Filename: pool/main/m/mmdvmhost/mmdvmhost_2026.11.13-0~deb12u1_amd64.deb
+Size: 7480332
+MD5sum: d48aa4ab76a14320e56992fe9d1eaf02
+SHA1: 9c9bd688582577d36ed61ba06d3dbe62ec28f8fd
+SHA256: a0212cb24f8abcd2d608114ad099a4c94315ea1961afd2e7b9c8faa497e0a6d7
 Section: hamradio
 Priority: optional
 Homepage: https://github.com/g4klx/MMDVM-Host
@@ -114,7 +114,7 @@ Description: MMDVM-Host, MMDVM-Display, MMDVM-Info and MMDVMCal
  service it relies on, and the MMDVMCal calibration tool
  .
  Built for Debian bookworm
- Git commits: MMDVM-Host 6ffa6d3, MMDVMCal cf37046, MMDVM-Display 76cd3c3, MMDVM-Info a1d884a
+ Git commits: MMDVM-Host 10a6c78, MMDVMCal cf37046, MMDVM-Display 76cd3c3, MMDVM-Info a1d884a
 
 Package: nxdnclients
 Version: 2026.11.08-0~deb12u1
