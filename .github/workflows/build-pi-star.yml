@@ -174,6 +174,9 @@ jobs:
     name: Deploy to GitHub Pages
     needs: build
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pages: read
     if: needs.build.result == 'success'
 
     steps:
@@ -305,19 +308,17 @@ jobs:
             git push
           fi
 
-      - name: Purge Cloudflare cache
+      - name: Wait for the live repository, then purge Cloudflare
         if: success()
         env:
-          CF_ZONE_ID: ${{ secrets.CF_ZONE_ID }}
-          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
+          CLOUDFLARE_ZONE: ${{ secrets.CLOUDFLARE_ZONE }}
+          CLOUDFLARE_TOKEN: ${{ secrets.CLOUDFLARE_TOKEN }}
+          SITE: https://deb.pistar.uk
+          INDEX_PATHS: dists/bookworm/InRelease dists/bookworm/Release dists/trixie/InRelease dists/trixie/Release dists/bookworm/main/binary-amd64/Packages dists/bookworm/main/binary-amd64/Packages.gz dists/bookworm/main/binary-amd64/Packages.bz2 dists/bookworm/main/binary-arm64/Packages dists/bookworm/main/binary-arm64/Packages.gz dists/bookworm/main/binary-arm64/Packages.bz2 dists/bookworm/main/binary-armhf/Packages dists/bookworm/main/binary-armhf/Packages.gz dists/bookworm/main/binary-armhf/Packages.bz2 dists/trixie/main/binary-amd64/Packages dists/trixie/main/binary-amd64/Packages.gz dists/trixie/main/binary-amd64/Packages.bz2 dists/trixie/main/binary-arm64/Packages dists/trixie/main/binary-arm64/Packages.gz dists/trixie/main/binary-arm64/Packages.bz2 dists/trixie/main/binary-armhf/Packages dists/trixie/main/binary-armhf/Packages.gz dists/trixie/main/binary-armhf/Packages.bz2 hamradio.gpg
         run: |
-          if [ -n "$CF_ZONE_ID" ] && [ -n "$CF_API_TOKEN" ]; then
-            curl -s -X POST \
-              "https://api.cloudflare.com/client/v4/zones/${CF_ZONE_ID}/purge_cache" \
-              -H "Authorization: Bearer ${CF_API_TOKEN}" \
-              -H "Content-Type: application/json" \
-              --data '{"purge_everything":true}'
-            echo "Cloudflare cache purged"
-          else
-            echo "Cloudflare credentials not configured, skipping cache purge"
-          fi
+          # Purging before the GitHub Pages build finishes lets Cloudflare
+          # re-cache the old index for hours, so image builds install the
+          # previous release.
+          scripts/wait-for-pages.sh || \
+            echo "::warning::https://deb.pistar.uk is not yet serving the deployed index"

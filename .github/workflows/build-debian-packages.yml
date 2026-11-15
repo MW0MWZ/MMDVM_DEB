@@ -530,6 +530,9 @@ jobs:
     name: Process Repository and Deploy
     needs: [prepare, build]
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pages: read
     if: |
       always() && 
       needs.build.result == 'success' &&
@@ -1025,77 +1028,19 @@ jobs:
           cname: deb.pistar.uk
           commit_message: "Deploy: Build #${{ github.run_number }} - ${{ steps.process.outputs.total_packages }} packages"
 
-      - name: Purge Cloudflare Cache
-        if: ${{ success() }}
+      - name: Wait for the live repository, then purge Cloudflare
+        if: success()
         env:
+          GH_TOKEN: ${{ github.token }}
           CLOUDFLARE_ZONE: ${{ secrets.CLOUDFLARE_ZONE }}
           CLOUDFLARE_TOKEN: ${{ secrets.CLOUDFLARE_TOKEN }}
+          SITE: https://deb.pistar.uk
+          INDEX_PATHS: dists/bookworm/InRelease dists/bookworm/Release dists/trixie/InRelease dists/trixie/Release dists/bookworm/main/binary-amd64/Packages dists/bookworm/main/binary-amd64/Packages.gz dists/bookworm/main/binary-amd64/Packages.bz2 dists/bookworm/main/binary-arm64/Packages dists/bookworm/main/binary-arm64/Packages.gz dists/bookworm/main/binary-arm64/Packages.bz2 dists/bookworm/main/binary-armhf/Packages dists/bookworm/main/binary-armhf/Packages.gz dists/bookworm/main/binary-armhf/Packages.bz2 dists/trixie/main/binary-amd64/Packages dists/trixie/main/binary-amd64/Packages.gz dists/trixie/main/binary-amd64/Packages.bz2 dists/trixie/main/binary-arm64/Packages dists/trixie/main/binary-arm64/Packages.gz dists/trixie/main/binary-arm64/Packages.bz2 dists/trixie/main/binary-armhf/Packages dists/trixie/main/binary-armhf/Packages.gz dists/trixie/main/binary-armhf/Packages.bz2 hamradio.gpg
         run: |
-          # Purge Debian repository metadata files from Cloudflare cache after deployment
-          if [ -n "$CLOUDFLARE_ZONE" ] && [ -n "$CLOUDFLARE_TOKEN" ]; then
-            echo "Purging Cloudflare cache for Debian repository metadata..."
-            
-            # Build list of critical files to purge
-            # These are the files that apt-get update downloads
-            FILES_TO_PURGE='['
-            FIRST=true
-            
-            # Add Release, InRelease, and Packages files for each distribution
-            for DIST in bookworm trixie; do
-              for FILE in Release Release.gpg InRelease; do
-                if [ "$FIRST" = true ]; then
-                  FIRST=false
-                else
-                  FILES_TO_PURGE="${FILES_TO_PURGE},"
-                fi
-                FILES_TO_PURGE="${FILES_TO_PURGE}\"https://deb.pistar.uk/dists/${DIST}/${FILE}\""
-              done
-              
-              # Add Packages files for each architecture
-              for ARCH in amd64 arm64 armhf; do
-                for EXT in "" ".gz" ".bz2"; do
-                  FILES_TO_PURGE="${FILES_TO_PURGE},"
-                  FILES_TO_PURGE="${FILES_TO_PURGE}\"https://deb.pistar.uk/dists/${DIST}/main/binary-${ARCH}/Packages${EXT}\""
-                done
-              done
-            done
-            
-            # Add the main index and GPG key
-            FILES_TO_PURGE="${FILES_TO_PURGE},\"https://deb.pistar.uk/index.html\""
-            FILES_TO_PURGE="${FILES_TO_PURGE},\"https://deb.pistar.uk/hamradio.gpg\""
-            FILES_TO_PURGE="${FILES_TO_PURGE}]"
-            
-            echo "Purging $(echo "$FILES_TO_PURGE" | grep -o 'https://' | wc -l) files from cache..."
-            
-            # Send purge request to Cloudflare
-            RESPONSE=$(curl -s -X POST "https://api.cloudflare.com/client/v4/zones/$CLOUDFLARE_ZONE/purge_cache" \
-              -H "Authorization: Bearer $CLOUDFLARE_TOKEN" \
-              -H "Content-Type: application/json" \
-              --data "{\"files\":$FILES_TO_PURGE}")
-            
-            if echo "$RESPONSE" | grep -q '"success":true'; then
-              echo "✅ Successfully purged Cloudflare cache for repository metadata"
-              
-              # Also do a targeted purge of the entire dists/ path to catch any stragglers
-              echo "Performing additional purge of dists/ path..."
-              RESPONSE_PATH=$(curl -s -X POST "https://api.cloudflare.com/client/v4/zones/$CLOUDFLARE_ZONE/purge_cache" \
-                -H "Authorization: Bearer $CLOUDFLARE_TOKEN" \
-                -H "Content-Type: application/json" \
-                --data '{"prefixes":["https://deb.pistar.uk/dists/"]}')
-              
-              if echo "$RESPONSE_PATH" | grep -q '"success":true'; then
-                echo "✅ Successfully purged dists/ path from cache"
-              fi
-            else
-              echo "⚠️ Warning: Cloudflare cache purge may have failed"
-              echo "Response: $RESPONSE"
-              # Don't fail the workflow for cache purge issues
-            fi
-          else
-            echo "ℹ️ Cloudflare credentials not configured, skipping cache purge"
-            echo "Users may need to wait for TTL expiry to see updated packages"
-          fi
-
+          # Purging before the GitHub Pages build finishes lets Cloudflare
+          # re-cache the old index for hours.
+          scripts/wait-for-pages.sh || \
+            echo "::warning::https://deb.pistar.uk is not yet serving the deployed index"
       - name: Create workflow summary
         env:
           CLEANUP_ENABLED: ${{ github.event.inputs.cleanup_after_build || 'true' }}
