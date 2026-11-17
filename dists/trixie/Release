@@ -6,18 +6,18 @@ Version: 1.0
 Architectures: amd64 armhf arm64
 Components: main
 Description: Amateur Radio Digital Voice packages for Debian trixie
-Date: Tue, 17 Nov 2026 20:48:49 +0000
+Date: Tue, 17 Nov 2026 21:30:00 +0000
 MD5Sum:
- 6f5bc36306eeb5c041eedc139ff19c1f 48082 main/binary-amd64/Packages
- 2025d6c2f875ac41ead82840d6b09ecd 7491 main/binary-amd64/Packages.gz
- 09a4625fd1ef9856a9b6520cded3ac6f 49910 main/binary-arm64/Packages
- f6f1f8c4d428ef09a7b5c4a3e0e63a18 7845 main/binary-arm64/Packages.gz
- d085cac3f72387a24f58cdd36078c933 49897 main/binary-armhf/Packages
- 91c03d93a30a112458434d28acedc8f3 7893 main/binary-armhf/Packages.gz
+ 102c2db777c18378d576f4a075b738bf 48835 main/binary-amd64/Packages
+ 409fbe4ee311aa4ebe6f809aca663700 7563 main/binary-amd64/Packages.gz
+ 2372be436641df2b840118d58a316f33 50663 main/binary-arm64/Packages
+ 9b30489b027ab60f85656aed6ad17b23 7928 main/binary-arm64/Packages.gz
+ 4b6ade4e8ccef70ae7d1bde1292cdaf9 50650 main/binary-armhf/Packages
+ 4c7b6e3a5b78767445fd37d7c98d8cab 7972 main/binary-armhf/Packages.gz
 SHA256:
- a315edb835d573ced62dd510b1645f18f1d1283b19a4b68be3782249517b0111 48082 main/binary-amd64/Packages
- 051b84cb698553b8ed17b32c963574deab1044bcce0b2313d60f60d6c2959663 7491 main/binary-amd64/Packages.gz
- f2c6bf299673f12f295aaf8a4bdb1eea8d8de4fb5953faf805e9242b98733a3b 49910 main/binary-arm64/Packages
- b6846ef6bd0544247c45243e796cfaf5e55fbaac41f9f95471e14cfc960dbe6f 7845 main/binary-arm64/Packages.gz
- b589b4617295aa451cb9da10d096dc7686afbade852bcca57f1ea3eb24818bf1 49897 main/binary-armhf/Packages
- 1bca80ead50f1bb5d422948be3187bde00930f58b6dcbec78e4bceebb1f75eef 7893 main/binary-armhf/Packages.gz
+ db5db7ecfcf5faa17f86e6af2c9f994bad0bdc30338a19fc5a0563f97ce972c5 48835 main/binary-amd64/Packages
+ 1f3faac8b5936080b4740294db8fe29e7e000885c3821f3e0463eca9f07e74da 7563 main/binary-amd64/Packages.gz
+ bcfb3bdd9ea6be4b1ed6ddbc5ed34066adfb627f8c3e1203d4edb16c960d68d5 50663 main/binary-arm64/Packages
+ f55a6887a024f40c1f44b7e7221dd5ba1b2381a8cffaf7f88656ecad98128874 7928 main/binary-arm64/Packages.gz
+ fe745e8be199ea2b99a72683e2d2f460dc612ecb26ca824ce7fdd5d4a9488aa0 50650 main/binary-armhf/Packages
+ fc995f298cc23fd551767e4ce89ca31870226a9ed27e2a35fdc66fc4c7dbf9e4 7972 main/binary-armhf/Packages.gz
