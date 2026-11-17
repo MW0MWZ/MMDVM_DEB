@@ -80,129 +80,64 @@ jobs:
             echo "$release_tag"
           }
           
-          # Function to get latest commit from GitHub
-          get_github_commit() {
-            local url=$1
-            local repo=$(echo "$url" | sed 's|.*github.com/||' | sed 's|\.git$||')
-            
-            # Try to get latest commit from default branch with auth token
-            for branch in main master develop; do
-              commit=$(curl -sL -H "Accept: application/vnd.github.v3+json" \
-                -H "Authorization: token ${GITHUB_TOKEN}" \
-                "https://api.github.com/repos/${repo}/commits/${branch}" 2>/dev/null | \
-                python3 -c "import sys, json; data=json.load(sys.stdin); print(data.get('sha', '')[:7] if 'sha' in data else '')" 2>/dev/null)
-              
-              if [ -n "$commit" ]; then
-                echo "$commit"
-                return
-              fi
-            done
-            
-            # If all branches fail, try to get the default branch
-            default_branch=$(curl -sL -H "Accept: application/vnd.github.v3+json" \
-              -H "Authorization: token ${GITHUB_TOKEN}" \
-              "https://api.github.com/repos/${repo}" 2>/dev/null | \
-              python3 -c "import sys, json; data=json.load(sys.stdin); print(data.get('default_branch', ''))" 2>/dev/null)
-            
-            if [ -n "$default_branch" ]; then
-              commit=$(curl -sL -H "Accept: application/vnd.github.v3+json" \
-                -H "Authorization: token ${GITHUB_TOKEN}" \
-                "https://api.github.com/repos/${repo}/commits/${default_branch}" 2>/dev/null | \
-                python3 -c "import sys, json; data=json.load(sys.stdin); print(data.get('sha', '')[:7] if 'sha' in data else '')" 2>/dev/null)
-              
-              if [ -n "$commit" ]; then
-                echo "$commit"
-                return
-              fi
-            fi
-            
-            echo ""
-          }
-          
-          # Function to check if package needs update
-          check_package_update() {
+          # Function to check if package needs update. Each package's
+          # source.conf is read in a subshell: its variables (GIT_REF above
+          # all) must not leak into the next package's check.
+          check_package_update() (
             local package=$1
             local source_conf="packages/${package}/source.conf"
-            
+            local needs=1
+
             if [ ! -f "$source_conf" ]; then
               echo "Source configuration not found for $package"
               return 1
             fi
-            
-            # Source the configuration
+
+            unset GITURL GIT_REF GIT_COMMIT
             source "$source_conf"
-            
-            # Check if this package tracks releases via GIT_REF (like wiringpi)
+
+            # A package that tracks releases (GIT_REF: wiringpi) has its
+            # GITURL checked by release tag
             if [ -n "${GIT_REF:-}" ] && [ -n "${GITURL:-}" ]; then
               echo "Checking $package for release updates from $GITURL"
-              
-              local current_ref="${GIT_REF}"
               local latest_release=$(get_latest_release_tag "$GITURL")
-              
               if [ -z "$latest_release" ]; then
-                echo "  Could not fetch latest release tag for $package"
-                echo "  Falling back to commit-based checking..."
-                
-                # Fall back to commit checking if no releases found
-                if [ -n "${GIT_COMMIT:-}" ]; then
-                  local current_commit="${GIT_COMMIT}"
-                  local latest_commit=$(get_github_commit "$GITURL")
-                  
-                  if [ -n "$latest_commit" ] && [ "$current_commit" != "$latest_commit" ]; then
-                    echo "  Current commit: ${current_commit}"
-                    echo "  Latest commit:  ${latest_commit}"
-                    echo "  ✅ UPDATE AVAILABLE (commit)!"
-                    echo "$package:$current_commit:$latest_commit:GIT_COMMIT" >> /tmp/updates.txt
-                    return 0
-                  fi
-                fi
+                echo "  ⚠️  Could not fetch latest release tag for $package"
+                echo "::warning::$package: could not fetch the latest release of $GITURL"
               else
-                echo "  Current release: ${current_ref}"
+                echo "  Current release: ${GIT_REF}"
                 echo "  Latest release:  ${latest_release}"
-                
-                if [ "$current_ref" != "$latest_release" ]; then
+                if [ "$GIT_REF" != "$latest_release" ]; then
                   echo "  ✅ NEW RELEASE AVAILABLE!"
-                  echo "$package:$current_ref:$latest_release:GIT_REF" >> /tmp/updates.txt
-                  return 0
-                fi
-              fi
-            # Check primary GITURL with commits (original behavior for other packages)
-            elif [ -n "${GITURL:-}" ]; then
-              echo "Checking $package from $GITURL"
-              
-              local current_commit="${GIT_COMMIT:-unknown}"
-              local latest_commit=$(get_github_commit "$GITURL")
-              
-              if [ -z "$latest_commit" ]; then
-                echo "  Could not fetch latest commit for $package"
-              else
-                echo "  Current: ${current_commit}"
-                echo "  Latest:  ${latest_commit}"
-                
-                if [ "$current_commit" != "$latest_commit" ]; then
-                  echo "  ✅ UPDATE AVAILABLE!"
-                  echo "$package:$current_commit:$latest_commit:GIT_COMMIT" >> /tmp/updates.txt
-                  return 0
+                  echo "$package:$GIT_REF:$latest_release:GIT_REF" >> /tmp/updates.txt
+                  needs=0
                 fi
               fi
             fi
-            
-            echo "  ✓ Up to date"
-            return 1
-          }
-          
-          # Check API rate limit before starting
-          echo "Checking GitHub API rate limit..."
-          RATE_LIMIT=$(curl -s -H "Authorization: token ${GITHUB_TOKEN}" \
-            "https://api.github.com/rate_limit" | \
-            python3 -c "import sys, json; data=json.load(sys.stdin); print(data['rate']['remaining'])" 2>/dev/null || echo "0")
-          
-          echo "API calls remaining: $RATE_LIMIT"
-          
-          if [ "$RATE_LIMIT" -lt "50" ]; then
-            echo "⚠️  Warning: Low API rate limit remaining."
-          fi
-          
+
+            # Every repository it builds from by commit: GITURL and each
+            # GITURL_* (scripts/upstream-commits.sh), so an update to any
+            # of them rebuilds the package
+            echo "Checking $package commits"
+            while read -r cvar recorded latest url var; do
+              [ -n "$cvar" ] || continue
+              if [ "$latest" = "-" ]; then
+                echo "  ⚠️  $url: could not be reached"
+                echo "::warning::$package: could not reach $url"
+              elif [ "$recorded" != "$latest" ]; then
+                echo "  ✅ $url: $recorded -> $latest"
+                echo "$package:$recorded:$latest:$cvar" >> /tmp/updates.txt
+                needs=0
+              else
+                echo "  ✓ $url: $latest"
+              fi
+            done <<UPSTREAM
+          $(scripts/upstream-commits.sh "$source_conf")
+          UPSTREAM
+
+            return $needs
+          )
+
           # Determine which packages to check
           if [ "$PACKAGES" = "all" ] || [ -z "$PACKAGES" ]; then
             # Find all packages with source.conf
@@ -429,6 +364,8 @@ jobs:
                       
                       if not found:
                           # Add GIT_REF if it doesn't exist
+                          if lines and not lines[-1].endswith('\n'):
+                              lines[-1] += '\n'
                           lines.append(f'GIT_REF="{latest}"\n')
                           print(f"  Added GIT_REF={latest}")
                       
@@ -471,18 +408,28 @@ jobs:
                       except Exception as e:
                           print(f"  Warning: Could not fetch commit SHA for tag {latest}: {e}")
                   
-                  elif source == 'GIT_COMMIT':
-                      # Update GIT_COMMIT for commit-based tracking
+                  elif source.startswith('GIT_COMMIT'):
+                      # Commit-based tracking: GIT_COMMIT for GITURL,
+                      # GIT_COMMIT_<X> for GITURL_<X>
                       found = False
                       for i, line in enumerate(lines):
-                          if line.startswith('GIT_COMMIT='):
-                              lines[i] = f'GIT_COMMIT="{latest}"\n'
+                          if line.startswith(source + '='):
+                              lines[i] = f'{source}="{latest}"\n'
                               found = True
-                              print(f"  Updated GIT_COMMIT to {latest}")
+                              print(f"  Updated {source} to {latest}")
                               break
                       if not found:
-                          lines.append(f'GIT_COMMIT="{latest}"\n')
-                          print(f"  Added GIT_COMMIT={latest}")
+                          url_var = 'GITURL' + source[len('GIT_COMMIT'):]
+                          at = next((i for i, l in enumerate(lines) if l.startswith(url_var + '=')), None)
+                          if at is None:
+                              if lines and not lines[-1].endswith('\n'):
+                                  lines[-1] += '\n'
+                              lines.append(f'{source}="{latest}"\n')
+                          else:
+                              if not lines[at].endswith('\n'):
+                                  lines[at] += '\n'
+                              lines.insert(at + 1, f'{source}="{latest}"\n')
+                          print(f"  Added {source}={latest}")
               
               # Write back if there were changes
               if lines != original_lines:
