@@ -55,6 +55,7 @@ build_software() {
         DATA_DIR=/usr/share/dstarclients/ \
         LOG_DIR=/var/log/dstargateway/ \
         BIN_DIR=/usr/bin/ \
+        USE_GPSD=1 \
         all
 
     # Binaries are built into their respective subdirectories
@@ -207,10 +208,10 @@ EOF
     # Set dependencies based on Debian version
     case "$DEBIAN_VERSION" in
         trixie)
-            DEPENDS="libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11), libmosquitto1t64"
+            DEPENDS="libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11), libmosquitto1t64, libgps30t64"
             ;;
         *)
-            DEPENDS="libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11), libmosquitto1"
+            DEPENDS="libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11), libmosquitto1, libgps28"
             ;;
     esac
 

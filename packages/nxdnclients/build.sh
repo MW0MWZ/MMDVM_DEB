@@ -64,6 +64,8 @@ build_software() {
         print_info "Building NXDNGateway..."
         cd NXDNGateway
         make clean || true
+        # GPSd support: upstream's Makefile switch (-DUSE_GPSD and -lgps)
+        sed -i -e '/^CFLAGS *=/ s/$/ -DUSE_GPSD/' -e '/^LIBS *=/ s/$/ -lgps/' Makefile
         make -j$(nproc) all
         cd ..
     fi
@@ -247,10 +249,10 @@ EOF
     # Set dependencies based on Debian version
     case "$DEBIAN_VERSION" in
         trixie)
-            DEPENDS="libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11), libmosquitto1t64"
+            DEPENDS="libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11), libmosquitto1t64, libgps30t64"
             ;;
         *)
-            DEPENDS="libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11), libmosquitto1"
+            DEPENDS="libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11), libmosquitto1, libgps28"
             ;;
     esac
     

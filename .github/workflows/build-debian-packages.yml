@@ -318,6 +318,7 @@ jobs:
                 lsb-release \
                 file \
                 libmosquitto-dev \
+                libgps-dev \
                 nlohmann-json3-dev \
                 libsamplerate0-dev
               
