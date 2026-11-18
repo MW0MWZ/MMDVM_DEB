@@ -27,6 +27,7 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 print_message() { echo -e "${GREEN}[BUILD]${NC} $1"; }
 print_error() { echo -e "${RED}[ERROR]${NC} $1" >&2; }
 print_info() { echo -e "${BLUE}[INFO]${NC} $1"; }
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/../../scripts/shlibdeps.sh"
 print_warning() { echo -e "${YELLOW}[WARNING]${NC} $1"; }
 
 clean_build() {
@@ -517,15 +518,9 @@ Copyright: Charles-Henri Hallard and contributors
 License: MIT
 EOF
 
-    # Set dependencies based on Debian version
-    case "$DEBIAN_VERSION" in
-        trixie)
-            DEPENDS="libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11), libmosquitto1t64, libsamplerate0t64"
-            ;;
-        *)
-            DEPENDS="libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11), libmosquitto1, libsamplerate0"
-            ;;
-    esac
+    # Dependencies: the shared libraries the binaries link, as this Debian
+    # release names their packages (dpkg-shlibdeps)
+    DEPENDS=$(shlibdeps_depends "$PKG_DIR") || { print_error "Cannot work out the package's dependencies"; exit 1; }
 
     # Add ARM-specific dependencies for display hardware support
     if [ "$PKG_ARCH" = "armhf" ] || [ "$PKG_ARCH" = "arm64" ]; then
