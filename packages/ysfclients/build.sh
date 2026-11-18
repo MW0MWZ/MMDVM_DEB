@@ -88,6 +88,8 @@ build_software() {
         print_info "Building DGIdGateway..."
         cd DGIdGateway
         make clean || true
+        # GPSd support: upstream's Makefile switch (-DUSE_GPSD and -lgps)
+        sed -i -e '/^CFLAGS *=/ s/$/ -DUSE_GPSD/' -e '/^LIBS *=/ s/$/ -lgps/' Makefile
         make -j$(nproc) all
         cd ..
     fi
