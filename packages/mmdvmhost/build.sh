@@ -524,7 +524,9 @@ EOF
 
     # Add ARM-specific dependencies for display hardware support
     if [ "$PKG_ARCH" = "armhf" ] || [ "$PKG_ARCH" = "arm64" ]; then
-        DEPENDS="$DEPENDS, wiringpi (>= 3.0), libi2c0, i2c-tools"
+        # wiringPi is built from source (no dependency information); libi2c0
+        # comes from dpkg-shlibdeps
+        DEPENDS="$DEPENDS, wiringpi (>= 3.0), i2c-tools"
     fi
 
     RECOMMENDS="mosquitto"

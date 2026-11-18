@@ -18,13 +18,19 @@ shlibdeps_depends() {
         echo "shlibdeps: no executables in $pkgdir" >&2
         return 1
     fi
-    # Libraries from no Debian package (wiringPi built from source) have no
+    # Libraries the package ships itself, in a private directory
+    # (usr/lib/mmdvmhost: the OLED library), are found there; libraries
+    # from no Debian package (wiringPi built from source) have no
     # dependency information: the build adds those itself
-    deps=$(cd "$tmp" && dpkg-shlibdeps --ignore-missing-info -O $files 2>/dev/null | sed -n 's/^shlibs:Depends=//p')
-    rm -rf "$tmp"
+    local libdirs
+    libdirs=$(find "$pkgdir" ! -path "*/DEBIAN/*" -name "*.so*" -printf '-l%h\n' | sort -u)
+    deps=$(cd "$tmp" && dpkg-shlibdeps --ignore-missing-info $libdirs -O $files 2>"$tmp/err" | sed -n 's/^shlibs:Depends=//p')
     if [ -z "$deps" ]; then
-        echo "shlibdeps: dpkg-shlibdeps found no dependencies for $pkgdir" >&2
+        echo "shlibdeps: dpkg-shlibdeps found no dependencies for $pkgdir:" >&2
+        cat "$tmp/err" >&2
+        rm -rf "$tmp"
         return 1
     fi
+    rm -rf "$tmp"
     echo "$deps"
 }
