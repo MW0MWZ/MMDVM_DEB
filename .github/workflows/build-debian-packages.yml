@@ -755,6 +755,16 @@ jobs:
               # Packages built by other workflows (not orphans)
               EXTERNAL_PACKAGES="pi-star"
 
+              # Packages built for ARM only (GPIO): an amd64 build left
+              # from before is an orphan
+              ARM_ONLY_PACKAGES="wiringpi"
+              for pkg in $ARM_ONLY_PACKAGES; do
+                find deploy/pool -name "${pkg}_*_amd64.deb" -type f | while read deb_path; do
+                  echo "  Removing $pkg built for amd64 (ARM only): $(basename "$deb_path")"
+                  rm -f "$deb_path"
+                done
+              done
+
               find deploy/pool -name "*.deb" -type f | while read deb_path; do
                 pkg_name=$(basename "$deb_path" | cut -d'_' -f1)
 
