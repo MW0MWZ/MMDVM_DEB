@@ -678,19 +678,21 @@ jobs:
               debian_ver=$(echo "$version" | grep -o '~deb[0-9]*' | sed 's/~deb//' || echo "unknown")
               group_key="${pkg_name}_${debian_ver}_${arch}"
               
-              # Store for processing
-              echo "$group_key|$deb_path|$(stat -c %Y "$deb_path" 2>/dev/null || echo "0")" >> /tmp/package_list.txt
+              # Store for processing, with the package version to order by
+              # (never the file time: every file in a fresh checkout of
+              # gh-pages has the same one)
+              echo "$group_key|$deb_path|$version" >> /tmp/package_list.txt
             done
             
             # Process each package group
             if [ -f /tmp/package_list.txt ]; then
-              # Sort and group packages
-              sort -t'|' -k1,1 -k3,3nr /tmp/package_list.txt > /tmp/sorted_packages.txt
+              # Sort and group packages: each group newest version first
+              sort -t'|' -k1,1 -k3,3Vr /tmp/package_list.txt > /tmp/sorted_packages.txt
               
               current_group=""
               group_packages=""
               
-              while IFS='|' read -r group_key deb_path mod_time; do
+              while IFS='|' read -r group_key deb_path pkg_version; do
                 if [ "$current_group" != "$group_key" ]; then
                   # Process previous group if exists
                   if [ -n "$current_group" ] && [ -n "$group_packages" ]; then
