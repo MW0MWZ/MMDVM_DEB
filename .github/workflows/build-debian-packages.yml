@@ -85,19 +85,14 @@ jobs:
         arch: [amd64, arm64, armhf]
         debian_version: ${{ fromJson(needs.prepare.outputs.debian_versions) }}
         package: ${{ fromJson(needs.prepare.outputs.packages) }}
+        # wiringpi is for the Pi's GPIO: ARM only. (The Docker platform
+        # is worked out from the arch in the build: an include keyed on
+        # arch alone would become a job of its own, with no package, when
+        # the exclude leaves no amd64 build, as building wiringpi alone
+        # does.)
         exclude:
           - arch: amd64
             package: wiringpi
-        include:
-          - arch: amd64
-            platform: linux/amd64
-            debian_arch: amd64
-          - arch: arm64
-            platform: linux/arm64
-            debian_arch: arm64
-          - arch: armhf
-            platform: linux/arm/v7
-            debian_arch: armhf
       max-parallel: 6
     
     steps:
@@ -125,7 +120,7 @@ jobs:
         id: calc_build
         env:
           PACKAGE: ${{ matrix.package }}
-          ARCH: ${{ matrix.debian_arch }}
+          ARCH: ${{ matrix.arch }}
           DEBIAN_VERSION: ${{ matrix.debian_version }}
         run: |
           set -e
@@ -263,8 +258,8 @@ jobs:
       - name: Build package in Docker
         env:
           PACKAGE: ${{ matrix.package }}
-          ARCH: ${{ matrix.debian_arch }}
-          PLATFORM: ${{ matrix.platform }}
+          ARCH: ${{ matrix.arch }}
+          PLATFORM: ${{ matrix.arch == 'armhf' && 'linux/arm/v7' || format('linux/{0}', matrix.arch) }}
           DEBIAN_VERSION: ${{ matrix.debian_version }}
           # BUILD_NUMBER and DEB_VERSION_SUFFIX are now set by the previous step via GITHUB_ENV
         run: |
