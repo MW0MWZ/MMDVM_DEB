@@ -6,18 +6,18 @@ Version: 1.0
 Architectures: amd64 armhf arm64
 Components: main
 Description: Amateur Radio Digital Voice packages for Debian bookworm
-Date: Fri, 20 Nov 2026 19:08:03 +0000
+Date: Fri, 20 Nov 2026 20:37:55 +0000
 MD5Sum:
- 85d8d6e1b92a392852ec4738a63bc74d 44309 main/binary-amd64/Packages
- 9ee435554991c866e23eaf3ae30eb97a 6824 main/binary-amd64/Packages.gz
- 396542bd80ef6d046006b97ef327261c 47573 main/binary-arm64/Packages
- 178b8a1bad9bf2776604549bbf1b5792 7463 main/binary-arm64/Packages.gz
- 69a979f019f44af4bd12d618487b1316 47573 main/binary-armhf/Packages
- 4becb116d06cc6d1a09b1c9bff2d3146 7455 main/binary-armhf/Packages.gz
+ 7ba1cfc7671fc1b5ff6c78aa3b30d74d 45095 main/binary-amd64/Packages
+ f44b01918a964c5700d4f51fa6b6e19f 6958 main/binary-amd64/Packages.gz
+ 4d628661eddd66fd7c0336a7cc14665c 48359 main/binary-arm64/Packages
+ e26db0f58014186f1a26c619cd38f6aa 7569 main/binary-arm64/Packages.gz
+ 406422e21fbeafb66929a9e502761251 48359 main/binary-armhf/Packages
+ 82a9d286d08b3d871cc608e302826f16 7550 main/binary-armhf/Packages.gz
 SHA256:
- e559b079e5648e96c5b901a32c95e15fd7701815cbb5628c3ba5c57bbe06c3d3 44309 main/binary-amd64/Packages
- 002a3e584cdf9e3e097ae5e7c2e188b09c8542ddea5fad0bd3c6e04a108b38e9 6824 main/binary-amd64/Packages.gz
- f93de820309e191a284fa1ebbcbd2248bb0807ca4f50f68ba3091213a30cd3f8 47573 main/binary-arm64/Packages
- 09829ade3f2aa8d1a13f6bd31c0e470e8ebdc1f8bee8f96127c45c3d15e611e8 7463 main/binary-arm64/Packages.gz
- 1ccfbeb4d063532d06f585adf2fc73cbed86baeb7177d64bdeb7fca19dbff353 47573 main/binary-armhf/Packages
- cfd3f312ac6b90430810cacc598eb3aa2e6043905061f161b862c518ceaeb5bb 7455 main/binary-armhf/Packages.gz
+ da888c6a471497e5fb72a3afcf83463eb4298b0d7524ca4c1658c03b4ac97a17 45095 main/binary-amd64/Packages
+ 3d76a12700ea72d7cfa0df0c8232d13bbebaa77ab7cce5bd765fe8376e1a4cbf 6958 main/binary-amd64/Packages.gz
+ 22d64b672436114d346a1a978ec6a0fbcbf8f652527600aea46289a4ffc41d8a 48359 main/binary-arm64/Packages
+ 5176635c9b6b9ede487da0471a5174795542271351124fef690dee1eafe20239 7569 main/binary-arm64/Packages.gz
+ dbcb908805b58a1c43ac3a6acdfac85cd76b1a796120ee9cb9222aa677c5d933 48359 main/binary-armhf/Packages
+ 31183e4213e72e043c731fb006cc8d015dd161bdcc9fdb8c014bad9b0a7506c9 7550 main/binary-armhf/Packages.gz
