@@ -6,18 +6,18 @@ Version: 1.0
 Architectures: amd64 armhf arm64
 Components: main
 Description: Amateur Radio Digital Voice packages for Debian bookworm
-Date: Sat, 21 Nov 2026 20:19:12 +0000
+Date: Sat, 21 Nov 2026 20:27:25 +0000
 MD5Sum:
- 5038cc2d32ca041eb24da2399e11328a 7356 main/binary-amd64/Packages.gz
- f10c5f2df95aeb6eafedae72ec365ea0 50902 main/binary-amd64/Packages
- de85db86a3e2f9ddddc82a42931ddef4 7981 main/binary-armhf/Packages.gz
- d3df44686b049044d155dc651db10a5b 54176 main/binary-armhf/Packages
- c68d270bf6e6be15c6cbb3e4639bec0a 7981 main/binary-arm64/Packages.gz
- dac771688f2da6af923f52f55bdbad9d 54176 main/binary-arm64/Packages
+ 6e6bfb57552be203a43e9c4ce58d620f 7440 main/binary-amd64/Packages.gz
+ b26658a2885fba1341f2b7f9cef9f3a0 51690 main/binary-amd64/Packages
+ c68974a1ef6667437c02eb84e6462bcc 8060 main/binary-armhf/Packages.gz
+ e3d13c096d2e3614a1470733cc0b4820 54964 main/binary-armhf/Packages
+ 950c55d29e04d8afa9c1064a7176437d 8058 main/binary-arm64/Packages.gz
+ 73e490195b6e8b9a408a84ff4233fb9b 54964 main/binary-arm64/Packages
 SHA256:
- d976770e14a11a0d1747c0a3c729217a3369d71f9ca1c0c626cf2e6d2cc0b3ae 7356 main/binary-amd64/Packages.gz
- d72e8c3eaa91c020be33b6b91cf555f582c62f745345a247b4b9bc1e9a2bc7e7 50902 main/binary-amd64/Packages
- ec9e0c714030ec69c1b4b8834442c752f8d1805b11d76f638567c3f55422fdd7 7981 main/binary-armhf/Packages.gz
- c4e92543f09800b8a5cb41970625f68f1c7caf0263a2591e44bebba169615605 54176 main/binary-armhf/Packages
- cd4335737055e21ae72d44c8c0441f117203052b4cc30416c8af5459a6a0722b 7981 main/binary-arm64/Packages.gz
- 19013c34bb78842a87dabe7c89bcc263525f558a2c17d1c9c01d4f396b3098fe 54176 main/binary-arm64/Packages
+ 0da3893172326309a004d6580d09a785b2c12d7140a8bcede6dd48926206fe54 7440 main/binary-amd64/Packages.gz
+ ea14d33131977d9fea4ff174fbfda4a7fddb355c22d1acd001dd5f335e4277f0 51690 main/binary-amd64/Packages
+ 9b837f406c8bf9dfed34f2213c1089d68e5fe4177a0764bf6cab0e21528ca3b2 8060 main/binary-armhf/Packages.gz
+ bb0e776d55676311339ec7e0df500a974f209c5a9f4ef35b9ddd7e6eb34bc664 54964 main/binary-armhf/Packages
+ 57ec41d2d654f60c9bf4f84a1aa4a35176d8957d1f42b734bf21ec1fe4372ac8 8058 main/binary-arm64/Packages.gz
+ 0438d7038f8d62e50c91c8016e75ee3e9bd7992f9a732be9ef261aea22777996 54964 main/binary-arm64/Packages
