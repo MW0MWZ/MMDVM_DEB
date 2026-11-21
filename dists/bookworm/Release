@@ -6,18 +6,18 @@ Version: 1.0
 Architectures: amd64 armhf arm64
 Components: main
 Description: Amateur Radio Digital Voice packages for Debian bookworm
-Date: Sat, 21 Nov 2026 16:13:17 +0000
+Date: Sat, 21 Nov 2026 16:25:42 +0000
 MD5Sum:
- d254f1355124b263c91aabbeac7a16c0 7118 main/binary-amd64/Packages.gz
- 87e3319e74868334af083136d8769788 48538 main/binary-amd64/Packages
- 1853ec23ca97599af1eea9b7fbc1e9d1 7731 main/binary-armhf/Packages.gz
- 6c3f02beabeb43eb7bb608da7f9bdf05 51812 main/binary-armhf/Packages
- 1ea550e0701dd6dbc2b6722930c6832a 7734 main/binary-arm64/Packages.gz
- f8c69e0a07af84e2fe3cc59e5975f5ac 51812 main/binary-arm64/Packages
+ 83d893456c14c17ba820769f9c023550 7199 main/binary-amd64/Packages.gz
+ ab9177d1c98c7884f697bd32c9c3202b 49326 main/binary-amd64/Packages
+ f0c01db476e5907c4ba1d996a254ffe6 7819 main/binary-armhf/Packages.gz
+ 972e3c9712cfc10dd007930a39bd1034 52600 main/binary-armhf/Packages
+ a25b7f980c5a103f55203cdacaee5378 7821 main/binary-arm64/Packages.gz
+ b199a44116dedf4fb59299f774a70b4a 52600 main/binary-arm64/Packages
 SHA256:
- 9f23fb4b96426696caf0087904899c05246e4e04d47a7dbe1860a1cddaf3708e 7118 main/binary-amd64/Packages.gz
- aa87ec70cf81b30ca4be1e3d59bd7b74d9fc69b7e2256281e36188724823aaf6 48538 main/binary-amd64/Packages
- 3afb7da1aec0a1b8849d7efaeb8e1a78eec1300798419e25752144d5b9e0bcb4 7731 main/binary-armhf/Packages.gz
- 5c617e0b6283a95986534c71a29f4cdbaeb6f372114450bde9f496d9d241cc8f 51812 main/binary-armhf/Packages
- 2913bd455a402d4ea2065fcc77a76803025f4f658870deb9ee00978122bfbcd9 7734 main/binary-arm64/Packages.gz
- d73f271c331d23e9b79c4f4a5be8ba7b1844f138282c557dc9d826485a6be894 51812 main/binary-arm64/Packages
+ 53c3a84d3434e16880c79972d2762ad992af601e5c3c606f09f0172f0afc83ee 7199 main/binary-amd64/Packages.gz
+ 11fef8edc0eed7c0772ee11be681fc95e5b4db7e81c33afd7dd2aac2b6033edd 49326 main/binary-amd64/Packages
+ 93604f77f48baee0067574c5224b5a02db91b6993331c4f7ab36805650bd7b7d 7819 main/binary-armhf/Packages.gz
+ 532f2e49082c45900e569d432f6d6f91878aa5c4be560625f156b23cfbe6b88b 52600 main/binary-armhf/Packages
+ 644459d4965e00bc263058eaa7f5ba91e7ed74bac15135694ed764c6952cb631 7821 main/binary-arm64/Packages.gz
+ 7c575c07c99ad7b7c2acd2297345ad9d72fb2cc823fe047a4d787a4215e6bd0a 52600 main/binary-arm64/Packages
