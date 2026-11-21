@@ -267,6 +267,24 @@ MD5sum: 7d99009809ca0c24e540cd6cdecfa535
 SHA256: 0ed84963d1a84ed0720028881ec911ce10b6c9c1d5ec06f7d97e4eb448cd4525
 
 Package: pi-star
+Version: 2026.11.21-6~deb13u1
+Section: hamradio
+Priority: optional
+Architecture: armhf
+Depends: mosquitto, mmdvmhost, dmrclients, dstarclients, ysfclients, nxdnclients, p25clients, fmclients, aprsclients, pocsagclients, dstarrepeater, stm32flash, dfu-util, avrdude
+Maintainer: MW0MWZ <andy@mw0mwz.co.uk>
+Description: Pi-Star MCP — web dashboard and process supervisor
+ Single Go binary that serves the Pi-Star web dashboard and manages
+ all amateur radio digital voice services (MMDVM-Host, gateways, bridges).
+ .
+ Built for Debian trixie
+Homepage: https://pistar.uk
+Filename: pool/main/p/pi-star/pi-star_2026.11.21-6~deb13u1_armhf.deb
+Size: 5205204
+MD5sum: 3551b62068062f72f4565275ec211998
+SHA256: 448010833c4cf1c70db2e10b162109cccfcb153f886c2a09c515d66dcd62ed7b
+
+Package: pi-star
 Version: 2026.11.20-7~deb13u1
 Section: hamradio
 Priority: optional
