@@ -135,6 +135,11 @@ create_package() {
     sed -i 's|^CustomHostsfiles=.*|CustomHostsfiles=/etc/dstarclients/hostfiles.d/|' "$TEMPLATE"
     sed -i 's|^User=.*|User=mmdvm|' "$TEMPLATE"
 
+    # DGWTimeServer's configuration template, as upstream ships it
+    if [ -f "DStarGateway/DGWTimeServer/example.cfg" ]; then
+        cp "DStarGateway/DGWTimeServer/example.cfg" "$PKG_DIR/usr/share/dstarclients/DGWTimeServer.ini.example"
+    fi
+
     # Copy docs
     for doc in README.md README LICENSE COPYING; do
         if [ -f "DStarGateway/$doc" ]; then
@@ -171,7 +176,7 @@ Wants=network-online.target
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/dgwtimeserver /etc/dstarclients/DStarGateway.ini
+ExecStart=/usr/bin/dgwtimeserver /etc/dstarclients/DGWTimeServer.ini
 Restart=on-failure
 RestartSec=5
 User=mmdvm
@@ -263,6 +268,9 @@ case "$1" in
         mkdir -p /etc/dstarclients
         if [ ! -e /etc/dstarclients/DStarGateway.ini ] && [ -f /usr/share/dstarclients/DStarGateway.ini.example ]; then
             cp /usr/share/dstarclients/DStarGateway.ini.example /etc/dstarclients/DStarGateway.ini
+        fi
+        if [ ! -e /etc/dstarclients/DGWTimeServer.ini ] && [ -f /usr/share/dstarclients/DGWTimeServer.ini.example ]; then
+            cp /usr/share/dstarclients/DGWTimeServer.ini.example /etc/dstarclients/DGWTimeServer.ini
         fi
         if [ ! -e /etc/dstarclients/DStar_Hosts.json ] && [ -f /usr/share/dstarclients/DStar_Hosts.json ]; then
             cp /usr/share/dstarclients/DStar_Hosts.json /etc/dstarclients/DStar_Hosts.json
