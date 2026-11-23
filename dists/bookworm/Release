@@ -6,18 +6,18 @@ Version: 1.0
 Architectures: amd64 armhf arm64
 Components: main
 Description: Amateur Radio Digital Voice packages for Debian bookworm
-Date: Sun, 22 Nov 2026 23:01:09 +0000
+Date: Mon, 23 Nov 2026 00:34:21 +0000
 MD5Sum:
- 21adedf390dc415456bf579ca433fb2d 6440 main/binary-amd64/Packages.gz
- 5059233b023051bdfe0d8c85f8eece8d 42275 main/binary-amd64/Packages
- 02fb77f6da81cab4541f5502c6526a71 7016 main/binary-armhf/Packages.gz
- dfe3f9dc33bd4424d27fddb155b37e44 45558 main/binary-armhf/Packages
- 4a10d08affc0b0311289969e62f91982 7021 main/binary-arm64/Packages.gz
- b84ee63b9bcc4b93f40f32e141e48b78 45558 main/binary-arm64/Packages
+ a405f867d8b8373b7b0f59f2670518e4 6526 main/binary-amd64/Packages.gz
+ ad9a054ac373bf1bd1368a0d7b083478 43075 main/binary-amd64/Packages
+ d86fbb7722f2cb804eda7ff6f7a27632 7098 main/binary-armhf/Packages.gz
+ 37e864f8d5ceaf35199b6a5212d240c4 46358 main/binary-armhf/Packages
+ 7a07720776461da75bd484c267fb3b42 7103 main/binary-arm64/Packages.gz
+ a6aa57b829b30b0b02dacb59faa8ae28 46358 main/binary-arm64/Packages
 SHA256:
- e64810e4d8f62905b47b9b93214cf100d44784f6f34f916c740826899b07fe24 6440 main/binary-amd64/Packages.gz
- f17c0b22f44533532f47c589c87fc3e143f7fec587eef2e9f9209fff57da68af 42275 main/binary-amd64/Packages
- dba368c482ac572924e94c1ad7798a0c8d83a16d7ab4fb03c4a218d8bff898d1 7016 main/binary-armhf/Packages.gz
- f21740c0820676c9cd03741918b2760d464e39e34e653f2d82f10cd90cb445b3 45558 main/binary-armhf/Packages
- 3b67528aeecb4a42850b0b26e304f469fa7d666fa47b70d020c2d34ac8ffa1a9 7021 main/binary-arm64/Packages.gz
- 7966f21fc5eaddffde4b5b4eaa4f7201151db4e8886ae656d1cbc1f01348d172 45558 main/binary-arm64/Packages
+ 16e4a6ef4fd32ba3b71dc43adf15c99e037a5c3b9f35d6d28ef4d7738949be0b 6526 main/binary-amd64/Packages.gz
+ 11416318bf1bf6021463649ab422b4efcc12de745bbb8bcba3fc2ad8804189a7 43075 main/binary-amd64/Packages
+ 3d4e2d6a56b92562ca700cd7e8f1e76fb80971d59b82233da933db9d9b3ef431 7098 main/binary-armhf/Packages.gz
+ 23668e031868af03d3b0a1ffc624f0c20e804952ca6e75d9ff6bf9d4fec20dda 46358 main/binary-armhf/Packages
+ 79dffdf4a5b7b563436730e9ad1de21514a617fc3dee3600d654334bec0cf16f 7103 main/binary-arm64/Packages.gz
+ 26db99706e31e7b90c51b15de6c53e9b81681eb2b1195e7acb7d987e79b7e866 46358 main/binary-arm64/Packages
