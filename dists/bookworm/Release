@@ -6,18 +6,18 @@ Version: 1.0
 Architectures: amd64 armhf arm64
 Components: main
 Description: Amateur Radio Digital Voice packages for Debian bookworm
-Date: Mon, 23 Nov 2026 21:20:34 +0000
+Date: Mon, 23 Nov 2026 21:41:55 +0000
 MD5Sum:
- 48ef308e77ebf3383e1a4fe95bb25bb6 6521 main/binary-amd64/Packages.gz
- 982109d132eeed3b68aaea2e94f202c3 43131 main/binary-amd64/Packages
- ce298a04389fa72d3fde080a038713b8 7094 main/binary-armhf/Packages.gz
- 3f9d56628f6927edfc2ab27e3a020a67 46414 main/binary-armhf/Packages
- 101c2bdea6eca3e2c93d304871e48800 7100 main/binary-arm64/Packages.gz
- efeed158e817528fe013f57def968089 46414 main/binary-arm64/Packages
+ 2bf963580751398697384bfb1355baf6 43931 main/binary-amd64/Packages
+ b1f682a0a16b3d3fca19c755db7e9e97 6603 main/binary-amd64/Packages.gz
+ 8c190a042c146a62f450ae10a7808b31 47214 main/binary-arm64/Packages
+ 1d9037b4aeaa530cae0f9daeeca5623e 7220 main/binary-arm64/Packages.gz
+ 67c1f34d0a279d01706409c988317a80 47214 main/binary-armhf/Packages
+ 8f61c54263617aceedf0a13f21de0fda 7207 main/binary-armhf/Packages.gz
 SHA256:
- 02031d3d2ba22290abb587bf03810bfa897ed69c8e6414c998b5d39ce552b753 6521 main/binary-amd64/Packages.gz
- c633c440202709f0c2d6b74a423f69143d983852f573d5d59946627180136021 43131 main/binary-amd64/Packages
- 0742510755c711ed626a47dd3185b7cfdd2aa330733dc80109d7a9da22c9efaf 7094 main/binary-armhf/Packages.gz
- 169e27d633fcac730737a05a2520fc7738831a1140d86fd52c28d65297e31a76 46414 main/binary-armhf/Packages
- 625dde1196c3d8f1186fe9d2169e13d812bd775148fe19497bf7cf981ae2a304 7100 main/binary-arm64/Packages.gz
- 8e46b23a14f2625770405de9f991f564f8e78e3b08f6e346ae7abe24de643a13 46414 main/binary-arm64/Packages
+ 3fa2cc31cfcd30823e1e09106bb186d1266f84417958c3f43e5bdd0c6f5497d2 43931 main/binary-amd64/Packages
+ 29c49635d1cd22afba5a033d2eacd8fb8e6c22d925004cc2d85bf1f4ae959f2e 6603 main/binary-amd64/Packages.gz
+ 4031fa0a4878225fa858aeb896fed9c78b84d019df60a36c9755be5b5e5239da 47214 main/binary-arm64/Packages
+ 34ae8e6398e7166acb0945d9b82b49f29fc3fe5b3137708694c54897175fea40 7220 main/binary-arm64/Packages.gz
+ 8871107536305f31a33461d20f1a378ca49ba62043079cd1b0bba9c217d49280 47214 main/binary-armhf/Packages
+ d7cb8e89bebc3b621c2d6b465d7c66390a89789936742871ef8a9a91c9532c11 7207 main/binary-armhf/Packages.gz
