@@ -9,34 +9,34 @@ Version: 1.0
 Architectures: amd64 armhf arm64
 Components: main
 Description: Amateur Radio Digital Voice packages for Debian trixie
-Date: Mon, 23 Nov 2026 00:34:26 +0000
+Date: Mon, 23 Nov 2026 00:43:39 +0000
 MD5Sum:
- d11cd018564642ab91f4f6b04e23f8d0 6548 main/binary-amd64/Packages.gz
- c340856e949128150d844630b6af112a 43090 main/binary-amd64/Packages
- b0b9752e4c8c8394e3c9d727ba9ea363 7118 main/binary-armhf/Packages.gz
- d5aa74fbdbaef3ffab5c0169da55eb5f 46360 main/binary-armhf/Packages
- 28185dc75b69decb09fc28c1e3324cbe 7111 main/binary-arm64/Packages.gz
- 7aed5cb3454a6925c9fca7330a70efb5 46373 main/binary-arm64/Packages
+ c4d2434b30c961655896cd78a8e10164 6634 main/binary-amd64/Packages.gz
+ 03de7dfee5540935bcd99edfb9812e43 43888 main/binary-amd64/Packages
+ d65b9041b374c598cbeed9815b724b12 7198 main/binary-armhf/Packages.gz
+ 76228a848a39daeb14986afe07409836 47158 main/binary-armhf/Packages
+ d394efc116ed1295d07c59824dbfeda5 7201 main/binary-arm64/Packages.gz
+ c5515a4d38b3fc80bbe531b77f6bee3d 47171 main/binary-arm64/Packages
 SHA256:
- ab79df42f8185818570d1ab9f57b324540ea9d94f9883591220c3050cf05c175 6548 main/binary-amd64/Packages.gz
- a1413226f017ce087b4a9b6fb966d0955c1e06a681f001e7fbd17fee47aafcb1 43090 main/binary-amd64/Packages
- faa1a1f7c6cb326c652d2bf6ecbc247bbc32d0269a29330b172f4f666e84b517 7118 main/binary-armhf/Packages.gz
- aff540197ec10e7b3a35d1f56e14d808fd77b69edce8ea7e153a03fe1eadfff2 46360 main/binary-armhf/Packages
- d626e3989f4aa66a47225a2cdf58df7382a67d5481104e9cd17cbbe8dbbaee4b 7111 main/binary-arm64/Packages.gz
- 54905a466e99c5a90520b34b7334c09989d3176471920dc221dbfe3aad2d457c 46373 main/binary-arm64/Packages
+ 75adcd1a378a65846dc84f9a314d57c5b8fced4a95aa613c3c75b33bc81d33ee 6634 main/binary-amd64/Packages.gz
+ 6ec18322cb4085c2a2cfd0d9fec5891ec14897e99418e3a6befa54ede91f5542 43888 main/binary-amd64/Packages
+ d56cde662c57aaee2102c1346e646136978e42e47730ddce30428e9ee7adc7b3 7198 main/binary-armhf/Packages.gz
+ 286b2a0c7924ff486f21ec7d94299834caf4d9e16b758ab13bdd9d71553d0889 47158 main/binary-armhf/Packages
+ 919203fbf7a99c063ee8caa4881c052068c2167f48d20dd8a2513e3dbe159999 7201 main/binary-arm64/Packages.gz
+ ae625330df89a92e8a207828ea77fb1f4c22bf8d537749a651e82798d8ad5ae3 47171 main/binary-arm64/Packages
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCgAdFiEEwSrrXjspA+i6MsGAzeIzmBVRrGEFAmsDihIACgkQzeIzmBVR
-rGE90g/5AQSHO20VuS9s/VI0er9W6odc1lInTcvqZhOcPZKDIc2JacCO/I4/xBEf
-BureUCKkd0vJkBFCHxsfqV+48hiFHV0HpL6VCQ+37bkgztsmiLS+FjjVTPXh/0E7
-iOMKsnSRASazyKkm0R3MA4YHgj0a9acN3mGtvKvA07IWB9huRl7AQaOZyH14rIBo
-nLB1/Ynyc6uRHV5Vpojmc1PAT5tTjkwc0CnoBhiT1MN0MR+u3bbdRVu+gDfpZEpk
-5ytSmHcKSoXetVLJX8nQz7UuqDTOVOP/vRV63lQcvFabC8qcLqi71iDC1yY2AFaO
-RLH6wfz95hMo2v0OYAkJd3tzVKwXlWrsLUq/PURU9GsCPB3yq7tCAYOTDScJIZ8d
-hrARrHGQHsSOUzP6upQ7BqOpKfixDwy3aKpA+bUfHzfMYCBOmM+yuTLq8++BDih4
-NfxjtVDGcnUDtvYLkItiI8KbEEUAWDn/hSKzQ7Rp0QEizURTP+f98IySkhrN0AnT
-A+Il+PXraTbXncQ78MqTHykJyyRftHsbPI0kVc+NkkKqlnK7oZQlWuTVe3rJ/5oK
-dMBQj9BIjAaFAmsabnEPGhtpjPzgGcPoOsBtmMHkgbB0JSoCEdZUGIAMGwRDso0M
-ttjBuh9ZWpoAl10f2JRryMxcpUA7hUfaSwPmzWIBAr3R7wbk8Cc=
-=uwu+
+iQIzBAEBCgAdFiEEwSrrXjspA+i6MsGAzeIzmBVRrGEFAmsDjDsACgkQzeIzmBVR
+rGH0rhAAg8UrNyZ9miBNtAkmYiEUL61rukQaliKwM1auC8Jr+B1ta6KD9F2G6SZw
+tcfxCDPNnzRVgSe80gaUemsuSh2TAx3KAM6ka6xYJCGLKbjGI3XQt3xK5ZftW9k4
+oScqaF87NJl5I/A7qcHjW5TvuwUK/M2O/f8bdUpbzZmBS5x8FJZxWDKCHuEsb2/c
+R5QqPO7pfJlVUpTCwrIHAhd9i7zmVvmHJ/DIMUt5wg0LMaMu/BSTnaXpddEPoyOp
+WgYpIiHPvRTmnfBy/mM2XBiKdv426UChlcdtZEKyz901PmQA47yqvH6R2vok+m7A
+HiA8VCDEfZcYS1PnJO5Pq1dxtRASOkxK0g8fZZVXcK48lMU0GP8UcUcnIKK9f8hc
+k0EaQF2+0pxFgWOldyW9PCcGlQ59YyZjCql9j0IDfRs13H9/NuQu1G7CPDsrBRsT
+U0nuFVl1RFHrKeZiKPLKSRZIU9RnokQ5SKxZnr37QXcVp7o0oOhWfeJZQs94dXoW
+C31hsnDIUSVDP6lzfTp8cK47uzgokrUYnAI5XQ29b2JF7tDIG6ZK71NZLYCZ7NZU
+sJ5+kuDxcTQ8uHGi3TXrX0S0dVbuZPxhTV4liSrJnidWYPh5nJehd40DtFM1fI7d
+XidiAoMbj0Yszz++acf2DGWWhVXLf+7Y9aj+yOVavHx9iJCEQ3I=
+=5KjM
 -----END PGP SIGNATURE-----
