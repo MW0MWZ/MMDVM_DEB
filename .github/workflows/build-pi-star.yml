@@ -194,119 +194,24 @@ jobs:
         with:
           path: artifacts/
 
-      - name: Merge new packages into repository
+      - name: Install repository tools
         run: |
-          set -e
+          sudo apt-get update
+          sudo apt-get install -y dpkg-dev apt-utils gnupg
 
-          TARGET_DIR="gh-pages/pool/main/p/pi-star"
-          mkdir -p "$TARGET_DIR"
-
-          for ARTIFACT_DIR in artifacts/pi-star-*/; do
-            find "$ARTIFACT_DIR" -name "*.deb" -type f | while read pkg; do
-              cp "$pkg" "$TARGET_DIR/"
-              echo "Copied: $(basename "$pkg")"
-            done
-          done
-
-          echo "All packages in repository:"
-          ls -la "$TARGET_DIR"/*.deb 2>/dev/null || echo "No packages"
-
-      - name: Generate Debian repository metadata
+      # Adds the release to gh-pages as it is at the moment of publishing,
+      # tidies the whole repository (orphans, old versions, all of dists/
+      # written and signed afresh, site files) and never force-pushes: when
+      # Build Debian Packages publishes first, this starts again from its
+      # commit, so neither release undoes the other.
+      - name: Publish to gh-pages
         env:
           GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
-          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+          GPG_KEY_ID: ${{ secrets.GPG_KEY_ID }}
         run: |
-          set -e
-          cd gh-pages
-
-          # Import GPG key for signing
-          if [ -n "$GPG_PRIVATE_KEY" ]; then
-            echo "$GPG_PRIVATE_KEY" | gpg --batch --import
-          fi
-
-          # Generate Packages files for each arch/distribution
-          for DEBIAN_VERSION in bookworm trixie; do
-            for ARCH in amd64 armhf arm64; do
-              DIST_DIR="dists/${DEBIAN_VERSION}/main/binary-${ARCH}"
-              mkdir -p "$DIST_DIR"
-
-              # Generate Packages file from all .deb files matching this arch
-              > "$DIST_DIR/Packages"
-              find pool/main -name "*_${ARCH}.deb" -type f | while read deb; do
-                # Only include packages for this Debian version
-                case "$DEBIAN_VERSION" in
-                  bookworm) MATCH="~deb12" ;;
-                  trixie)   MATCH="~deb13" ;;
-                esac
-                if echo "$deb" | grep -q "$MATCH" || ! echo "$deb" | grep -q "~deb"; then
-                  # Strip trailing blank lines from control to prevent
-                  # split stanzas (some debs like wiringpi have them).
-                  dpkg-deb -I "$deb" control 2>/dev/null | sed '/^[[:space:]]*$/d' >> "$DIST_DIR/Packages" || true
-                  echo "Filename: $deb" >> "$DIST_DIR/Packages"
-                  echo "Size: $(stat -c%s "$deb")" >> "$DIST_DIR/Packages"
-                  echo "MD5sum: $(md5sum "$deb" | cut -d' ' -f1)" >> "$DIST_DIR/Packages"
-                  echo "SHA256: $(sha256sum "$deb" | cut -d' ' -f1)" >> "$DIST_DIR/Packages"
-                  echo "" >> "$DIST_DIR/Packages"
-                fi
-              done
-
-              gzip -9c "$DIST_DIR/Packages" > "$DIST_DIR/Packages.gz"
-            done
-
-            # Generate Release file
-            RELEASE_FILE="dists/${DEBIAN_VERSION}/Release"
-            cat > "$RELEASE_FILE" << EOF
-          Origin: Ham Radio Packages
-          Label: Ham Radio Packages
-          Suite: ${DEBIAN_VERSION}
-          Codename: ${DEBIAN_VERSION}
-          Version: 1.0
-          Architectures: amd64 armhf arm64
-          Components: main
-          Description: Amateur Radio Digital Voice packages for Debian ${DEBIAN_VERSION}
-          Date: $(date -Ru)
-          EOF
-
-            # Add checksums
-            echo "MD5Sum:" >> "$RELEASE_FILE"
-            find "dists/${DEBIAN_VERSION}/main" -type f \( -name "Packages" -o -name "Packages.gz" \) | while read f; do
-              REL=$(echo "$f" | sed "s|dists/${DEBIAN_VERSION}/||")
-              echo " $(md5sum "$f" | cut -d' ' -f1) $(stat -c%s "$f") $REL" >> "$RELEASE_FILE"
-            done
-
-            echo "SHA256:" >> "$RELEASE_FILE"
-            find "dists/${DEBIAN_VERSION}/main" -type f \( -name "Packages" -o -name "Packages.gz" \) | while read f; do
-              REL=$(echo "$f" | sed "s|dists/${DEBIAN_VERSION}/||")
-              echo " $(sha256sum "$f" | cut -d' ' -f1) $(stat -c%s "$f") $REL" >> "$RELEASE_FILE"
-            done
-
-            # Sign Release file if GPG key available
-            if [ -n "$GPG_PRIVATE_KEY" ]; then
-              gpg --batch --yes --pinentry-mode loopback \
-                --passphrase "$GPG_PASSPHRASE" \
-                -abs -o "dists/${DEBIAN_VERSION}/Release.gpg" \
-                "$RELEASE_FILE"
-              gpg --batch --yes --pinentry-mode loopback \
-                --passphrase "$GPG_PASSPHRASE" \
-                --clearsign -o "dists/${DEBIAN_VERSION}/InRelease" \
-                "$RELEASE_FILE"
-            fi
-          done
-
-      - name: Deploy to gh-pages
-        run: |
-          set -e
-          cd gh-pages
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add -A
-          if git diff --cached --quiet; then
-            echo "No changes to deploy"
-          else
-            VERSION="${{ github.event.client_payload.version }}"
-            git commit -m "pi-star ${VERSION}"
-            git push
-          fi
+          scripts/publish-repo.sh gh-pages \
+            "pi-star ${{ github.event.client_payload.version }}" \
+            scripts/merge-artifacts.sh artifacts/pi-star-*/
 
       - name: Wait for the live repository, then purge Cloudflare
         if: success()
@@ -322,3 +227,12 @@ jobs:
           # previous release.
           scripts/wait-for-pages.sh || \
             echo "::warning::https://deb.pistar.uk is not yet serving the deployed index"
+
+  # Keep the Actions history short (see cleanup-runs.yml)
+  cleanup-runs:
+    name: Cleanup old workflow runs
+    needs: [build, deploy]
+    if: always()
+    permissions:
+      actions: write
+    uses: ./.github/workflows/cleanup-runs.yml

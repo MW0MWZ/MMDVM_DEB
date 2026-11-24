@@ -146,8 +146,13 @@ The build process:
 - Clones source from upstream git repositories
 - Builds for all architectures using Docker and QEMU
 - Creates DEB packages following Debian standards
-- Generates repository metadata (Packages, Release files)
+- Keeps the newest 5 versions of each package for each Debian release and architecture (by version number), and removes packages no longer built here
+- Generates and signs repository metadata (Packages, Release files) listing every kept version
 - Deploys to GitHub Pages
+
+Both this workflow and "Build Pi-Star DEB" publish through `scripts/publish-repo.sh`. Every publish adds its packages to gh-pages as it is at that moment, then tidies the whole repository (orphans, old versions, all of `dists/` written and signed afresh and checked against `keys/hamradio.gpg`, site files) and pushes without force, starting again if another workflow pushed first, so neither can undo the other's release.
+
+Every workflow ends by deleting old workflow runs (`cleanup-runs.yml`, also weekly): successful runs older than 5 days, others older than 30 days.
 
 ### Automatic Builds
 
@@ -176,8 +181,9 @@ All repository metadata (Release files) can be signed with GPG for APT secure ve
 MMDVM_DEB/
 ├── .github/workflows/       # GitHub Actions workflows
 │   ├── build-debian-packages.yml
+│   ├── build-pi-star.yml
 │   ├── check-upstream-updates.yml
-│   └── cleanup-old-packages.yml
+│   └── cleanup-runs.yml
 ├── packages/                # Package definitions
 │   ├── mmdvmhost/          # MMDVM-Host, MMDVM-Display, MMDVM-Info, MMDVMCal
 │   ├── dmrclients/         # DMRGateway, DMR2YSF, DMR2NXDN

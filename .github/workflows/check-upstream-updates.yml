@@ -584,3 +584,12 @@ jobs:
         with:
           name: update-details
           path: /tmp
+
+  # Keep the Actions history short (see cleanup-runs.yml)
+  cleanup-runs:
+    name: Cleanup old workflow runs
+    needs: [check-updates, update-sources, trigger-build, notification]
+    if: always()
+    permissions:
+      actions: write
+    uses: ./.github/workflows/cleanup-runs.yml

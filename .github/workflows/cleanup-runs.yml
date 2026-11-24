@@ -1,8 +1,13 @@
 name: Cleanup Old Workflow Runs
 
+# Runs at the end of every other workflow (workflow_call), and weekly in
+# case none has run. Deletes completed runs: successful ones older than
+# 5 days, any other result older than 30 days. A run still going is
+# never touched, and a failure here never fails the calling workflow.
 on:
+  workflow_call:
   schedule:
-    # Run weekly on Sunday at 04:00 UTC
+    # Weekly on Sunday at 04:00 UTC
     - cron: '0 4 * * 0'
   workflow_dispatch:
 
@@ -10,6 +15,8 @@ jobs:
   cleanup:
     name: Delete old workflow runs
     runs-on: ubuntu-latest
+    permissions:
+      actions: write
     steps:
       - name: Cleanup workflow runs
         uses: actions/github-script@v8
@@ -20,35 +27,46 @@ jobs:
             const now = Date.now();
             const msPerDay = 86400000;
             const successMaxAge = 5 * msPerDay;
-            const failureMaxAge = 30 * msPerDay;
+            const otherMaxAge = 30 * msPerDay;
 
             let deleted = 0;
             let kept = 0;
 
-            // Paginate through all workflow runs
-            for await (const response of github.paginate.iterator(
-              github.rest.actions.listWorkflowRunsForRepo,
-              { owner, repo, per_page: 100 }
-            )) {
-              for (const run of response.data) {
-                const runAge = now - new Date(run.created_at).getTime();
-                const isSuccess = run.conclusion === 'success';
-                const maxAge = isSuccess ? successMaxAge : failureMaxAge;
-
-                if (runAge > maxAge) {
-                  console.log(`Deleting run #${run.id} (${run.name}) - ${run.conclusion} - ${run.created_at}`);
-                  try {
-                    await github.rest.actions.deleteWorkflowRun({
-                      owner, repo, run_id: run.id
-                    });
-                    deleted++;
-                  } catch (e) {
-                    console.log(`  Failed to delete: ${e.message}`);
+            try {
+              const old = [];
+              // Every run is listed and its status checked here: the API's
+              // status=completed filter leaves out some completed runs
+              // (GitHub Pages' own deployments among them)
+              for await (const response of github.paginate.iterator(
+                github.rest.actions.listWorkflowRunsForRepo,
+                { owner, repo, per_page: 100 }
+              )) {
+                for (const run of response.data) {
+                  if (run.status !== 'completed' || run.id === context.runId) {
+                    kept++;
+                    continue;
                   }
-                } else {
-                  kept++;
+                  const runAge = now - new Date(run.created_at).getTime();
+                  const maxAge = run.conclusion === 'success' ? successMaxAge : otherMaxAge;
+                  if (runAge > maxAge) {
+                    old.push(run);
+                  } else {
+                    kept++;
+                  }
                 }
               }
+              // Delete after listing: deleting while paging shifts the pages
+              for (const run of old) {
+                console.log(`Deleting run #${run.id} (${run.name}) - ${run.conclusion} - ${run.created_at}`);
+                try {
+                  await github.rest.actions.deleteWorkflowRun({ owner, repo, run_id: run.id });
+                  deleted++;
+                } catch (e) {
+                  console.log(`  Failed to delete: ${e.message}`);
+                }
+              }
+            } catch (e) {
+              core.warning(`Workflow run cleanup stopped: ${e.message}`);
             }
 
             console.log(`\nCleanup complete: deleted ${deleted} runs, kept ${kept} runs`);
