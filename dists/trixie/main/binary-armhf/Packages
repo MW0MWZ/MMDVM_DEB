@@ -1049,36 +1049,6 @@ Description: The wiringPi libraries, headers and gpio command
 Uploaders: Grazer Computer Club - GC2 <wiringpi@gc2.at>
 
 Package: ysfclients
-Version: 2025.11.24-0~deb13u1
-Architecture: armhf
-Maintainer: MW0MWZ <andy@mw0mwz.co.uk>
-Depends: libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11)
-Recommends: ntp | chrony
-Filename: pool/main/y/ysfclients/ysfclients_2025.11.24-0~deb13u1_armhf.deb
-Size: 2679828
-MD5sum: 21c583fa5c5dcf8adce0ccea95b174a9
-SHA1: ff18f0e6abd92da1bfeee9d8bade62f8e6658112
-SHA256: ed6c11cd45fec0c76f797884fe6eae6b1d35a2ef871b32ad856080cce2824a08
-Section: hamradio
-Priority: optional
-Homepage: https://github.com/g4klx/YSFClients
-Description: YSF Clients for Amateur Radio
- YSF Gateway, Parrot, DGId Gateway and Cross-Mode converters for
- digital communications using Yaesu System Fusion (YSF) protocol.
- .
- This package includes:
-  - YSFGateway: Gateway for YSF networks
-  - YSFParrot: Echo/parrot server for testing
-  - DGIdGateway: Digital Group ID Gateway
-  - YSF2DMR: Cross-mode converter from YSF to DMR
-  - YSF2NXDN: Cross-mode converter from YSF to NXDN
-  - YSF2P25: Cross-mode converter from YSF to P25
- .
- Built for Debian trixie
- YSFClients commit: 05aa577
- MMDVM_CM commit: 1dd5383
-
-Package: ysfclients
 Version: 2025.11.24-1~deb13u1
 Architecture: armhf
 Maintainer: MW0MWZ <andy@mw0mwz.co.uk>
@@ -1196,4 +1166,34 @@ Description: YSF Clients for Amateur Radio
  .
  Built for Debian trixie
  YSFClients commit: 36106e3
+ MMDVM_CM commit: 1dd5383
+
+Package: ysfclients
+Version: 2026.11.24-0~deb13u1
+Architecture: armhf
+Maintainer: MW0MWZ <andy@mw0mwz.co.uk>
+Depends: libc6 (>= 2.38), libgcc-s1 (>= 3.5), libgps30t64 (>= 3.3), libmosquitto1 (>= 1.6), libstdc++6 (>= 11)
+Recommends: ntp | chrony
+Filename: pool/main/y/ysfclients/ysfclients_2026.11.24-0~deb13u1_armhf.deb
+Size: 4627476
+MD5sum: d24449bb36eee8467bc28a15fe8ff8cc
+SHA1: 7063fccb433193cf13e3f7351385c7d5cf6e3c9a
+SHA256: 1b7b9f6c1b18e10624e59f78258ebc94f80ea1a8cbaf84a36cff955b1f7e0b57
+Section: hamradio
+Priority: optional
+Homepage: https://github.com/g4klx/YSFClients
+Description: YSF Clients for Amateur Radio
+ YSF Gateway, Parrot, DGId Gateway and Cross-Mode converters for
+ digital communications using Yaesu System Fusion (YSF) protocol.
+ .
+ This package includes:
+  - YSFGateway: Gateway for YSF networks
+  - YSFParrot: Echo/parrot server for testing
+  - DGIdGateway: Digital Group ID Gateway
+  - YSF2DMR: Cross-mode converter from YSF to DMR
+  - YSF2NXDN: Cross-mode converter from YSF to NXDN
+  - YSF2P25: Cross-mode converter from YSF to P25
+ .
+ Built for Debian trixie
+ YSFClients commit: 405aa74
  MMDVM_CM commit: 1dd5383
