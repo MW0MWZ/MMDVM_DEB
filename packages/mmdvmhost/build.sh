@@ -21,7 +21,6 @@ GITURL_INFO="https://github.com/g4klx/MMDVM-Info.git"
 GITURL_OLED="https://github.com/MW0MWZ/ArduiPi_OLED.git"
 BUILD_DIR="build"
 OUTPUT_DIR="${OUTPUT_DIR:-./output}"
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 # Functions
 print_message() { echo -e "${GREEN}[BUILD]${NC} $1"; }
@@ -66,11 +65,6 @@ prepare_source() {
     cd MMDVM-Info
     INFO_COMMIT=$(git rev-parse --short HEAD)
     INFO_COMMIT_FULL=$(git rev-parse HEAD)
-    # Upstream relies on <unistd.h> being pulled in indirectly; include it
-    # explicitly so the build doesn't depend on libc header internals.
-    if patch -p1 -N --dry-run < "$SCRIPT_DIR/mmdvminfo-unistd.patch" >/dev/null 2>&1; then
-        patch -p1 -N < "$SCRIPT_DIR/mmdvminfo-unistd.patch"
-    fi
     cd ..
 
     # Clone ArduiPi_OLED for ARM platforms
