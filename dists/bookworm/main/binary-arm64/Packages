@@ -189,27 +189,6 @@ Description: DMR Clients for Amateur Radio
  Git commits: DMRGateway d75d466, MMDVM_CM 1dd5383
 
 Package: dstarclients
-Version: 2026.03.03-0~deb12u1
-Architecture: arm64
-Maintainer: MW0MWZ <andy@mw0mwz.co.uk>
-Depends: libc6 (>= 2.36), libgcc-s1 (>= 3.0), libstdc++6 (>= 11), libcurl4, libmosquitto1
-Recommends: mosquitto
-Filename: pool/main/d/dstarclients/dstarclients_2026.03.03-0~deb12u1_arm64.deb
-Size: 768400
-MD5sum: 2bedfaa8ee4d482020d1302145e370a6
-SHA1: 08905e40ab426f5a6691c5900fbfc6b8f3d6b493
-SHA256: 49a2a804aa0e61fd50f93c70d25f541b4007d68b7dd022635c1e281a957a7fbb
-Section: hamradio
-Priority: optional
-Homepage: https://github.com/g4klx/DStarGateway
-Description: D-Star Gateway and Tools
- D-Star Gateway for digital voice amateur radio
- Includes gateway, time server, remote control, and transmit tools
- .
- Built for Debian bookworm
- Git commit: 1a5c5f9
-
-Package: dstarclients
 Version: 2026.03.23-0~deb12u1
 Architecture: arm64
 Maintainer: MW0MWZ <andy@mw0mwz.co.uk>
@@ -292,6 +271,27 @@ Description: D-Star Gateway and Tools
  .
  Built for Debian bookworm
  Git commit: 289d06e
+
+Package: dstarclients
+Version: 2026.11.24-0~deb12u1
+Architecture: arm64
+Maintainer: MW0MWZ <andy@mw0mwz.co.uk>
+Depends: libc6 (>= 2.34), libgcc-s1 (>= 3.0), libgps28 (>= 3.3), libmosquitto1 (>= 1.6), libstdc++6 (>= 11)
+Recommends: mosquitto
+Filename: pool/main/d/dstarclients/dstarclients_2026.11.24-0~deb12u1_arm64.deb
+Size: 665220
+MD5sum: 78ae8be77831bc8c29cee658e9502e88
+SHA1: af58bcfc0dadf45713b56fd89cffd4ef4f2a605b
+SHA256: ea8ace6ddda84cdd90070ec682efdb56443204fed6b274b055f3b0d704ebc4f1
+Section: hamradio
+Priority: optional
+Homepage: https://github.com/g4klx/DStarGateway
+Description: D-Star Gateway and Tools
+ D-Star Gateway for digital voice amateur radio
+ Includes gateway, time server, remote control, and transmit tools
+ .
+ Built for Debian bookworm
+ Git commit: ddd6661
 
 Package: dstarrepeater
 Version: 2026.03.08-0~deb12u1
