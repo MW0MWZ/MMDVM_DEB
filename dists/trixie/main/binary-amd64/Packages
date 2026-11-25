@@ -779,25 +779,6 @@ Description: P25 Clients for Amateur Radio
  Git commit: 32989c6
 
 Package: pi-star
-Version: 2026.11.24-4~deb13u1
-Architecture: amd64
-Maintainer: MW0MWZ <andy@mw0mwz.co.uk>
-Depends: mosquitto, mmdvmhost, dmrclients, dstarclients, ysfclients, nxdnclients, p25clients, fmclients, aprsclients, pocsagclients, dstarrepeater, stm32flash, dfu-util, stlink-tools, avrdude
-Filename: pool/main/p/pi-star/pi-star_2026.11.24-4~deb13u1_amd64.deb
-Size: 6301060
-MD5sum: 39d5ade1838a73ab07709e760cf067ae
-SHA1: ef637da2e2cb86e87d1ca290e717e20fe0af0abf
-SHA256: d6c27e64865d25efde2d2f3ef698826127539c37adc34993ff153690f6364c24
-Section: hamradio
-Priority: optional
-Homepage: https://pistar.uk
-Description: Pi-Star MCP — web dashboard and process supervisor
- Single Go binary that serves the Pi-Star web dashboard and manages
- all amateur radio digital voice services (MMDVM-Host, gateways, bridges).
- .
- Built for Debian trixie
-
-Package: pi-star
 Version: 2026.11.24-5~deb13u1
 Architecture: amd64
 Maintainer: MW0MWZ <andy@mw0mwz.co.uk>
@@ -864,6 +845,25 @@ Size: 6314544
 MD5sum: 5f2b0b5e406d6a641ba832418ade3c86
 SHA1: f34db50efe420d4d0c1fe2f724f3c57263741107
 SHA256: 0f7e63411776c3e4b8ef2e3759102e07bceba0557c6343e9db0f533c2a120151
+Section: hamradio
+Priority: optional
+Homepage: https://pistar.uk
+Description: Pi-Star MCP — web dashboard and process supervisor
+ Single Go binary that serves the Pi-Star web dashboard and manages
+ all amateur radio digital voice services (MMDVM-Host, gateways, bridges).
+ .
+ Built for Debian trixie
+
+Package: pi-star
+Version: 2026.11.25-2~deb13u1
+Architecture: amd64
+Maintainer: MW0MWZ <andy@mw0mwz.co.uk>
+Depends: mosquitto, mmdvmhost, dmrclients, dstarclients, ysfclients, nxdnclients, p25clients, fmclients, aprsclients, pocsagclients, dstarrepeater, stm32flash, dfu-util, stlink-tools, avrdude
+Filename: pool/main/p/pi-star/pi-star_2026.11.25-2~deb13u1_amd64.deb
+Size: 6313420
+MD5sum: 7bd5c066909422423da95ecdb01bc97c
+SHA1: 841542ded72a8e69323045161009d6678e207fa6
+SHA256: 5aef9d36a7a89bd6209f6a29bae9450be3ee2b602309250e1b352f910bdad232
 Section: hamradio
 Priority: optional
 Homepage: https://pistar.uk
