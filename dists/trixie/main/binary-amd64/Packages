@@ -474,29 +474,6 @@ Description: FM Clients for Amateur Radio
  Git commit: 02d7bd0
 
 Package: mmdvmhost
-Version: 2026.11.21-4~deb13u1
-Architecture: amd64
-Maintainer: MW0MWZ <andy@mw0mwz.co.uk>
-Depends: libc6 (>= 2.38), libgcc-s1 (>= 3.0), libmosquitto1 (>= 1.6), libstdc++6 (>= 14)
-Recommends: mosquitto
-Filename: pool/main/m/mmdvmhost/mmdvmhost_2026.11.21-4~deb13u1_amd64.deb
-Size: 7887820
-MD5sum: 2b0a902fefb2abcbf360d6ff87fda40c
-SHA1: df92fdf6c46310595033c014c9860118c4934d6a
-SHA256: 67e9075d69d9f11858783efa1be19a264b52f6e844a9494f4c8845e2d78aafe1
-Section: hamradio
-Priority: optional
-Homepage: https://github.com/g4klx/MMDVM-Host
-Description: MMDVM-Host, MMDVM-Display, MMDVM-Info and MMDVMCal
- Multi-Mode Digital Voice Modem Host Software
- Supports D-Star, DMR, YSF, P25, NXDN, POCSAG and FM
- Includes the MMDVM-Display display driver, the MMDVM-Info information
- service it relies on, and the MMDVMCal calibration tool
- .
- Built for Debian trixie
- Git commits: MMDVM-Host b18e6f9, MMDVMCal 888aa8e, MMDVM-Display 7ba1003, MMDVM-Info a1d884a
-
-Package: mmdvmhost
 Version: 2026.11.21-5~deb13u1
 Architecture: amd64
 Maintainer: MW0MWZ <andy@mw0mwz.co.uk>
@@ -576,6 +553,29 @@ Size: 7925500
 MD5sum: c91ca9148f45f8d661a553ecdc22a372
 SHA1: 01a33c212b625853db253b791e97c0e3b4e8de0b
 SHA256: 05df55606a717fb4d4b4e63575e1f896e4ad8e8a49f490888f35abdf6cd02967
+Section: hamradio
+Priority: optional
+Homepage: https://github.com/g4klx/MMDVM-Host
+Description: MMDVM-Host, MMDVM-Display, MMDVM-Info and MMDVMCal
+ Multi-Mode Digital Voice Modem Host Software
+ Supports D-Star, DMR, YSF, P25, NXDN, POCSAG and FM
+ Includes the MMDVM-Display display driver, the MMDVM-Info information
+ service it relies on, and the MMDVMCal calibration tool
+ .
+ Built for Debian trixie
+ Git commits: MMDVM-Host c145bc8, MMDVMCal 888aa8e, MMDVM-Display df00814, MMDVM-Info 69d6c09
+
+Package: mmdvmhost
+Version: 2026.11.26-1~deb13u1
+Architecture: amd64
+Maintainer: MW0MWZ <andy@mw0mwz.co.uk>
+Depends: libc6 (>= 2.38), libgcc-s1 (>= 3.0), libmosquitto1 (>= 1.6), libstdc++6 (>= 14)
+Recommends: mosquitto
+Filename: pool/main/m/mmdvmhost/mmdvmhost_2026.11.26-1~deb13u1_amd64.deb
+Size: 7927136
+MD5sum: 139280dc9e587c9fa4eb4499e6ce32d1
+SHA1: c6ac65d6fb3e756023ac7842d5e3dafb6a76e38f
+SHA256: 824114b8a5a9a34471a9ee6880ec031cd1411b4efef8eb6af640870d6166eecf
 Section: hamradio
 Priority: optional
 Homepage: https://github.com/g4klx/MMDVM-Host
