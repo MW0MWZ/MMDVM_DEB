@@ -474,29 +474,6 @@ Description: FM Clients for Amateur Radio
  Git commit: 02d7bd0
 
 Package: mmdvmhost
-Version: 2026.11.21-6~deb13u1
-Architecture: amd64
-Maintainer: MW0MWZ <andy@mw0mwz.co.uk>
-Depends: libc6 (>= 2.38), libgcc-s1 (>= 3.0), libmosquitto1 (>= 1.6), libstdc++6 (>= 14)
-Recommends: mosquitto
-Filename: pool/main/m/mmdvmhost/mmdvmhost_2026.11.21-6~deb13u1_amd64.deb
-Size: 7885448
-MD5sum: b0d8424bb605cc3613168896c9b3e98e
-SHA1: eba2322629780d65c6844e344be12a9700138904
-SHA256: e7dbd33d7c9936951018a51f350f1d47f60920787ad92df8f6d55247891ba9ce
-Section: hamradio
-Priority: optional
-Homepage: https://github.com/g4klx/MMDVM-Host
-Description: MMDVM-Host, MMDVM-Display, MMDVM-Info and MMDVMCal
- Multi-Mode Digital Voice Modem Host Software
- Supports D-Star, DMR, YSF, P25, NXDN, POCSAG and FM
- Includes the MMDVM-Display display driver, the MMDVM-Info information
- service it relies on, and the MMDVMCal calibration tool
- .
- Built for Debian trixie
- Git commits: MMDVM-Host b18e6f9, MMDVMCal 888aa8e, MMDVM-Display 7ba1003, MMDVM-Info 69d6c09
-
-Package: mmdvmhost
 Version: 2026.11.25-0~deb13u1
 Architecture: amd64
 Maintainer: MW0MWZ <andy@mw0mwz.co.uk>
@@ -587,6 +564,29 @@ Description: MMDVM-Host, MMDVM-Display, MMDVM-Info and MMDVMCal
  .
  Built for Debian trixie
  Git commits: MMDVM-Host c145bc8, MMDVMCal 888aa8e, MMDVM-Display a791080, MMDVM-Info 69d6c09
+
+Package: mmdvmhost
+Version: 2026.11.26-3~deb13u1
+Architecture: amd64
+Maintainer: MW0MWZ <andy@mw0mwz.co.uk>
+Depends: libc6 (>= 2.38), libgcc-s1 (>= 3.0), libmosquitto1 (>= 1.6), libstdc++6 (>= 14)
+Recommends: mosquitto
+Filename: pool/main/m/mmdvmhost/mmdvmhost_2026.11.26-3~deb13u1_amd64.deb
+Size: 8690036
+MD5sum: 6c5bb03d59cd568f855faa9fbc48086a
+SHA1: ef3d1fcd2ff22e087152c98804d65da3e4c99b11
+SHA256: bf3aff4c512d7f43361b539fb829c6a8a071944932126f2f37ee1bced876d428
+Section: hamradio
+Priority: optional
+Homepage: https://github.com/g4klx/MMDVM-Host
+Description: MMDVM-Host, MMDVM-Display, MMDVM-Info and MMDVMCal
+ Multi-Mode Digital Voice Modem Host Software
+ Supports D-Star, DMR, YSF, P25, NXDN, POCSAG and FM
+ Includes the MMDVM-Display display driver, the MMDVM-Info information
+ service it relies on, and the MMDVMCal calibration tool
+ .
+ Built for Debian trixie
+ Git commits: MMDVM-Host c145bc8, MMDVMCal 888aa8e, MMDVM-Display a1a6f2a, MMDVM-Info 69d6c09
 
 Package: nxdnclients
 Version: 2026.03.08-0~deb13u1
